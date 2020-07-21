@@ -8,18 +8,15 @@ package gotable
 
 import (
 	"fmt"
+	"gotable/constant"
 )
 
-const (
-	_VERSION = "go-table 1.1.8"
-)
-
-type table struct {
+type Table struct {
 	header 	Set
 	value 	[]map[string]string
 }
 
-func (tb *table) AddHead(newHead string) error {
+func (tb *Table) AddHead(newHead string) error {
 	err := tb.header.Add(newHead)
 	if err != nil {
 		return err
@@ -33,7 +30,7 @@ func (tb *table) AddHead(newHead string) error {
 	return nil
 }
 
-func (tb *table) AddValue(newValue map[string]string) error {
+func (tb *Table) AddValue(newValue map[string]string) error {
 	for key, _ := range newValue {
 		if tb.header.Exit(key) {
 			continue
@@ -47,7 +44,7 @@ func (tb *table) AddValue(newValue map[string]string) error {
 	return nil
 }
 
-func (tb *table) PrintTable() {
+func (tb *Table) PrintTable() {
 	if tb.Empty() {
 		fmt.Println("table is empty.")
 		return
@@ -94,23 +91,23 @@ func (tb *table) PrintTable() {
 	printGroup(tableValue, tb.header.base, columnMaxLength)
 }
 
-func (tb *table) Empty() bool {
+func (tb *Table) Empty() bool {
 	if len(tb.value) == 0 {
 		return true
 	}
 	return false
 }
 
-func (tb *table) GetHeaders() []string {
+func (tb *Table) GetHeaders() []string {
 	return tb.header.base
 }
 
-func (tb *table) GetValues() []map[string]string {
+func (tb *Table) GetValues() []map[string]string {
 	return tb.value
 }
 
 // TODO if value in table, return true.
-func (tb *table) Exit(head string, value interface{}) bool {
+func (tb *Table) Exit(head string, value interface{}) bool {
 	headExit := false
 	for _, headInHeader := range tb.header.base {
 		if head == headInHeader {
@@ -204,7 +201,7 @@ func isEvenNumber(number int) bool {
 	return false
 }
 
-func CreateTable(header []string) (*table, error) {
+func CreateTable(header []string) (*Table, error) {
 	set := Set{}
 	for _, head := range header {
 		err := set.Add(head)
@@ -213,7 +210,7 @@ func CreateTable(header []string) (*table, error) {
 		}
 	}
 
-	tb := &table{
+	tb := &Table{
 		header: set,
 		value:  make([]map[string]string, 0),
 	}
@@ -221,5 +218,5 @@ func CreateTable(header []string) (*table, error) {
 }
 
 func Version() string {
-	return _VERSION
+	return constant.Version
 }
