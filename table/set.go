@@ -1,4 +1,4 @@
-package gotable
+package table
 
 import "fmt"
 
