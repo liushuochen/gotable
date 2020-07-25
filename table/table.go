@@ -23,7 +23,7 @@ func (tb *Table) AddHead(newHead string) error {
 
 func (tb *Table) AddValue(newValue map[string]string) error {
 	for key := range newValue {
-		if tb.Header.Exit(key) {
+		if tb.Header.Exist(key) {
 			continue
 		} else {
 			err := fmt.Errorf("invalid value %s", key)
