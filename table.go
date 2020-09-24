@@ -7,8 +7,8 @@
 package gotable
 
 import (
-	"github.com/liushuochen/gotable/constant"
-	"github.com/liushuochen/gotable/table"
+	"gotable/constant"
+	"gotable/table"
 )
 
 
