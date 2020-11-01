@@ -53,17 +53,17 @@ var (
 	}
 	structSliceData = []interface{}{
 		MyStruct{
-			Name:       "Alice",
+			Name:       "京东方A",
 			Experience: 3,
 			Salary:     2300.00,
 		},
 		MyStruct{
-			Name:       "Bob",
+			Name:       "券商ETF",
 			Experience: 10,
 			Salary:     900.00,
 		},
 		MyStruct{
-			Name:       "Coco",
+			Name:       "圆通",
 			Experience: 1,
 			Salary:     9000.00,
 		},

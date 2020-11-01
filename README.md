@@ -78,3 +78,7 @@ func TestStructTable(t *testing.T) {
 1.4 支持struct slice转table
 - 支持struct slice转table（基于反射）
 - 支持单元格自定义颜色配置
+
+## 存在问题
+- 单元格为中文时 表格对不齐
+![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_chi_issue.png)
