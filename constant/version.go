@@ -1,5 +1,5 @@
 package constant
 
 const (
-	Version = "go-table  1.3"
+	Version = "go-table 1.3"
 )

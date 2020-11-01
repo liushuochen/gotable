@@ -8,19 +8,32 @@ import (
 )
 
 type Table struct {
-	Header 	Set
-	Value 	[]map[string]Sequence
+	Header set
+	Value  []map[string]Sequence
+	Opts   *Options
+}
+
+type Options struct {
 	ColorController ColorController
+}
+type Option func(t *Options)
+
+func WithColorController(controller ColorController) Option {
+	return func(o *Options) {
+		o.ColorController = controller
+	}
 }
 
 type ColorController func(field string, val reflect.Value) color.Color
 
-func DefaultController(field string, val reflect.Value) color.Color {
+func defaultController(field string, val reflect.Value) color.Color {
 	return ""
 }
 
+//Sequence sequence for print
 type Sequence interface {
 	Val() string
+	// actual length except invisible rune
 	Len() int
 }
 
@@ -34,6 +47,40 @@ func (s DefaultSequence) Len() int {
 	return len(s)
 }
 
+func CreateTable(header []string, options ...Option) (*Table, error) {
+	set := set{}
+	for _, head := range header {
+		err := set.Add(head)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	tb := &Table{
+		Header: set,
+		Value:  make([]map[string]Sequence, 0),
+	}
+
+	opts := &Options{
+		ColorController: defaultController,
+	}
+
+	for _, do := range options {
+		do(opts)
+	}
+
+	tb.Opts = opts
+	return tb, nil
+}
+
+func CreateTableFromStruct(meta interface{}, options ...Option) (*Table, error) {
+	typ := reflect.TypeOf(meta)
+	var header []string
+	for i := 0; i < typ.NumField(); i++ {
+		header = append(header, typ.Field(i).Name)
+	}
+	return CreateTable(header, options...)
+}
 
 func (tb *Table) AddHead(newHead string) error {
 	err := tb.Header.Add(newHead)
@@ -63,25 +110,22 @@ func (tb *Table) AddValue(newValue map[string]Sequence) error {
 	return nil
 }
 
-func (tb *Table) FillItems(items []interface{}) error {
-	var value []map[string]Sequence
-
-	for _, item := range items {
+func (tb *Table) AddValuesFromSlice(items []interface{}) error {
+	structToMap := func(item interface{}) map[string]Sequence {
 		typ := reflect.TypeOf(item)
 		val := reflect.ValueOf(item)
 		mp := make(map[string]Sequence, val.NumField())
 		for i := 0; i < val.NumField(); i++ {
 			fieldName := typ.Field(i).Name
 			fieldVal := val.FieldByName(fieldName)
-
-			clr := tb.ColorController(fieldName, fieldVal)
+			clr := tb.Opts.ColorController(fieldName, fieldVal)
 			mp[fieldName] = color.ColorfulString(clr, fieldVal)
 		}
-		value = append(value, mp)
+		return mp
 	}
 
-	for _, v:=  range value {
-		err := tb.AddValue(v)
+	for _, item := range items {
+		err := tb.AddValue(structToMap(item))
 		if err != nil {
 			return err
 		}
@@ -241,7 +285,7 @@ func center(str Sequence, length int, fillchar string) (string, error) {
 }
 
 func isEvenNumber(number int) bool {
-	if number % 2 == 0 {
+	if number%2 == 0 {
 		return true
 	}
 	return false
