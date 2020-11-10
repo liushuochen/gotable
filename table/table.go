@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/TuoAiTang/gotable/color"
+	"github.com/liushuochen/gotable/color"
 )
 
 type Table struct {

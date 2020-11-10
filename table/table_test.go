@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/TuoAiTang/gotable/color"
+	"github.com/liushuochen/gotable/color"
 	"github.com/stretchr/testify/assert"
 )
 
