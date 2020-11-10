@@ -1,10 +1,85 @@
 package table
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+
+	"github.com/TuoAiTang/gotable/color"
+)
 
 type Table struct {
-	Header 	Set
-	Value 	[]map[string]string
+	Header set
+	Value  []map[string]Sequence
+	Opts   *Options
+}
+
+type Options struct {
+	ColorController ColorController
+}
+type Option func(t *Options)
+
+func WithColorController(controller ColorController) Option {
+	return func(o *Options) {
+		o.ColorController = controller
+	}
+}
+
+type ColorController func(field string, val reflect.Value) color.Color
+
+func defaultController(field string, val reflect.Value) color.Color {
+	return ""
+}
+
+//Sequence sequence for print
+type Sequence interface {
+	Val() string
+	// actual length except invisible rune
+	Len() int
+}
+
+type DefaultSequence string
+
+func (s DefaultSequence) Val() string {
+	return string(s)
+}
+
+func (s DefaultSequence) Len() int {
+	return len(s)
+}
+
+func CreateTable(header []string, options ...Option) (*Table, error) {
+	set := set{}
+	for _, head := range header {
+		err := set.Add(head)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	tb := &Table{
+		Header: set,
+		Value:  make([]map[string]Sequence, 0),
+	}
+
+	opts := &Options{
+		ColorController: defaultController,
+	}
+
+	for _, do := range options {
+		do(opts)
+	}
+
+	tb.Opts = opts
+	return tb, nil
+}
+
+func CreateTableFromStruct(meta interface{}, options ...Option) (*Table, error) {
+	typ := reflect.TypeOf(meta)
+	var header []string
+	for i := 0; i < typ.NumField(); i++ {
+		header = append(header, typ.Field(i).Name)
+	}
+	return CreateTable(header, options...)
 }
 
 func (tb *Table) AddHead(newHead string) error {
@@ -15,13 +90,13 @@ func (tb *Table) AddHead(newHead string) error {
 
 	// modify exit value, add new column.
 	for _, data := range tb.Value {
-		data[newHead] = ""
+		data[newHead] = nil
 	}
 
 	return nil
 }
 
-func (tb *Table) AddValue(newValue map[string]string) error {
+func (tb *Table) AddValue(newValue map[string]Sequence) error {
 	for key := range newValue {
 		if tb.Header.Exist(key) {
 			continue
@@ -35,6 +110,30 @@ func (tb *Table) AddValue(newValue map[string]string) error {
 	return nil
 }
 
+func (tb *Table) AddValuesFromSlice(items []interface{}) error {
+	structToMap := func(item interface{}) map[string]Sequence {
+		typ := reflect.TypeOf(item)
+		val := reflect.ValueOf(item)
+		mp := make(map[string]Sequence, val.NumField())
+		for i := 0; i < val.NumField(); i++ {
+			fieldName := typ.Field(i).Name
+			fieldVal := val.FieldByName(fieldName)
+			clr := tb.Opts.ColorController(fieldName, fieldVal)
+			mp[fieldName] = color.ColorfulString(clr, fieldVal)
+		}
+		return mp
+	}
+
+	for _, item := range items {
+		err := tb.AddValue(structToMap(item))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (tb *Table) PrintTable() {
 	if tb.Empty() {
 		fmt.Println("table is empty.")
@@ -42,16 +141,16 @@ func (tb *Table) PrintTable() {
 	}
 
 	columnMaxLength := make(map[string]int)
-	tag := make(map[string]string)
-	taga := make([]map[string]string, 0)
+	tag := make(map[string]Sequence)
+	taga := make([]map[string]Sequence, 0)
 	for _, header := range tb.Header.base {
 		columnMaxLength[header] = 0
-		tag[header] = "-"
+		tag[header] = DefaultSequence("-")
 	}
 
 	for _, data := range tb.Value {
 		for _, header := range tb.Header.base {
-			maxLength := max(len(header), len(data[header]))
+			maxLength := max(len(header), data[header].Len())
 			maxLength = max(maxLength, columnMaxLength[header])
 			columnMaxLength[header] = maxLength
 		}
@@ -64,7 +163,7 @@ func (tb *Table) PrintTable() {
 	// print table head
 	for index, head := range tb.Header.base {
 		itemLen := columnMaxLength[head] + 4
-		s, _ := center(head, itemLen, " ")
+		s, _ := center(DefaultSequence(head), itemLen, " ")
 		if index == 0 {
 			s = "|" + s + "|"
 		} else {
@@ -93,7 +192,7 @@ func (tb *Table) GetHeaders() []string {
 	return tb.Header.base
 }
 
-func (tb *Table) GetValues() []map[string]string {
+func (tb *Table) GetValues() []map[string]Sequence {
 	return tb.Value
 }
 
@@ -120,19 +219,19 @@ func (tb *Table) Exit(head string, value interface{}) bool {
 	return find
 }
 
-func printGroup(group []map[string]string, header []string, columnMaxLen map[string]int) {
+func printGroup(group []map[string]Sequence, header []string, columnMaxLen map[string]int) {
 	for _, item := range group {
 		for index, head := range header {
 			itemLen := columnMaxLen[head] + 4
 			s := ""
-			if item[head] == "-" {
+			if item[head].Val() == "-" {
 				s, _ = center(item[head], itemLen, "-")
 			} else {
 				s, _ = center(item[head], itemLen, " ")
 			}
 
 			icon := "|"
-			if item[head] == "-" {
+			if item[head].Val() == "-" {
 				icon = "+"
 			}
 
@@ -154,39 +253,39 @@ func max(x, y int) int {
 	return y
 }
 
-func center(str string, length int, fillchar string) (string, error) {
+func center(str Sequence, length int, fillchar string) (string, error) {
 	if len(fillchar) != 1 {
 		err := fmt.Errorf("the fill character must be exactly one" +
 			" character long")
 		return "", err
 	}
 
-	if len(str) >= length {
-		return str, nil
+	if str.Len() >= length {
+		return str.Val(), nil
 	}
 
 	result := ""
-	if isEvenNumber(length - len(str)) {
+	if isEvenNumber(length - str.Len()) {
 		front := ""
-		for i := 0; i < ((length - len(str)) / 2); i++ {
+		for i := 0; i < ((length - str.Len()) / 2); i++ {
 			front = front + fillchar
 		}
 
-		result = front + str + front
+		result = front + str.Val() + front
 	} else {
 		front := ""
-		for i := 0; i < ((length - len(str) - 1) / 2); i++ {
+		for i := 0; i < ((length - str.Len() - 1) / 2); i++ {
 			front = front + fillchar
 		}
 
 		behind := front + fillchar
-		result = front + str + behind
+		result = front + str.Val() + behind
 	}
 	return result, nil
 }
 
 func isEvenNumber(number int) bool {
-	if number % 2 == 0 {
+	if number%2 == 0 {
 		return true
 	}
 	return false
