@@ -1,4 +1,4 @@
-module github.com/TuoAiTang/gotable
+module github.com/liushuochen/gotable
 
 go 1.14
 
