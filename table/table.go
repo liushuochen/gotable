@@ -2,9 +2,8 @@ package table
 
 import (
 	"fmt"
-	"reflect"
-
 	"github.com/liushuochen/gotable/color"
+	"reflect"
 )
 
 type Table struct {
@@ -56,12 +55,12 @@ func CreateTable(header []string, options ...Option) (*Table, error) {
 		}
 	}
 
-	tb := &Table{
+	tb := &Table {
 		Header: set,
 		Value:  make([]map[string]Sequence, 0),
 	}
 
-	opts := &Options{
+	opts := &Options {
 		ColorController: defaultController,
 	}
 
