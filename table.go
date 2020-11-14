@@ -1,4 +1,4 @@
-package table
+package gotable
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 type Table struct {
-	Header set
+	Header Set
 	Value  []map[string]Sequence
 	Opts   *Options
 }
@@ -15,6 +15,7 @@ type Table struct {
 type Options struct {
 	ColorController ColorController
 }
+
 type Option func(t *Options)
 
 func WithColorController(controller ColorController) Option {
@@ -26,7 +27,7 @@ func WithColorController(controller ColorController) Option {
 type ColorController func(field string, val reflect.Value) color.Color
 
 func defaultController(field string, val reflect.Value) color.Color {
-	return ""
+	return color.WHITE
 }
 
 //Sequence sequence for print
@@ -47,7 +48,7 @@ func (s DefaultSequence) Len() int {
 }
 
 func CreateTable(header []string, options ...Option) (*Table, error) {
-	set := set{}
+	set := Set{}
 	for _, head := range header {
 		err := set.Add(head)
 		if err != nil {
@@ -110,6 +111,7 @@ func (tb *Table) AddValue(newValue map[string]Sequence) error {
 }
 
 func (tb *Table) AddValuesFromSlice(items []interface{}) error {
+	fmt.Println("-------- inner AddValuesFromSlice ----------")
 	structToMap := func(item interface{}) map[string]Sequence {
 		typ := reflect.TypeOf(item)
 		val := reflect.ValueOf(item)
@@ -196,7 +198,7 @@ func (tb *Table) GetValues() []map[string]Sequence {
 }
 
 // TODO if value in table, return true.
-func (tb *Table) Exit(head string, value interface{}) bool {
+func (tb *Table) Exist(head string, value interface{}) bool {
 	headExit := false
 	for _, headInHeader := range tb.Header.base {
 		if head == headInHeader {

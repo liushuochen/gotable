@@ -1,7 +1,7 @@
 # gotable
 
 ## Introduction
-打印CLI表格框架。
+Print table in console
 
 ## 效果
 ### 普通表格

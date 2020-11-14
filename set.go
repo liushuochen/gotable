@@ -1,20 +1,20 @@
-package table
+package gotable
 
 import "fmt"
 
-type set struct {
+type Set struct {
 	base []string
 }
 
-func (set *set) Len() int {
+func (set *Set) Len() int {
 	return len(set.base)
 }
 
-func (set *set) Cap() int {
+func (set *Set) Cap() int {
 	return cap(set.base)
 }
 
-func (set *set) Exist(element string) bool {
+func (set *Set) Exist(element string) bool {
 	flag := set.exist(element)
 	if flag == -1 {
 		return false
@@ -22,7 +22,7 @@ func (set *set) Exist(element string) bool {
 	return true
 }
 
-func (set *set) exist(element string) int {
+func (set *Set) exist(element string) int {
 	for index, data := range set.base {
 		if data == element {
 			return index
@@ -32,11 +32,11 @@ func (set *set) exist(element string) int {
 	return -1
 }
 
-func (set *set) Clear() {
+func (set *Set) Clear() {
 	set.base = make([]string, 0)
 }
 
-func (set *set) Add(element string) error {
+func (set *Set) Add(element string) error {
 	if set.Exist(element) {
 		return fmt.Errorf("value %s has exit", element)
 	}
@@ -44,7 +44,7 @@ func (set *set) Add(element string) error {
 	return nil
 }
 
-func (set *set) Remove(element string) error {
+func (set *Set) Remove(element string) error {
 	position := set.exist(element)
 	if position == -1 {
 		return fmt.Errorf("value %s has not exit", element)
