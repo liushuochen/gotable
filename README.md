@@ -3,7 +3,7 @@
 ## Introduction
 Print table in console
 
-## 效果
+## effect
 ### 普通表格
 ![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_test_plain.png)
 ### 彩色表格

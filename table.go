@@ -99,6 +99,23 @@ func (tb *Table) AddHead(newHead string) error {
 func (tb *Table) AddValue(newValue map[string]Sequence) error {
 	for key := range newValue {
 		if tb.Header.Exist(key) {
+			value := reflect.ValueOf(newValue[key])
+			clr := tb.Opts.ColorController(key, value)
+			newValue[key] = color.ColorfulString(clr, value)
+			continue
+		} else {
+			err := fmt.Errorf("invalid value %s", key)
+			return err
+		}
+	}
+
+	tb.Value = append(tb.Value, newValue)
+	return nil
+}
+
+func (tb *Table) addValue(newValue map[string]Sequence) error {
+	for key := range newValue {
+		if tb.Header.Exist(key) {
 			continue
 		} else {
 			err := fmt.Errorf("invalid value %s", key)
@@ -111,7 +128,6 @@ func (tb *Table) AddValue(newValue map[string]Sequence) error {
 }
 
 func (tb *Table) AddValuesFromSlice(items []interface{}) error {
-	fmt.Println("-------- inner AddValuesFromSlice ----------")
 	structToMap := func(item interface{}) map[string]Sequence {
 		typ := reflect.TypeOf(item)
 		val := reflect.ValueOf(item)
@@ -126,7 +142,7 @@ func (tb *Table) AddValuesFromSlice(items []interface{}) error {
 	}
 
 	for _, item := range items {
-		err := tb.AddValue(structToMap(item))
+		err := tb.addValue(structToMap(item))
 		if err != nil {
 			return err
 		}
