@@ -4,13 +4,10 @@
 Print table in console
 
 ## effect
-### 普通表格
+### normal table
 ![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_test_plain.png)
-### 彩色表格
+### color table
 ![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_test_color.png)
-### 结构体数组转表格
-![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_test_strcut.png)
-
 
 ## Bootstrap
 直接运行`table_test.go`

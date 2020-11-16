@@ -22,7 +22,7 @@ var (
 	MAGENTA      = Color([]byte{27, 91, 51, 53, 109})
 	CYAN         = Color([]byte{27, 91, 51, 54, 109})
 	RESET        = Color([]byte{27, 91, 48, 109})
-	DISABLECOLOR = false
+	DISABLECOLOR = ""
 )
 
 func PrintlnGreen(obj interface{}) {
