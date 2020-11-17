@@ -3,15 +3,14 @@
 ## Introduction
 Print table in console
 
-## effect
-### normal table
+## Effect
+### Normal table
 ![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_test_plain.png)
-### color table
+### Color table
 ![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_test_color.png)
 
-## Bootstrap
-直接运行`table_test.go`
-或者参考[使用指南](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
+## reference
+Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
 
 ### Demo
 ```go

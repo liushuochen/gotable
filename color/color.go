@@ -40,12 +40,16 @@ type String struct {
 	Length   int
 }
 
-func (c String) Val() string {
+func (c String) Value() string {
 	return c.Colorful
 }
 
 func (c String) Len() int {
 	return c.Length
+}
+
+func (c String) OriginValue() string {
+	return c.Origin
 }
 
 func ColorfulString(color Color, obj interface{}) String {
@@ -56,6 +60,7 @@ func ColorfulString(color Color, obj interface{}) String {
 			Color:    color,
 			Colorful: origin,
 			Length:   len(origin),
+			Origin:   origin,
 		}
 	}
 
@@ -63,5 +68,6 @@ func ColorfulString(color Color, obj interface{}) String {
 		Color:    color,
 		Colorful: fmt.Sprintf("%v%v%v", color, obj, RESET),
 		Length:   len(origin),
+		Origin:   origin,
 	}
 }

@@ -1,6 +1,7 @@
 package gotable
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/liushuochen/gotable/color"
 	"reflect"
@@ -27,24 +28,31 @@ func WithColorController(controller ColorController) Option {
 type ColorController func(field string, val reflect.Value) color.Color
 
 func defaultController(field string, val reflect.Value) color.Color {
-	return color.WHITE
+	return ""
 }
 
 //Sequence sequence for print
 type Sequence interface {
-	Val() string
+	Value() string
 	// actual length except invisible rune
 	Len() int
+
+	//Origin value
+	OriginValue() string
 }
 
 type DefaultSequence string
 
-func (s DefaultSequence) Val() string {
+func (s DefaultSequence) Value() string {
 	return string(s)
 }
 
 func (s DefaultSequence) Len() int {
 	return len(s)
+}
+
+func (s DefaultSequence) OriginValue() string {
+	return s.Value()
 }
 
 func CreateTable(header []string, options ...Option) (*Table, error) {
@@ -213,7 +221,6 @@ func (tb *Table) GetValues() []map[string]Sequence {
 	return tb.Value
 }
 
-// TODO if value in table, return true.
 func (tb *Table) Exist(head string, value interface{}) bool {
 	headExit := false
 	for _, headInHeader := range tb.Header.base {
@@ -234,4 +241,21 @@ func (tb *Table) Exist(head string, value interface{}) bool {
 		}
 	}
 	return find
+}
+
+func (tb *Table) Json() (string, error) {
+	data := make([]map[string]interface{}, 0)
+	for _, v := range tb.Value {
+		element := make(map[string]interface{})
+		for head, value := range v {
+			element[head] = value.OriginValue()
+		}
+		data = append(data, element)
+	}
+
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }

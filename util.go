@@ -7,14 +7,14 @@ func printGroup(group []map[string]Sequence, header []string, columnMaxLen map[s
 		for index, head := range header {
 			itemLen := columnMaxLen[head] + 4
 			s := ""
-			if item[head].Val() == "-" {
+			if item[head].Value() == "-" {
 				s, _ = center(item[head], itemLen, "-")
 			} else {
 				s, _ = center(item[head], itemLen, " ")
 			}
 
 			icon := "|"
-			if item[head].Val() == "-" {
+			if item[head].Value() == "-" {
 				icon = "+"
 			}
 
@@ -44,7 +44,7 @@ func center(str Sequence, length int, fillchar string) (string, error) {
 	}
 
 	if str.Len() >= length {
-		return str.Val(), nil
+		return str.Value(), nil
 	}
 
 	result := ""
@@ -54,7 +54,7 @@ func center(str Sequence, length int, fillchar string) (string, error) {
 			front = front + fillchar
 		}
 
-		result = front + str.Val() + front
+		result = front + str.Value() + front
 	} else {
 		front := ""
 		for i := 0; i < ((length - str.Len() - 1) / 2); i++ {
@@ -62,7 +62,7 @@ func center(str Sequence, length int, fillchar string) (string, error) {
 		}
 
 		behind := front + fillchar
-		result = front + str.Val() + behind
+		result = front + str.Value() + behind
 	}
 	return result, nil
 }
