@@ -31,13 +31,13 @@ func defaultController(field string, val reflect.Value) color.Color {
 	return ""
 }
 
-//Sequence sequence for print
+// Sequence sequence for print
 type Sequence interface {
 	Value() string
-	// actual length except invisible rune
+	// Actual length except invisible rune
 	Len() int
 
-	//Origin value
+	// Origin value
 	OriginValue() string
 }
 
@@ -106,19 +106,12 @@ func (tb *Table) AddHead(newHead string) error {
 
 func (tb *Table) AddValue(newValue map[string]Sequence) error {
 	for key := range newValue {
-		if tb.Header.Exist(key) {
-			value := reflect.ValueOf(newValue[key])
-			clr := tb.Opts.ColorController(key, value)
-			newValue[key] = color.ColorfulString(clr, value)
-			continue
-		} else {
-			err := fmt.Errorf("invalid value %s", key)
-			return err
-		}
+		value := reflect.ValueOf(newValue[key])
+		clr := tb.Opts.ColorController(key, value)
+		newValue[key] = color.ColorfulString(clr, value)
 	}
 
-	tb.Value = append(tb.Value, newValue)
-	return nil
+	return tb.addValue(newValue)
 }
 
 func (tb *Table) addValue(newValue map[string]Sequence) error {
@@ -128,6 +121,13 @@ func (tb *Table) addValue(newValue map[string]Sequence) error {
 		} else {
 			err := fmt.Errorf("invalid value %s", key)
 			return err
+		}
+	}
+
+	for _, head := range tb.Header.base {
+		_, ok := newValue[head]
+		if !ok {
+			newValue[head] = DefaultSequence("")
 		}
 	}
 
@@ -169,7 +169,7 @@ func (tb *Table) PrintTable() {
 	tag := make(map[string]Sequence)
 	taga := make([]map[string]Sequence, 0)
 	for _, header := range tb.Header.base {
-		columnMaxLength[header] = 0
+		columnMaxLength[header] = len(header)
 		tag[header] = DefaultSequence("-")
 	}
 
