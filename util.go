@@ -1,20 +1,23 @@
 package gotable
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/liushuochen/gotable/header"
+)
 
-func printGroup(group []map[string]Sequence, header []string, columnMaxLen map[string]int) {
+func printGroup(group []map[string]Sequence, header []*header.Header, columnMaxLen map[string]int) {
 	for _, item := range group {
 		for index, head := range header {
-			itemLen := columnMaxLen[head] + 4
+			itemLen := columnMaxLen[head.Name] + 4
 			s := ""
-			if item[head].Value() == "-" {
-				s, _ = center(item[head], itemLen, "-")
+			if item[head.Name].Value() == "-" {
+				s, _ = center(item[head.Name], itemLen, "-")
 			} else {
-				s, _ = center(item[head], itemLen, " ")
+				s, _ = center(item[head.Name], itemLen, " ")
 			}
 
 			icon := "|"
-			if item[head].Value() == "-" {
+			if item[head.Name].Value() == "-" {
 				icon = "+"
 			}
 

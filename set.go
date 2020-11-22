@@ -1,9 +1,12 @@
 package gotable
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/liushuochen/gotable/header"
+)
 
 type Set struct {
-	base []string
+	base []*header.Header
 }
 
 func (set *Set) Len() int {
@@ -15,16 +18,12 @@ func (set *Set) Cap() int {
 }
 
 func (set *Set) Exist(element string) bool {
-	flag := set.exist(element)
-	if flag == -1 {
-		return false
-	}
-	return true
+	return set.exist(element) != -1
 }
 
 func (set *Set) exist(element string) int {
 	for index, data := range set.base {
-		if data == element {
+		if data.Name == element {
 			return index
 		}
 	}
@@ -33,14 +32,16 @@ func (set *Set) exist(element string) int {
 }
 
 func (set *Set) Clear() {
-	set.base = make([]string, 0)
+	set.base = make([]*header.Header, 0)
 }
 
 func (set *Set) Add(element string) error {
 	if set.Exist(element) {
 		return fmt.Errorf("value %s has exit", element)
 	}
-	set.base = append(set.base, element)
+
+	newHeader := &header.Header{ Name: element }
+	set.base = append(set.base, newHeader)
 	return nil
 }
 

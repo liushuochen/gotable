@@ -8,7 +8,7 @@ import (
 )
 
 type Table struct {
-	Header Set
+	Header *Set
 	Value  []map[string]Sequence
 	Opts   *Options
 }
@@ -34,6 +34,7 @@ func defaultController(field string, val reflect.Value) color.Color {
 // Sequence sequence for print
 type Sequence interface {
 	Value() string
+
 	// Actual length except invisible rune
 	Len() int
 
@@ -56,7 +57,7 @@ func (s DefaultSequence) OriginValue() string {
 }
 
 func CreateTable(header []string, options ...Option) (*Table, error) {
-	set := Set{}
+	set := &Set{}
 	for _, head := range header {
 		err := set.Add(head)
 		if err != nil {
@@ -104,6 +105,15 @@ func (tb *Table) AddHead(newHead string) error {
 	return nil
 }
 
+func (tb *Table) SetDefault(h string, defaultValue string) {
+	for _, head := range tb.Header.base {
+		if head.Name == h {
+			head.SetDefault(defaultValue)
+			break
+		}
+	}
+}
+
 func (tb *Table) AddValue(newValue map[string]Sequence) error {
 	for key := range newValue {
 		value := reflect.ValueOf(newValue[key])
@@ -125,9 +135,10 @@ func (tb *Table) addValue(newValue map[string]Sequence) error {
 	}
 
 	for _, head := range tb.Header.base {
-		_, ok := newValue[head]
+		_, ok := newValue[head.Name]
 		if !ok {
-			newValue[head] = DefaultSequence("")
+			fmt.Println("11111111", head.Default())
+			newValue[head.Name] = DefaultSequence(head.Default())
 		}
 	}
 
@@ -169,15 +180,15 @@ func (tb *Table) PrintTable() {
 	tag := make(map[string]Sequence)
 	taga := make([]map[string]Sequence, 0)
 	for _, header := range tb.Header.base {
-		columnMaxLength[header] = len(header)
-		tag[header] = DefaultSequence("-")
+		columnMaxLength[header.Name] = len(header.Name)
+		tag[header.Name] = DefaultSequence("-")
 	}
 
 	for _, data := range tb.Value {
 		for _, header := range tb.Header.base {
-			maxLength := max(len(header), data[header].Len())
-			maxLength = max(maxLength, columnMaxLength[header])
-			columnMaxLength[header] = maxLength
+			maxLength := max(len(header.Name), data[header.Name].Len())
+			maxLength = max(maxLength, columnMaxLength[header.Name])
+			columnMaxLength[header.Name] = maxLength
 		}
 	}
 
@@ -187,8 +198,8 @@ func (tb *Table) PrintTable() {
 
 	// print table head
 	for index, head := range tb.Header.base {
-		itemLen := columnMaxLength[head] + 4
-		s, _ := center(DefaultSequence(head), itemLen, " ")
+		itemLen := columnMaxLength[head.Name] + 4
+		s, _ := center(DefaultSequence(head.Name), itemLen, " ")
 		if index == 0 {
 			s = "|" + s + "|"
 		} else {
@@ -214,7 +225,11 @@ func (tb *Table) Empty() bool {
 }
 
 func (tb *Table) GetHeaders() []string {
-	return tb.Header.base
+	result := make([]string, 0)
+	for _, head := range tb.Header.base {
+		result = append(result, head.Name)
+	}
+	return result
 }
 
 func (tb *Table) GetValues() []map[string]Sequence {
@@ -224,7 +239,7 @@ func (tb *Table) GetValues() []map[string]Sequence {
 func (tb *Table) Exist(head string, value interface{}) bool {
 	headExit := false
 	for _, headInHeader := range tb.Header.base {
-		if head == headInHeader {
+		if head == headInHeader.Name {
 			headExit = true
 			break
 		}

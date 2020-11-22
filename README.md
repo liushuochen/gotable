@@ -12,7 +12,8 @@ Print table in console
 ## reference
 Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
 
-### Demo
+## Demo
+### Create a color table
 ```go
 package main
 
@@ -100,6 +101,34 @@ func main() {
 	tbl.AddValuesFromSlice(structSliceData)
 
 	tbl.PrintTable()
+}
+```
+
+### Set default value
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("China", "Xi'AN")
+
+	value := make(map[string]gotable.Sequence)
+	value["US"] = gotable.DefaultSequence("DC")
+	value["UK"] = gotable.DefaultSequence("London")
+	tb.AddValue(value)
+
+	tb.PrintTable()
 }
 ```
 
