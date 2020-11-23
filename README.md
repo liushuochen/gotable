@@ -13,6 +13,33 @@ Print table in console
 Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
 
 ## Demo
+### Create a table
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	value := make(map[string]gotable.Sequence)
+	value["US"] = gotable.DefaultSequence("DC")
+	value["UK"] = gotable.DefaultSequence("London")
+	value["China"] = gotable.DefaultSequence("Beijing")
+	tb.AddValue(value)
+
+	tb.PrintTable()
+}
+```
+
 ### Create a color table
 ```go
 package main
@@ -131,15 +158,6 @@ func main() {
 	tb.PrintTable()
 }
 ```
-
-## 版本更新
-1.3 解决打印彩色字符串时，计算长度时错误，表格对不齐
-- 根本问题：把不可显示的字符也计算进长度了
-- 解决方式：设计接口替换string类型。将表格支持的string替换成Sequence接口，提供Val()和Len()。用Len来进行长度计算，避免不可打印字符占用宽度计算。
-
-1.4 支持struct slice转table
-- 支持struct slice转table（基于反射）
-- 支持单元格自定义颜色配置
 
 ## 存在问题
 - 单元格为中文时 表格对不齐
