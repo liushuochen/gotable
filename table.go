@@ -196,7 +196,7 @@ func (tb *Table) GetHeaders() []string {
 	return result
 }
 
-func (tb *Table) GetValues() []map[string]Sequence {
+func (tb *Table) GetColoredValues() []map[string]Sequence {
 	return tb.Value
 }
 

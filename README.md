@@ -12,6 +12,13 @@ Print table in console
 ## reference
 Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
 
+## API
+### Frame API
+- Create table
+```go
+func CreateTable(header []string, options ...Option) (*Table, error)
+```
+
 ## Demo
 ### Create a table
 ```go
