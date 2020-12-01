@@ -200,6 +200,18 @@ func (tb *Table) GetColoredValues() []map[string]Sequence {
 	return tb.Value
 }
 
+func (tb *Table) GetValues() []map[string]string {
+	values := make([]map[string]string, 0)
+	for _, tableValueMap := range tb.Value {
+		originValueMap := make(map[string]string)
+		for key := range tableValueMap {
+			originValueMap[key] = tableValueMap[key].OriginValue()
+		}
+		values = append(values, originValueMap)
+	}
+	return values
+}
+
 func (tb *Table) Exist(head string, value interface{}) bool {
 	headExit := false
 	for _, headInHeader := range tb.Header.base {
