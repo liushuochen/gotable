@@ -42,17 +42,17 @@ type Sequence interface {
 	OriginValue() string
 }
 
-type DefaultSequence string
+type TableValue string
 
-func (s DefaultSequence) Value() string {
+func (s TableValue) Value() string {
 	return string(s)
 }
 
-func (s DefaultSequence) Len() int {
+func (s TableValue) Len() int {
 	return len(s)
 }
 
-func (s DefaultSequence) OriginValue() string {
+func (s TableValue) OriginValue() string {
 	return s.Value()
 }
 
@@ -102,7 +102,7 @@ func (tb *Table) addValue(newValue map[string]Sequence) error {
 	for _, head := range tb.Header.base {
 		_, ok := newValue[head.Name]
 		if !ok {
-			newValue[head.Name] = DefaultSequence(head.Default())
+			newValue[head.Name] = TableValue(head.Default())
 		}
 	}
 
@@ -145,7 +145,7 @@ func (tb *Table) PrintTable() {
 	taga := make([]map[string]Sequence, 0)
 	for _, header := range tb.Header.base {
 		columnMaxLength[header.Name] = len(header.Name)
-		tag[header.Name] = DefaultSequence("-")
+		tag[header.Name] = TableValue("-")
 	}
 
 	for _, data := range tb.Value {
@@ -163,7 +163,7 @@ func (tb *Table) PrintTable() {
 	// print table head
 	for index, head := range tb.Header.base {
 		itemLen := columnMaxLength[head.Name] + 4
-		s, _ := center(DefaultSequence(head.Name), itemLen, " ")
+		s, _ := center(TableValue(head.Name), itemLen, " ")
 		if index == 0 {
 			s = "|" + s + "|"
 		} else {

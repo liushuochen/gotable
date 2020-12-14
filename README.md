@@ -23,6 +23,11 @@ func CreateTable(header []string, options ...Option) (*Table, error)
 func CreateTableFromStruct(meta interface{}, options ...Option) (*Table, error)
 ```
 
+- Get version
+```go
+func Version() string
+```
+
 ## Demo
 ### Create a table
 ```go
@@ -42,9 +47,9 @@ func main() {
 	}
 
 	value := make(map[string]gotable.Sequence)
-	value["US"] = gotable.DefaultSequence("DC")
-	value["UK"] = gotable.DefaultSequence("London")
-	value["China"] = gotable.DefaultSequence("Beijing")
+	value["US"] = gotable.TableValue("DC")
+	value["UK"] = gotable.TableValue("London")
+	value["China"] = gotable.TableValue("Beijing")
 	tb.AddValue(value)
 
 	tb.PrintTable()
@@ -171,5 +176,5 @@ func main() {
 ```
 
 ## Issue
-- 单元格为中文时 表格对不齐
+- When there are characters other than ASCII in the data, there is a misalignment.
 ![](https://tuocheng.oss-cn-beijing.aliyuncs.com/gotable_chi_issue.png)
