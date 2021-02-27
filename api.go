@@ -2,11 +2,12 @@ package gotable
 
 import (
 	"github.com/liushuochen/gotable/constant"
+	table "github.com/liushuochen/gotable/table"
 	"reflect"
 )
 
-func CreateTable(header []string, options ...Option) (*Table, error) {
-	set := &Set{}
+func CreateTable(header []string, options ... table.Option) (*table.Table, error) {
+	set := &table.Set{}
 	for _, head := range header {
 		err := set.Add(head)
 		if err != nil {
@@ -14,13 +15,13 @@ func CreateTable(header []string, options ...Option) (*Table, error) {
 		}
 	}
 
-	tb := &Table {
+	tb := &table.Table {
 		Header: set,
-		Value:  make([]map[string]Sequence, 0),
+		Value:  make([]map[string]table.Sequence, 0),
 	}
 
-	opts := &Options {
-		ColorController: defaultController,
+	opts := &table.Options {
+		ColorController: table.DefaultController,
 	}
 
 	for _, do := range options {
@@ -31,7 +32,7 @@ func CreateTable(header []string, options ...Option) (*Table, error) {
 	return tb, nil
 }
 
-func CreateTableFromStruct(meta interface{}, options ...Option) (*Table, error) {
+func CreateTableFromStruct(meta interface{}, options ...table.Option) (*table.Table, error) {
 	typ := reflect.TypeOf(meta)
 	var header []string
 	for i := 0; i < typ.NumField(); i++ {
@@ -41,3 +42,15 @@ func CreateTableFromStruct(meta interface{}, options ...Option) (*Table, error) 
 }
 
 func Version() string { return constant.GetVersion() }
+
+func CreateEmptyValueMap() map[string]table.Sequence {
+	return make(map[string]table.Sequence)
+}
+
+func CreateValue(value string) table.TableValue {
+	return table.TableValue(value)
+}
+
+func WithColorController(controller table.ColorController) table.Option {
+	return table.WithColorController(controller)
+}
