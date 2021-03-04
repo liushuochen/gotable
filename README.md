@@ -16,17 +16,22 @@ Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/de
 ### github.com/liushuochen/gotable
 - Create table
 ```go
-func CreateTable(header []string, options ...Option) (*Table, error)
+func CreateTable(header []string, options ... table.Option) (*table.Table, error)
 ```
 
 - Create the table from a struct
 ```go
-func CreateTableFromStruct(meta interface{}, options ...Option) (*Table, error)
+func CreateTableFromStruct(meta interface{}, options ...table.Option)
 ```
 
 - Get version
 ```go
 func Version() string
+```
+
+- Create an empty value map
+```go
+func Dict() map[string]table.Sequence
 ```
 
 ## Demo
@@ -47,13 +52,14 @@ func main() {
 		return
 	}
 
-	value := gotable.CreateEmptyValueMap()
-	value["US"] = gotable.CreateValue("DC")
-	value["UK"] = gotable.CreateValue("London")
-	value["China"] = gotable.CreateValue("Beijing")
+	value := gotable.Dict()
+	value["US"] = gotable.Value("DC")
+	value["UK"] = gotable.Value("London")
+	value["China"] = gotable.Value("Beijing")
 	tb.AddValue(value)
 	tb.PrintTable()
 }
+
 ```
 
 ### Create a color table
@@ -93,10 +99,10 @@ func main() {
 		return
 	}
 
-	value := gotable.CreateEmptyValueMap()
-	value["China"] = gotable.CreateValue("Beijing")
-	value["US"] = gotable.CreateValue("DC")
-	value["UK"] = gotable.CreateValue("London")
+	value := gotable.Dict()
+	value["China"] = gotable.Value("Beijing")
+	value["US"] = gotable.Value("DC")
+	value["UK"] = gotable.Value("London")
 	tb.AddValue(value)
 
 	tb.PrintTable()
@@ -145,6 +151,7 @@ func main() {
 
 	tbl.PrintTable()
 }
+
 ```
 
 ### Set default value
@@ -166,16 +173,43 @@ func main() {
 
 	tb.SetDefault("China", "Xi'AN")
 
-	value := gotable.CreateEmptyValueMap()
-	value["US"] = gotable.CreateValue("DC")
-	value["UK"] = gotable.CreateValue("London")
+	value := gotable.Dict()
+	value["US"] = gotable.Value("DC")
+	value["UK"] = gotable.Value("London")
 	tb.AddValue(value)
 
 	tb.PrintTable()
 }
+
 ```
 
 ### Add a new head to a table
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	value := gotable.Dict()
+	value["US"] = gotable.Value("DC")
+	value["UK"] = gotable.Value("London")
+	tb.AddValue(value)
+	tb.AddHead("Japan")
+
+	tb.PrintTable()
+}
+
+```
 
 
 ## Issue

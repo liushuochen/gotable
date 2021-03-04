@@ -1,17 +1,24 @@
-package gotable
+package table
 
 import (
 	"fmt"
 	"github.com/liushuochen/gotable/header"
 )
 
-func printGroup(group []map[string]Sequence, header []*header.Header, columnMaxLen map[string]int) {
+func printGroup(
+	group []map[string]Sequence,
+	header []*header.Header,
+	columnMaxLen map[string]int,
+	setBorder bool,
+) {
 	for _, item := range group {
 		for index, head := range header {
 			itemLen := columnMaxLen[head.Name] + 4
 			s := ""
 			if item[head.Name].Value() == "-" {
-				s, _ = center(item[head.Name], itemLen, "-")
+				if setBorder {
+					s, _ = center(item[head.Name], itemLen, "-")
+				}
 			} else {
 				s, _ = center(item[head.Name], itemLen, " ")
 			}
@@ -19,6 +26,9 @@ func printGroup(group []map[string]Sequence, header []*header.Header, columnMaxL
 			icon := "|"
 			if item[head.Name].Value() == "-" {
 				icon = "+"
+			}
+			if !setBorder {
+				icon = ""
 			}
 
 			if index == 0 {

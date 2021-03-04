@@ -1,4 +1,4 @@
-package gotable
+package table
 
 import (
 	"encoding/json"
@@ -8,9 +8,18 @@ import (
 )
 
 type Table struct {
-	Header *Set
-	Value  []map[string]Sequence
-	Opts   *Options
+	Header 	*Set
+	Value  	[]map[string]Sequence
+	Opts   	*Options
+	border	bool
+}
+
+func CreateTable(set *Set) *Table {
+	return &Table{
+		Header: set,
+		Value: make([]map[string]Sequence, 0),
+		border: true,
+	}
 }
 
 type Options struct {
@@ -158,27 +167,34 @@ func (tb *Table) PrintTable() {
 
 	// print first line
 	taga = append(taga, tag)
-	printGroup(taga, tb.Header.base, columnMaxLength)
+	if tb.border {
+		printGroup(taga, tb.Header.base, columnMaxLength, tb.border)
+	}
 
 	// print table head
+	icon := "|"
+	if !tb.border { icon = "" }
 	for index, head := range tb.Header.base {
 		itemLen := columnMaxLength[head.Name] + 4
 		s, _ := center(TableValue(head.Name), itemLen, " ")
 		if index == 0 {
-			s = "|" + s + "|"
+			s = icon + s + icon
 		} else {
-			s = "" + s + "|"
+			s = "" + s + icon
 		}
 
 		fmt.Print(s)
 	}
-	fmt.Println()
+
+	if tb.border {
+		fmt.Println()
+	}
 
 	// print value
 	tableValue := taga
 	tableValue = append(tableValue, tb.Value...)
 	tableValue = append(tableValue, tag)
-	printGroup(tableValue, tb.Header.base, columnMaxLength)
+	printGroup(tableValue, tb.Header.base, columnMaxLength, tb.border)
 }
 
 func (tb *Table) Empty() bool {
@@ -249,4 +265,12 @@ func (tb *Table) Json() (string, error) {
 		return "", err
 	}
 	return string(bytes), nil
+}
+
+func (tb *Table) CloseBorder() {
+	tb.border = false
+}
+
+func (tb *Table) OpenBorder() {
+	tb.border = true
 }

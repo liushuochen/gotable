@@ -2,7 +2,7 @@ package gotable
 
 import (
 	"github.com/liushuochen/gotable/constant"
-	table "github.com/liushuochen/gotable/table"
+	"github.com/liushuochen/gotable/table"
 	"reflect"
 )
 
@@ -14,11 +14,7 @@ func CreateTable(header []string, options ... table.Option) (*table.Table, error
 			return nil, err
 		}
 	}
-
-	tb := &table.Table {
-		Header: set,
-		Value:  make([]map[string]table.Sequence, 0),
-	}
+	tb := table.CreateTable(set)
 
 	opts := &table.Options {
 		ColorController: table.DefaultController,
@@ -43,11 +39,11 @@ func CreateTableFromStruct(meta interface{}, options ...table.Option) (*table.Ta
 
 func Version() string { return constant.GetVersion() }
 
-func CreateEmptyValueMap() map[string]table.Sequence {
+func Dict() map[string]table.Sequence {
 	return make(map[string]table.Sequence)
 }
 
-func CreateValue(value string) table.TableValue {
+func Value(value string) table.TableValue {
 	return table.TableValue(value)
 }
 
