@@ -3,66 +3,20 @@ package table
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/liushuochen/gotable/color"
-	"reflect"
 )
 
 type Table struct {
 	Header 	*Set
-	Value  	[]map[string]Sequence
-	Opts   	*Options
+	Value  	[]map[string]string
 	border	bool
 }
 
 func CreateTable(set *Set) *Table {
 	return &Table{
 		Header: set,
-		Value: make([]map[string]Sequence, 0),
+		Value: make([]map[string]string, 0),
 		border: true,
 	}
-}
-
-type Options struct {
-	ColorController ColorController
-}
-
-type Option func(t *Options)
-
-func WithColorController(controller ColorController) Option {
-	return func(o *Options) {
-		o.ColorController = controller
-	}
-}
-
-type ColorController func(field string, val reflect.Value) color.Color
-
-func DefaultController(field string, val reflect.Value) color.Color {
-	return ""
-}
-
-// Sequence sequence for print
-type Sequence interface {
-	Value() string
-
-	// Actual length except invisible rune
-	Len() int
-
-	// Origin value
-	OriginValue() string
-}
-
-type TableValue string
-
-func (s TableValue) Value() string {
-	return string(s)
-}
-
-func (s TableValue) Len() int {
-	return len(s)
-}
-
-func (s TableValue) OriginValue() string {
-	return s.Value()
 }
 
 func (tb *Table) AddHead(newHead string) error {
@@ -73,7 +27,7 @@ func (tb *Table) AddHead(newHead string) error {
 
 	// modify exit value, add new column.
 	for _, data := range tb.Value {
-		data[newHead] = TableValue("")
+		data[newHead] = ""
 	}
 
 	return nil
@@ -88,21 +42,13 @@ func (tb *Table) SetDefault(h string, defaultValue string) {
 	}
 }
 
-func (tb *Table) AddValue(newValue map[string]Sequence) error {
-	for key := range newValue {
-		value := reflect.ValueOf(newValue[key])
-		clr := tb.Opts.ColorController(key, value)
-		newValue[key] = color.ColorfulString(clr, value)
-	}
-
+func (tb *Table) AddValue(newValue map[string]string) error {
 	return tb.addValue(newValue)
 }
 
-func (tb *Table) addValue(newValue map[string]Sequence) error {
+func (tb *Table) addValue(newValue map[string]string) error {
 	for key := range newValue {
-		if tb.Header.Exist(key) {
-			continue
-		} else {
+		if !tb.Header.Exist(key) {
 			err := fmt.Errorf("invalid value %s", key)
 			return err
 		}
@@ -111,35 +57,11 @@ func (tb *Table) addValue(newValue map[string]Sequence) error {
 	for _, head := range tb.Header.base {
 		_, ok := newValue[head.Name]
 		if !ok {
-			newValue[head.Name] = TableValue(head.Default())
+			newValue[head.Name] = head.Default()
 		}
 	}
 
 	tb.Value = append(tb.Value, newValue)
-	return nil
-}
-
-func (tb *Table) AddValuesFromSlice(items []interface{}) error {
-	structToMap := func(item interface{}) map[string]Sequence {
-		typ := reflect.TypeOf(item)
-		val := reflect.ValueOf(item)
-		mp := make(map[string]Sequence, val.NumField())
-		for i := 0; i < val.NumField(); i++ {
-			fieldName := typ.Field(i).Name
-			fieldVal := val.FieldByName(fieldName)
-			clr := tb.Opts.ColorController(fieldName, fieldVal)
-			mp[fieldName] = color.ColorfulString(clr, fieldVal)
-		}
-		return mp
-	}
-
-	for _, item := range items {
-		err := tb.addValue(structToMap(item))
-		if err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -150,16 +72,16 @@ func (tb *Table) PrintTable() {
 	}
 
 	columnMaxLength := make(map[string]int)
-	tag := make(map[string]Sequence)
-	taga := make([]map[string]Sequence, 0)
+	tag := make(map[string]string)
+	taga := make([]map[string]string, 0)
 	for _, header := range tb.Header.base {
 		columnMaxLength[header.Name] = len(header.Name)
-		tag[header.Name] = TableValue("-")
+		tag[header.Name] = "-"
 	}
 
 	for _, data := range tb.Value {
 		for _, header := range tb.Header.base {
-			maxLength := max(len(header.Name), data[header.Name].Len())
+			maxLength := max(len(header.Name), len(data[header.Name]))
 			maxLength = max(maxLength, columnMaxLength[header.Name])
 			columnMaxLength[header.Name] = maxLength
 		}
@@ -176,7 +98,7 @@ func (tb *Table) PrintTable() {
 	if !tb.border { icon = "" }
 	for index, head := range tb.Header.base {
 		itemLen := columnMaxLength[head.Name] + 4
-		s, _ := center(TableValue(head.Name), itemLen, " ")
+		s, _ := center(head.Name, itemLen, " ")
 		if index == 0 {
 			s = icon + s + icon
 		} else {
@@ -212,16 +134,12 @@ func (tb *Table) GetHeaders() []string {
 	return result
 }
 
-func (tb *Table) GetColoredValues() []map[string]Sequence {
-	return tb.Value
-}
-
 func (tb *Table) GetValues() []map[string]string {
 	values := make([]map[string]string, 0)
 	for _, tableValueMap := range tb.Value {
 		originValueMap := make(map[string]string)
 		for key := range tableValueMap {
-			originValueMap[key] = tableValueMap[key].OriginValue()
+			originValueMap[key] = tableValueMap[key]
 		}
 		values = append(values, originValueMap)
 	}
@@ -255,7 +173,7 @@ func (tb *Table) Json() (string, error) {
 	for _, v := range tb.Value {
 		element := make(map[string]interface{})
 		for head, value := range v {
-			element[head] = value.OriginValue()
+			element[head] = value
 		}
 		data = append(data, element)
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 func printGroup(
-	group []map[string]Sequence,
+	group []map[string]string,
 	header []*header.Header,
 	columnMaxLen map[string]int,
 	setBorder bool,
@@ -15,7 +15,7 @@ func printGroup(
 		for index, head := range header {
 			itemLen := columnMaxLen[head.Name] + 4
 			s := ""
-			if item[head.Name].Value() == "-" {
+			if item[head.Name] == "-" {
 				if setBorder {
 					s, _ = center(item[head.Name], itemLen, "-")
 				}
@@ -24,7 +24,7 @@ func printGroup(
 			}
 
 			icon := "|"
-			if item[head.Name].Value() == "-" {
+			if item[head.Name] == "-" {
 				icon = "+"
 			}
 			if !setBorder {
@@ -49,33 +49,33 @@ func max(x, y int) int {
 	return y
 }
 
-func center(str Sequence, length int, fillchar string) (string, error) {
+func center(str string, length int, fillchar string) (string, error) {
 	if len(fillchar) != 1 {
 		err := fmt.Errorf("the fill character must be exactly one" +
 			" character long")
 		return "", err
 	}
 
-	if str.Len() >= length {
-		return str.Value(), nil
+	if len(str) >= length {
+		return str, nil
 	}
 
 	result := ""
-	if isEvenNumber(length - str.Len()) {
+	if isEvenNumber(length - len(str)) {
 		front := ""
-		for i := 0; i < ((length - str.Len()) / 2); i++ {
+		for i := 0; i < ((length - len(str)) / 2); i++ {
 			front = front + fillchar
 		}
 
-		result = front + str.Value() + front
+		result = front + str + front
 	} else {
 		front := ""
-		for i := 0; i < ((length - str.Len() - 1) / 2); i++ {
+		for i := 0; i < ((length - len(str) - 1) / 2); i++ {
 			front = front + fillchar
 		}
 
 		behind := front + fillchar
-		result = front + str.Value() + behind
+		result = front + str + behind
 	}
 	return result, nil
 }
