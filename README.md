@@ -13,6 +13,7 @@ Print table in console
 Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
 
 ## API
+### github.com/liushuochen/gotable
 - Create table
 ```go
 func CreateTable(header []string, options ...Option) (*Table, error)
@@ -46,12 +47,11 @@ func main() {
 		return
 	}
 
-	value := make(map[string]gotable.Sequence)
-	value["US"] = gotable.TableValue("DC")
-	value["UK"] = gotable.TableValue("London")
-	value["China"] = gotable.TableValue("Beijing")
+	value := gotable.CreateEmptyValueMap()
+	value["US"] = gotable.CreateValue("DC")
+	value["UK"] = gotable.CreateValue("London")
+	value["China"] = gotable.CreateValue("Beijing")
 	tb.AddValue(value)
-
 	tb.PrintTable()
 }
 ```
@@ -93,10 +93,10 @@ func main() {
 		return
 	}
 
-	value := make(map[string]gotable.Sequence)
-	value["China"] = gotable.DefaultSequence("Beijing")
-	value["US"] = gotable.DefaultSequence("DC")
-	value["UK"] = gotable.DefaultSequence("London")
+	value := gotable.CreateEmptyValueMap()
+	value["China"] = gotable.CreateValue("Beijing")
+	value["US"] = gotable.CreateValue("DC")
+	value["UK"] = gotable.CreateValue("London")
 	tb.AddValue(value)
 
 	tb.PrintTable()
@@ -122,7 +122,7 @@ func main() {
 	tbl, _ := gotable.CreateTableFromStruct(
 		MyStruct{},
 		gotable.WithColorController(controller),
-		)
+	)
 
 	structSliceData := []interface{}{
 		MyStruct{
@@ -166,14 +166,17 @@ func main() {
 
 	tb.SetDefault("China", "Xi'AN")
 
-	value := make(map[string]gotable.Sequence)
-	value["US"] = gotable.DefaultSequence("DC")
-	value["UK"] = gotable.DefaultSequence("London")
+	value := gotable.CreateEmptyValueMap()
+	value["US"] = gotable.CreateValue("DC")
+	value["UK"] = gotable.CreateValue("London")
 	tb.AddValue(value)
 
 	tb.PrintTable()
 }
 ```
+
+### Add a new head to a table
+
 
 ## Issue
 - When there are characters other than ASCII in the data, there is a misalignment.

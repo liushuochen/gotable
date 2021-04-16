@@ -27,7 +27,7 @@ func WithColorController(controller ColorController) Option {
 
 type ColorController func(field string, val reflect.Value) color.Color
 
-func defaultController(field string, val reflect.Value) color.Color {
+func DefaultController(field string, val reflect.Value) color.Color {
 	return ""
 }
 
@@ -64,7 +64,7 @@ func (tb *Table) AddHead(newHead string) error {
 
 	// modify exit value, add new column.
 	for _, data := range tb.Value {
-		data[newHead] = nil
+		data[newHead] = TableValue("")
 	}
 
 	return nil
