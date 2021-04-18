@@ -3,6 +3,13 @@ package table
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/liushuochen/gotable/header"
+)
+
+const (
+	C = header.AlignCenter
+	L = header.AlignLeft
+	R = header.AlignRight
 )
 
 type Table struct {
@@ -74,16 +81,16 @@ func (tb *Table) PrintTable() {
 	columnMaxLength := make(map[string]int)
 	tag := make(map[string]string)
 	taga := make([]map[string]string, 0)
-	for _, header := range tb.Header.base {
-		columnMaxLength[header.Name] = len(header.Name)
-		tag[header.Name] = "-"
+	for _, h := range tb.Header.base {
+		columnMaxLength[h.Name] = len(h.Name)
+		tag[h.Name] = "-"
 	}
 
 	for _, data := range tb.Value {
-		for _, header := range tb.Header.base {
-			maxLength := max(len(header.Name), len(data[header.Name]))
-			maxLength = max(maxLength, columnMaxLength[header.Name])
-			columnMaxLength[header.Name] = maxLength
+		for _, h := range tb.Header.base {
+			maxLength := max(len(h.Name), len(data[h.Name]))
+			maxLength = max(maxLength, columnMaxLength[h.Name])
+			columnMaxLength[h.Name] = maxLength
 		}
 	}
 
@@ -97,8 +104,16 @@ func (tb *Table) PrintTable() {
 	icon := "|"
 	if !tb.border { icon = "" }
 	for index, head := range tb.Header.base {
-		itemLen := columnMaxLength[head.Name] + 4
-		s, _ := center(head.Name, itemLen, " ")
+		itemLen := columnMaxLength[head.Name] + 2
+		s := ""
+		switch head.Align() {
+		case R:
+			s, _ = right(head.Name, itemLen, " ")
+		case L:
+			s, _ = left(head.Name, itemLen, " ")
+		default:
+			s, _ = center(head.Name, itemLen, " ")
+		}
 		if index == 0 {
 			s = icon + s + icon
 		} else {
@@ -191,4 +206,13 @@ func (tb *Table) CloseBorder() {
 
 func (tb *Table) OpenBorder() {
 	tb.border = true
+}
+
+func (tb *Table) Align(head string, mode int) {
+	for _, h := range tb.Header.base {
+		if h.Name == head {
+			h.SetAlign(mode)
+			return
+		}
+	}
 }

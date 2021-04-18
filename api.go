@@ -5,6 +5,12 @@ import (
 	"github.com/liushuochen/gotable/table"
 )
 
+const (
+	Center = table.C
+	Left = table.L
+	Right = table.R
+)
+
 func CreateTable(header []string) (*table.Table, error) {
 	set := &table.Set{}
 	for _, head := range header {

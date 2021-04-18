@@ -13,14 +13,21 @@ func printGroup(
 ) {
 	for _, item := range group {
 		for index, head := range header {
-			itemLen := columnMaxLen[head.Name] + 4
+			itemLen := columnMaxLen[head.Name] + 2
 			s := ""
 			if item[head.Name] == "-" {
 				if setBorder {
 					s, _ = center(item[head.Name], itemLen, "-")
 				}
 			} else {
-				s, _ = center(item[head.Name], itemLen, " ")
+				switch head.Align() {
+				case R:
+					s, _ = right(item[head.Name], itemLen, " ")
+				case L:
+					s, _ = left(item[head.Name], itemLen, " ")
+				default:
+					s, _ = center(item[head.Name], itemLen, " ")
+				}
 			}
 
 			icon := "|"
@@ -78,6 +85,36 @@ func center(str string, length int, fillchar string) (string, error) {
 		result = front + str + behind
 	}
 	return result, nil
+}
+
+func left(str string, length int, fillchar string) (string, error) {
+	if len(fillchar) != 1 {
+		err := fmt.Errorf("the fill character must be exactly one" +
+			" character long")
+		return "", err
+	}
+
+	result := str + block(length - len(str))
+	return result, nil
+}
+
+func right(str string, length int, fillchar string) (string, error) {
+	if len(fillchar) != 1 {
+		err := fmt.Errorf("the fill character must be exactly one" +
+			" character long")
+		return "", err
+	}
+
+	result := block(length - len(str)) + str
+	return result, nil
+}
+
+func block(length int) string {
+	result := ""
+	for i := 0; i < length; i++ {
+		result += " "
+	}
+	return result
 }
 
 func isEvenNumber(number int) bool {

@@ -40,7 +40,7 @@ func (set *Set) Add(element string) error {
 		return fmt.Errorf("value %s has exit", element)
 	}
 
-	newHeader := &header.Header{ Name: element }
+	newHeader := header.CreateHeader(element)
 	set.base = append(set.base, newHeader)
 	return nil
 }
