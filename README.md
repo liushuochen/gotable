@@ -24,6 +24,14 @@ func Version() string
 func (tb *Table) AddValue(newValue map[string]string) error
 ```
 
+- Add a list of values
+Method ```AddValues``` add a list of values. It returns a slice that 
+consists of adding failed values.
+
+```go
+func (tb *Table) AddValues(values []map[string]string) []map[string]string
+```
+
 - Add head
 ```go
 func (tb *Table) AddHead(newHead string) error
@@ -48,6 +56,13 @@ to use it.</p>
 
 ```go
 func (tb *Table) Align(head string, mode int)
+```
+
+- Check empty
+Use table method ```Empty``` to check if the table is empty.
+
+```go
+func (tb *Table) Empty() bool
 ```
 
 
@@ -104,6 +119,53 @@ func main() {
         return
     }
 }
+
+```
+
+### Add values
+Method ```AddValues``` add a list of values. It returns a slice that 
+consists of adding failed values.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"Name", "ID", "salary"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	values := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		value := make(map[string]string)
+		value["Name"] = fmt.Sprintf("employee-%d", i)
+		value["ID"] = fmt.Sprintf("00%d", i)
+		value["salary"] = "60000"
+		values = append(values, value)
+	}
+
+	tb.AddValues(values)
+	tb.PrintTable()
+}
+
+```
+
+execute result:
+```text
++------------+-----+--------+
+|    Name    | ID  | salary |
++------------+-----+--------+
+| employee-0 | 000 | 60000  |
+| employee-1 | 001 | 60000  |
+| employee-2 | 002 | 60000  |
++------------+-----+--------+
 
 ```
 
@@ -279,5 +341,27 @@ execute result:
 |         |     NewYork     |Manchester  |
 +---------+-----------------+------------+
 
+```
 
+### Check empty
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	if tb.Empty() {
+		fmt.Println("table is empty.")
+	}
+}
 ```

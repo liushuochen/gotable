@@ -72,6 +72,17 @@ func (tb *Table) addValue(newValue map[string]string) error {
 	return nil
 }
 
+func (tb *Table) AddValues(values []map[string]string) []map[string]string {
+	failure := make([]map[string]string, 0)
+	for _, value := range values {
+		err := tb.AddValue(value)
+		if err != nil {
+			failure = append(failure, value)
+		}
+	}
+	return failure
+}
+
 func (tb *Table) PrintTable() {
 	if tb.Empty() {
 		fmt.Println("table is empty.")
