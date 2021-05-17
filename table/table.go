@@ -49,6 +49,15 @@ func (tb *Table) SetDefault(h string, defaultValue string) {
 	}
 }
 
+func (tb *Table) GetDefault(h string) string {
+	for _, head := range tb.Header.base {
+		if head.Name == h {
+			return head.Default()
+		}
+	}
+	return ""
+}
+
 func (tb *Table) AddValue(newValue map[string]string) error {
 	return tb.addValue(newValue)
 }

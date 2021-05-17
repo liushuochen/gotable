@@ -49,6 +49,15 @@ func (tb *Table) PrintTable()
 func (tb *Table) SetDefault(h string, defaultValue string)
 ```
 
+- Get default value
+Use table method ```GetDefault``` to get default value of head. 
+If h does not exist in the table.Header, the method returns an empty 
+string.
+
+```go
+func (tb *Table) GetDefault(h string) string
+```
+
 - Arrange: center, align left or align right
 <p> By default, the table is centered. You can set a header to be left 
 aligned or right aligned. See the next section for more details on how 
@@ -259,6 +268,30 @@ execute result:
 |  Xi'AN  |     NewYork     | Manchester |
 +---------+-----------------+------------+
 
+```
+
+### Get default value
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("China", "Beijing")
+	tb.SetDefault("China", "Hangzhou")
+	fmt.Println(tb.GetDefault("China"))
+	// Hangzhou
+}
 ```
 
 ### Add a new head to a table
