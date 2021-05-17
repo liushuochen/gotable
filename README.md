@@ -65,6 +65,13 @@ Use table method ```Empty``` to check if the table is empty.
 func (tb *Table) Empty() bool
 ```
 
+- Get list of head
+Use table method ```GetHeaders``` to get a list of heads.
+
+```go
+func (tb *Table) GetHeaders() []string
+```
+
 
 ## Demo
 ### Create a table
@@ -363,5 +370,27 @@ func main() {
 	if tb.Empty() {
 		fmt.Println("table is empty.")
 	}
+}
+```
+
+### Get list of heads
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	fmt.Println(tb.GetHeaders())
+	// [China US UK]
 }
 ```
