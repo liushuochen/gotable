@@ -58,6 +58,13 @@ string.
 func (tb *Table) GetDefault(h string) string
 ```
 
+- Get default map
+Use table method ```GetDefaults``` to get default map of head. 
+
+```go
+func (tb *Table) GetDefaults() map[string]string
+```
+
 - Arrange: center, align left or align right
 <p> By default, the table is centered. You can set a header to be left 
 aligned or right aligned. See the next section for more details on how 
@@ -74,11 +81,18 @@ Use table method ```Empty``` to check if the table is empty.
 func (tb *Table) Empty() bool
 ```
 
-- Get list of head
+- Get list of heads
 Use table method ```GetHeaders``` to get a list of heads.
 
 ```go
 func (tb *Table) GetHeaders() []string
+```
+
+- Get values map
+Use table method ```GetValues``` to get the map that save values.
+
+```go
+func (tb *Table) GetValues() []map[string]string
 ```
 
 
@@ -294,6 +308,31 @@ func main() {
 }
 ```
 
+### Get default map
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("UK", "London")
+	defaults := tb.GetDefaults()
+	fmt.Println(defaults)
+	// map[China: UK:London US:]
+}
+
+```
+
 ### Add a new head to a table
 ```go
 package main
@@ -426,4 +465,38 @@ func main() {
 	fmt.Println(tb.GetHeaders())
 	// [China US UK]
 }
+```
+
+### Get values map
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("UK", "---")
+	value := make(map[string]string)
+	value["China"] = "Beijing"
+	value["US"] = "Washington, D.C."
+	value["UK"] = "London"
+	_ = tb.AddValue(value)
+
+	value2 := make(map[string]string)
+	value2["China"] = "Hangzhou"
+	value2["US"] = "NewYork"
+	_ = tb.AddValue(value2)
+	fmt.Println(tb.GetValues())
+	// [map[China:Beijing UK:London US:Washington, D.C.] map[China:Hangzhou UK:--- US:NewYork]]
+}
+
 ```

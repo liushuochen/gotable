@@ -58,6 +58,14 @@ func (tb *Table) GetDefault(h string) string {
 	return ""
 }
 
+func (tb *Table) GetDefaults() map[string]string {
+	defaults := make(map[string]string)
+	for _, h := range tb.Header.base {
+		defaults[h.Name] = h.Default()
+	}
+	return defaults
+}
+
 func (tb *Table) AddValue(newValue map[string]string) error {
 	return tb.addValue(newValue)
 }
@@ -169,17 +177,7 @@ func (tb *Table) GetHeaders() []string {
 	return result
 }
 
-func (tb *Table) GetValues() []map[string]string {
-	values := make([]map[string]string, 0)
-	for _, tableValueMap := range tb.Value {
-		originValueMap := make(map[string]string)
-		for key := range tableValueMap {
-			originValueMap[key] = tableValueMap[key]
-		}
-		values = append(values, originValueMap)
-	}
-	return values
-}
+func (tb *Table) GetValues() []map[string]string { return tb.Value }
 
 func (tb *Table) Exist(head string, value interface{}) bool {
 	headExit := false
