@@ -105,6 +105,11 @@ func (tb *Table) GetValues() []map[string]string
 func (tb *Table) Exist(value map[string]string) bool
 ```
 
+- Get table length
+```go
+func (tb *Table) Length() int
+```
+
 
 ## Demo
 ### Create a table
@@ -582,4 +587,43 @@ func main() {
 	// The table do not has a key named 's'
 	fmt.Println(tb.Exist(row2))
 }
+```
+
+### Get table length
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"Name", "ID", "salary"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	length := tb.Length()
+	fmt.Printf("Before insert values, the value of length is: %d\n", length)
+	// Before insert values, the value of length is: 0
+
+	values := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		value := make(map[string]string)
+		value["Name"] = fmt.Sprintf("employee-%d", i)
+		value["ID"] = fmt.Sprintf("00%d", i)
+		value["salary"] = "60000"
+		values = append(values, value)
+	}
+
+	tb.AddValues(values)
+
+	length = tb.Length()
+	fmt.Printf("After insert values, the value of length is: %d\n", length)
+	// After insert values, the value of length is: 3
+}
+
 ```

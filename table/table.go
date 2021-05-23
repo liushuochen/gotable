@@ -167,10 +167,11 @@ func (tb *Table) PrintTable() {
 }
 
 func (tb *Table) Empty() bool {
-	if len(tb.Value) == 0 {
-		return true
-	}
-	return false
+	return tb.Length() == 0
+}
+
+func (tb *Table) Length() int {
+	return len(tb.Value)
 }
 
 func (tb *Table) GetHeaders() []string {
