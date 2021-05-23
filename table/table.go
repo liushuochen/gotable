@@ -49,6 +49,10 @@ func (tb *Table) SetDefault(h string, defaultValue string) {
 	}
 }
 
+func (tb *Table) DropDefault(h string) {
+	tb.SetDefault(h, "")
+}
+
 func (tb *Table) GetDefault(h string) string {
 	for _, head := range tb.Header.base {
 		if head.Name == h {
@@ -179,26 +183,19 @@ func (tb *Table) GetHeaders() []string {
 
 func (tb *Table) GetValues() []map[string]string { return tb.Value }
 
-func (tb *Table) Exist(head string, value interface{}) bool {
-	headExit := false
-	for _, headInHeader := range tb.Header.base {
-		if head == headInHeader.Name {
-			headExit = true
-			break
+func (tb *Table) Exist(value map[string]string) bool {
+	for _, row := range tb.Value {
+		exist := true
+		for key := range value {
+			v, ok := row[key]
+			if !ok || v != value[key] {
+				exist = false
+				break
+			}
 		}
+		if exist { return exist }
 	}
-	if !headExit {
-		return headExit
-	}
-
-	find := false
-	for _, data := range tb.Value {
-		if data[head] == value {
-			find = true
-			break
-		}
-	}
-	return find
+	return false
 }
 
 func (tb *Table) Json() (string, error) {

@@ -49,6 +49,11 @@ func (tb *Table) PrintTable()
 func (tb *Table) SetDefault(h string, defaultValue string)
 ```
 
+- Drop default value
+```go
+func (tb *Table) DropDefault(h string)
+```
+
 - Get default value
 Use table method ```GetDefault``` to get default value of head. 
 If h does not exist in the table.Header, the method returns an empty 
@@ -93,6 +98,11 @@ Use table method ```GetValues``` to get the map that save values.
 
 ```go
 func (tb *Table) GetValues() []map[string]string
+```
+
+- Check value exists
+```go
+func (tb *Table) Exist(value map[string]string) bool
 ```
 
 
@@ -281,6 +291,33 @@ execute result:
 | Beijing | Washington D.C. |   London   |
 |  Xi'AN  |     NewYork     | Manchester |
 +---------+-----------------+------------+
+
+```
+
+### Drop default value
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("UK", "London")
+	fmt.Println(tb.GetDefaults())
+	// map[China: UK:London US:]
+	tb.DropDefault("UK")
+	fmt.Println(tb.GetDefaults())
+	// map[China: UK: US:]
+}
 
 ```
 
@@ -499,4 +536,50 @@ func main() {
 	// [map[China:Beijing UK:London US:Washington, D.C.] map[China:Hangzhou UK:--- US:NewYork]]
 }
 
+```
+
+### Check value exists
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"Name", "ID", "salary"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	values := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		value := make(map[string]string)
+		value["Name"] = fmt.Sprintf("employee-%d", i)
+		value["ID"] = fmt.Sprintf("00%d", i)
+		value["salary"] = "60000"
+		values = append(values, value)
+	}
+
+	tb.AddValues(values)
+
+	row := make(map[string]string)
+	row["salary"] = "60000"
+	// check salary="60000" exists: true
+	fmt.Println(tb.Exist(row))
+
+	row["Name"] = "employee-5"
+	// check salary="60000" && Name="employee-5" exists: false
+	// The value of "employee-5" in Name do not exist
+	fmt.Println(tb.Exist(row))
+
+	row2 := make(map[string]string)
+	row2["s"] = "60000"
+	// check s="60000" exists: false
+	// The table do not has a key named 's'
+	fmt.Println(tb.Exist(row2))
+}
 ```
