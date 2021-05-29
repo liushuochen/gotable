@@ -110,6 +110,13 @@ func (tb *Table) Exist(value map[string]string) bool
 func (tb *Table) Length() int
 ```
 
+- To json string
+Use table method ```Json``` to convert the table to JSON format.
+
+```go
+func (tb *Table) Json() (string, error)
+```
+
 
 ## Demo
 ### Create a table
@@ -626,4 +633,53 @@ func main() {
 	// After insert values, the value of length is: 3
 }
 
+```
+
+### To json string
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"Name", "ID", "salary"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	values := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		value := make(map[string]string)
+		value["Name"] = fmt.Sprintf("employee-%d", i)
+		value["ID"] = fmt.Sprintf("00%d", i)
+		value["salary"] = "60000"
+		values = append(values, value)
+	}
+
+	jsonString, err := tb.Json()
+	if err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		return
+	}
+	fmt.Println(jsonString)
+	// output: []
+
+	tb.AddValues(values)
+
+	jsonString, err = tb.Json()
+	if err != nil {
+		fmt.Println("ERROR: ", err.Error())
+		return
+	}
+	fmt.Println(jsonString)
+	// output:
+	// [{"ID":"000","Name":"employee-0","salary":"60000"},
+	// {"ID":"001","Name":"employee-1","salary":"60000"},
+	// {"ID":"002","Name":"employee-2","salary":"60000"}]
+}
 ```

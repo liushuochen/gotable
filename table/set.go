@@ -54,3 +54,12 @@ func (set *Set) Remove(element string) error {
 	set.base = append(set.base[:position], set.base[position+1:]...)
 	return nil
 }
+
+func (set *Set) Get(name string) *header.Header {
+	for _, h := range set.base {
+		if h.Name == name {
+			return h
+		}
+	}
+	return nil
+}

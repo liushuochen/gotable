@@ -10,6 +10,7 @@ const (
 	C = header.AlignCenter
 	L = header.AlignLeft
 	R = header.AlignRight
+	Default = "__DEFAULT__"
 )
 
 type Table struct {
@@ -80,6 +81,11 @@ func (tb *Table) addValue(newValue map[string]string) error {
 			err := fmt.Errorf("invalid value %s", key)
 			return err
 		}
+
+		// TODO: add value by const `DEFAULT`
+		//if newValue[key] == Default {
+		//	newValue[key] == tb.GetHeaders()
+		//}
 	}
 
 	for _, head := range tb.Header.base {

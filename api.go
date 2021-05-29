@@ -9,6 +9,7 @@ const (
 	Center = table.C
 	Left = table.L
 	Right = table.R
+	Default = table.Default
 )
 
 func CreateTable(header []string) (*table.Table, error) {
