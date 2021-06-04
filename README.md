@@ -18,6 +18,15 @@ func CreateTable(header []string) (*table.Table, error)
 func Version() string
 ```
 
+- Specify default value
+The ```gotable.Default``` constant replaces the default value stored 
+in head. Refer to Set Default Values in the Demo section for more 
+information.
+
+```go
+gotable.Default
+```
+
 ### *table.Table
 - Add value
 ```go
@@ -43,7 +52,7 @@ func (tb *Table) PrintTable()
 ```
 
 - Set default value
-<p>By default, the default value for all heads is an empty string.</p>
+By default, the default value for all heads is an empty string.
 
 ```go
 func (tb *Table) SetDefault(h string, defaultValue string)
@@ -115,6 +124,13 @@ Use table method ```Json``` to convert the table to JSON format.
 
 ```go
 func (tb *Table) Json() (string, error)
+```
+
+- Close border
+Use table method ```CloseBorder``` to close table border.
+
+```go
+func (tb *Table) CloseBorder()
 ```
 
 
@@ -278,6 +294,7 @@ func main() {
 	}
 
 	tb.SetDefault("China", "Xi'AN")
+	tb.SetDefault("US", "Los Angeles")
 
 	value := make(map[string]string)
 	value["China"] = "Beijing"
@@ -290,6 +307,13 @@ func main() {
 	value2["UK"] = "Manchester"
 	tb.AddValue(value2)
 
+	value3 := make(map[string]string)
+	value3["China"] = "Hangzhou"
+	// use gotable.Default
+	value3["US"] = gotable.Default
+	value3["UK"] = "Manchester"
+	tb.AddValue(value3)
+
 	tb.PrintTable()
 }
 
@@ -297,12 +321,13 @@ func main() {
 
 execute result:
 ```text
-+---------+-----------------+------------+
-|  China  |       US        |     UK     |
-+---------+-----------------+------------+
-| Beijing | Washington D.C. |   London   |
-|  Xi'AN  |     NewYork     | Manchester |
-+---------+-----------------+------------+
++----------+-----------------+------------+
+|  China   |       US        |     UK     |
++----------+-----------------+------------+
+| Beijing  | Washington D.C. |   London   |
+|  Xi'AN   |     NewYork     | Manchester |
+| Hangzhou |   Los Angeles   | Manchester |
++----------+-----------------+------------+
 
 ```
 
@@ -682,4 +707,60 @@ func main() {
 	// {"ID":"001","Name":"employee-1","salary":"60000"},
 	// {"ID":"002","Name":"employee-2","salary":"60000"}]
 }
+```
+
+### Close border
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	headers := []string{"China", "US", "UK"}
+	tb, err := gotable.CreateTable(headers)
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("US", "Los Angeles")
+
+	value := make(map[string]string)
+	value["China"] = "Beijing"
+	value["US"] = "Washington D.C."
+	value["UK"] = "London"
+	tb.AddValue(value)
+
+	value2 := make(map[string]string)
+	value2["China"] = "Xi'AN"
+	value2["US"] = "NewYork"
+	value2["UK"] = "Manchester"
+	tb.AddValue(value2)
+
+	value3 := make(map[string]string)
+	value3["China"] = "Hangzhou"
+	value3["US"] = gotable.Default
+	value3["UK"] = "Manchester"
+	tb.AddValue(value3)
+
+	// close border
+	tb.CloseBorder()
+	tb.Align("China", gotable.Left)
+	tb.Align("US", gotable.Left)
+	tb.Align("UK", gotable.Left)
+
+	tb.PrintTable()
+}
+```
+
+execute result:
+```text
+China     US               UK          
+Beijing   Washington D.C.  London      
+Xi'AN     NewYork          Manchester  
+Hangzhou  Los Angeles      Manchester
+
 ```

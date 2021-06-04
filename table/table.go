@@ -82,10 +82,10 @@ func (tb *Table) addValue(newValue map[string]string) error {
 			return err
 		}
 
-		// TODO: add value by const `DEFAULT`
-		//if newValue[key] == Default {
-		//	newValue[key] == tb.GetHeaders()
-		//}
+		// add value by const `DEFAULT`
+		if newValue[key] == Default {
+			newValue[key] = tb.Header.Get(key).Default()
+		}
 	}
 
 	for _, head := range tb.Header.base {
