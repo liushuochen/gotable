@@ -6,7 +6,7 @@ import (
 )
 
 type Set struct {
-	base []*header.Header
+	base []*header.Column
 }
 
 func (set *Set) Len() int {
@@ -23,7 +23,7 @@ func (set *Set) Exist(element string) bool {
 
 func (set *Set) exist(element string) int {
 	for index, data := range set.base {
-		if data.Name == element {
+		if data.String() == element {
 			return index
 		}
 	}
@@ -32,7 +32,7 @@ func (set *Set) exist(element string) int {
 }
 
 func (set *Set) Clear() {
-	set.base = make([]*header.Header, 0)
+	set.base = make([]*header.Column, 0)
 }
 
 func (set *Set) Add(element string) error {
@@ -40,7 +40,7 @@ func (set *Set) Add(element string) error {
 		return fmt.Errorf("value %s has exit", element)
 	}
 
-	newHeader := header.CreateHeader(element)
+	newHeader := header.CreateColumn(element)
 	set.base = append(set.base, newHeader)
 	return nil
 }
@@ -55,9 +55,9 @@ func (set *Set) Remove(element string) error {
 	return nil
 }
 
-func (set *Set) Get(name string) *header.Header {
+func (set *Set) Get(name string) *header.Column {
 	for _, h := range set.base {
-		if h.Name == name {
+		if h.String() == name {
 			return h
 		}
 	}

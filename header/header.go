@@ -6,34 +6,53 @@ const (
 	AlignRight
 )
 
-type Header struct {
-	Name			string
+type Column struct {
+	name			string
 	defaultValue	string
 	align			int
+	length			int
 }
 
-func CreateHeader(name string) *Header {
-	h := &Header{
-		Name: name,
+func CreateColumn(name string) *Column {
+	h := &Column{
+		name: name,
 		defaultValue: "",
 		align: AlignCenter,
+		length: 0,
+	}
+
+	// TODO: tmp code, will remove in gotable 3.0
+	for _, c := range name {
+		if isChinese(c) {
+			h.length += 2
+		} else {
+			h.length += 1
+		}
 	}
 	return h
 }
 
-func (h *Header) Default() string {
+func (h *Column) String() string {
+	return h.name
+}
+
+func (h *Column) Length() int {
+	return h.length
+}
+
+func (h *Column) Default() string {
 	return h.defaultValue
 }
 
-func (h *Header) SetDefault(value string) {
+func (h *Column) SetDefault(value string) {
 	h.defaultValue = value
 }
 
-func (h *Header) Align() int {
+func (h *Column) Align() int {
 	return h.align
 }
 
-func (h *Header) AlignString() string {
+func (h *Column) AlignString() string {
 	switch h.align {
 	case AlignCenter:
 		return "center"
@@ -46,7 +65,7 @@ func (h *Header) AlignString() string {
 	}
 }
 
-func (h *Header) SetAlign(mode int) {
+func (h *Column) SetAlign(mode int) {
 	switch mode {
 	case AlignLeft:
 		h.align = AlignLeft

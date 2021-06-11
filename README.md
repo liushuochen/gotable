@@ -10,7 +10,7 @@ Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/de
 ### github.com/liushuochen/gotable
 - Create table
 ```go
-func CreateTable(header []string) (*table.Table, error)
+func Create(columns ...string) (*table.Table, error)
 ```
 
 - Get version
@@ -148,8 +148,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -170,8 +169,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -182,10 +180,10 @@ func main() {
 	value["US"] = "DC"
 	value["UK"] = "London"
 	err = tb.AddValue(value)
-    if err != nil {
-        fmt.Println("Add value to table failed: ", err.Error())
-        return
-    }
+	if err != nil {
+		fmt.Println("Add value to table failed: ", err.Error())
+		return
+	}
 }
 
 ```
@@ -203,8 +201,7 @@ import (
 )
 
 func main() {
-	headers := []string{"Name", "ID", "salary"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -249,8 +246,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -286,8 +282,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -341,8 +336,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -368,8 +362,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -392,8 +385,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -417,8 +409,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -450,7 +441,6 @@ execute result:
 To change the arrangement, there are three constants
 (```gotable.Center```, ```gotable.Left```, ```gotable.Right```) to 
 choose from. By default, all arrangements is ```gotable.Center```.
-
 
 ```go
 package main
@@ -506,8 +496,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -529,8 +518,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -551,8 +539,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -585,8 +572,7 @@ import (
 )
 
 func main() {
-	headers := []string{"Name", "ID", "salary"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -631,8 +617,7 @@ import (
 )
 
 func main() {
-	headers := []string{"Name", "ID", "salary"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -670,8 +655,7 @@ import (
 )
 
 func main() {
-	headers := []string{"Name", "ID", "salary"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -719,8 +703,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return

@@ -3,6 +3,7 @@ package table
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/header"
 )
 
@@ -14,36 +15,36 @@ const (
 )
 
 type Table struct {
-	Header 	*Set
-	Value  	[]map[string]string
+	Columns *Set
+	Value  	[]map[string]cell.Cell
 	border	bool
 }
 
 func CreateTable(set *Set) *Table {
 	return &Table{
-		Header: set,
-		Value: make([]map[string]string, 0),
+		Columns: set,
+		Value: make([]map[string]cell.Cell, 0),
 		border: true,
 	}
 }
 
 func (tb *Table) AddHead(newHead string) error {
-	err := tb.Header.Add(newHead)
+	err := tb.Columns.Add(newHead)
 	if err != nil {
 		return err
 	}
 
 	// modify exit value, add new column.
 	for _, data := range tb.Value {
-		data[newHead] = ""
+		data[newHead] = cell.CreateEmptyData()
 	}
 
 	return nil
 }
 
 func (tb *Table) SetDefault(h string, defaultValue string) {
-	for _, head := range tb.Header.base {
-		if head.Name == h {
+	for _, head := range tb.Columns.base {
+		if head.String() == h {
 			head.SetDefault(defaultValue)
 			break
 		}
@@ -55,8 +56,8 @@ func (tb *Table) DropDefault(h string) {
 }
 
 func (tb *Table) GetDefault(h string) string {
-	for _, head := range tb.Header.base {
-		if head.Name == h {
+	for _, head := range tb.Columns.base {
+		if head.String() == h {
 			return head.Default()
 		}
 	}
@@ -65,8 +66,8 @@ func (tb *Table) GetDefault(h string) string {
 
 func (tb *Table) GetDefaults() map[string]string {
 	defaults := make(map[string]string)
-	for _, h := range tb.Header.base {
-		defaults[h.Name] = h.Default()
+	for _, h := range tb.Columns.base {
+		defaults[h.String()] = h.Default()
 	}
 	return defaults
 }
@@ -77,25 +78,25 @@ func (tb *Table) AddValue(newValue map[string]string) error {
 
 func (tb *Table) addValue(newValue map[string]string) error {
 	for key := range newValue {
-		if !tb.Header.Exist(key) {
+		if !tb.Columns.Exist(key) {
 			err := fmt.Errorf("invalid value %s", key)
 			return err
 		}
 
 		// add value by const `DEFAULT`
 		if newValue[key] == Default {
-			newValue[key] = tb.Header.Get(key).Default()
+			newValue[key] = tb.Columns.Get(key).Default()
 		}
 	}
 
-	for _, head := range tb.Header.base {
-		_, ok := newValue[head.Name]
+	for _, head := range tb.Columns.base {
+		_, ok := newValue[head.String()]
 		if !ok {
-			newValue[head.Name] = head.Default()
+			newValue[head.String()] = head.Default()
 		}
 	}
 
-	tb.Value = append(tb.Value, newValue)
+	tb.Value = append(tb.Value, ToRow(newValue))
 	return nil
 }
 
@@ -117,40 +118,40 @@ func (tb *Table) PrintTable() {
 	}
 
 	columnMaxLength := make(map[string]int)
-	tag := make(map[string]string)
-	taga := make([]map[string]string, 0)
-	for _, h := range tb.Header.base {
-		columnMaxLength[h.Name] = len(h.Name)
-		tag[h.Name] = "-"
+	tag := make(map[string]cell.Cell)
+	taga := make([]map[string]cell.Cell, 0)
+	for _, h := range tb.Columns.base {
+		columnMaxLength[h.String()] = h.Length()
+		tag[h.String()] = cell.CreateData("-")
 	}
 
 	for _, data := range tb.Value {
-		for _, h := range tb.Header.base {
-			maxLength := max(len(h.Name), len(data[h.Name]))
-			maxLength = max(maxLength, columnMaxLength[h.Name])
-			columnMaxLength[h.Name] = maxLength
+		for _, h := range tb.Columns.base {
+			maxLength := max(h.Length(), data[h.String()].Length())
+			maxLength = max(maxLength, columnMaxLength[h.String()])
+			columnMaxLength[h.String()] = maxLength
 		}
 	}
 
 	// print first line
 	taga = append(taga, tag)
 	if tb.border {
-		printGroup(taga, tb.Header.base, columnMaxLength, tb.border)
+		printGroup(taga, tb.Columns.base, columnMaxLength, tb.border)
 	}
 
 	// print table head
 	icon := "|"
 	if !tb.border { icon = "" }
-	for index, head := range tb.Header.base {
-		itemLen := columnMaxLength[head.Name] + 2
+	for index, head := range tb.Columns.base {
+		itemLen := columnMaxLength[head.String()] + 2
 		s := ""
 		switch head.Align() {
 		case R:
-			s, _ = right(head.Name, itemLen, " ")
+			s, _ = right(head, itemLen, " ")
 		case L:
-			s, _ = left(head.Name, itemLen, " ")
+			s, _ = left(head, itemLen, " ")
 		default:
-			s, _ = center(head.Name, itemLen, " ")
+			s, _ = center(head, itemLen, " ")
 		}
 		if index == 0 {
 			s = icon + s + icon
@@ -169,7 +170,7 @@ func (tb *Table) PrintTable() {
 	tableValue := taga
 	tableValue = append(tableValue, tb.Value...)
 	tableValue = append(tableValue, tag)
-	printGroup(tableValue, tb.Header.base, columnMaxLength, tb.border)
+	printGroup(tableValue, tb.Columns.base, columnMaxLength, tb.border)
 }
 
 func (tb *Table) Empty() bool {
@@ -182,20 +183,30 @@ func (tb *Table) Length() int {
 
 func (tb *Table) GetHeaders() []string {
 	result := make([]string, 0)
-	for _, head := range tb.Header.base {
-		result = append(result, head.Name)
+	for _, head := range tb.Columns.base {
+		result = append(result, head.String())
 	}
 	return result
 }
 
-func (tb *Table) GetValues() []map[string]string { return tb.Value }
+func (tb *Table) GetValues() []map[string]string {
+	values := make([]map[string]string, 0)
+	for _, value := range tb.Value {
+		ms := make(map[string]string)
+		for k, v := range value {
+			ms[k] = v.String()
+		}
+		values = append(values, ms)
+	}
+	return values
+}
 
 func (tb *Table) Exist(value map[string]string) bool {
 	for _, row := range tb.Value {
 		exist := true
 		for key := range value {
 			v, ok := row[key]
-			if !ok || v != value[key] {
+			if !ok || v.String() != value[key] {
 				exist = false
 				break
 			}
@@ -231,8 +242,8 @@ func (tb *Table) OpenBorder() {
 }
 
 func (tb *Table) Align(head string, mode int) {
-	for _, h := range tb.Header.base {
-		if h.Name == head {
+	for _, h := range tb.Columns.base {
+		if h.String() == head {
 			h.SetAlign(mode)
 			return
 		}

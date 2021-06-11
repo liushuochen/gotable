@@ -2,36 +2,37 @@ package table
 
 import (
 	"fmt"
+	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/header"
 )
 
 func printGroup(
-	group []map[string]string,
-	header []*header.Header,
+	group []map[string]cell.Cell,
+	header []*header.Column,
 	columnMaxLen map[string]int,
 	setBorder bool,
 ) {
 	for _, item := range group {
 		for index, head := range header {
-			itemLen := columnMaxLen[head.Name] + 2
+			itemLen := columnMaxLen[head.String()] + 2
 			s := ""
-			if item[head.Name] == "-" {
+			if item[head.String()].String() == "-" {
 				if setBorder {
-					s, _ = center(item[head.Name], itemLen, "-")
+					s, _ = center(item[head.String()], itemLen, "-")
 				}
 			} else {
 				switch head.Align() {
 				case R:
-					s, _ = right(item[head.Name], itemLen, " ")
+					s, _ = right(item[head.String()], itemLen, " ")
 				case L:
-					s, _ = left(item[head.Name], itemLen, " ")
+					s, _ = left(item[head.String()], itemLen, " ")
 				default:
-					s, _ = center(item[head.Name], itemLen, " ")
+					s, _ = center(item[head.String()], itemLen, " ")
 				}
 			}
 
 			icon := "|"
-			if item[head.Name] == "-" {
+			if item[head.String()].String() == "-" {
 				icon = "+"
 			}
 			if !setBorder {
@@ -56,56 +57,56 @@ func max(x, y int) int {
 	return y
 }
 
-func center(str string, length int, fillchar string) (string, error) {
+func center(c cell.Cell, length int, fillchar string) (string, error) {
 	if len(fillchar) != 1 {
 		err := fmt.Errorf("the fill character must be exactly one" +
 			" character long")
 		return "", err
 	}
 
-	if len(str) >= length {
-		return str, nil
+	if c.Length() >= length {
+		return c.String(), nil
 	}
 
 	result := ""
-	if isEvenNumber(length - len(str)) {
+	if isEvenNumber(length - c.Length()) {
 		front := ""
-		for i := 0; i < ((length - len(str)) / 2); i++ {
+		for i := 0; i < ((length - c.Length()) / 2); i++ {
 			front = front + fillchar
 		}
 
-		result = front + str + front
+		result = front + c.String() + front
 	} else {
 		front := ""
-		for i := 0; i < ((length - len(str) - 1) / 2); i++ {
+		for i := 0; i < ((length - c.Length() - 1) / 2); i++ {
 			front = front + fillchar
 		}
 
 		behind := front + fillchar
-		result = front + str + behind
+		result = front + c.String() + behind
 	}
 	return result, nil
 }
 
-func left(str string, length int, fillchar string) (string, error) {
+func left(c cell.Cell, length int, fillchar string) (string, error) {
 	if len(fillchar) != 1 {
 		err := fmt.Errorf("the fill character must be exactly one" +
 			" character long")
 		return "", err
 	}
 
-	result := str + block(length - len(str))
+	result := c.String() + block(length - c.Length())
 	return result, nil
 }
 
-func right(str string, length int, fillchar string) (string, error) {
+func right(c cell.Cell, length int, fillchar string) (string, error) {
 	if len(fillchar) != 1 {
 		err := fmt.Errorf("the fill character must be exactly one" +
 			" character long")
 		return "", err
 	}
 
-	result := block(length - len(str)) + str
+	result := block(length - c.Length()) + c.String()
 	return result, nil
 }
 
@@ -118,8 +119,16 @@ func block(length int) string {
 }
 
 func isEvenNumber(number int) bool {
-	if number%2 == 0 {
+	if number % 2 == 0 {
 		return true
 	}
 	return false
+}
+
+func ToRow(value map[string]string) map[string]cell.Cell {
+	row := make(map[string]cell.Cell)
+	for k, v := range value {
+		row[k] = cell.CreateData(v)
+	}
+	return row
 }
