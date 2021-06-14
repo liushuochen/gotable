@@ -420,7 +420,7 @@ func main() {
 	value["US"] = "Washington D.C."
 	value["UK"] = "London"
 	tb.AddValue(value)
-	tb.AddHead("Japan")
+	tb.AddColumn("Japan")
 
 	tb.PrintTable()
 }
@@ -451,8 +451,7 @@ import (
 )
 
 func main() {
-	headers := []string{"China", "US", "UK"}
-	tb, err := gotable.CreateTable(headers)
+	tb, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return

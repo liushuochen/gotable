@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/header"
+	"github.com/liushuochen/gotable/util"
 )
 
 const (
@@ -28,18 +29,23 @@ func CreateTable(set *Set) *Table {
 	}
 }
 
-func (tb *Table) AddHead(newHead string) error {
-	err := tb.Columns.Add(newHead)
+func (tb *Table) AddColumn(column string) error {
+	err := tb.Columns.Add(column)
 	if err != nil {
 		return err
 	}
 
-	// modify exit value, add new column.
-	for _, data := range tb.Value {
-		data[newHead] = cell.CreateEmptyData()
+	// modify exist value, add new column.
+	for _, row := range tb.Value {
+		row[column] = cell.CreateEmptyData()
 	}
-
 	return nil
+}
+
+// Deprecated
+func (tb *Table) AddHead(newHead string) error {
+	util.DeprecatedTips("AddHead", "AddColumn", "3.0", "method")
+	return tb.AddColumn(newHead)
 }
 
 func (tb *Table) SetDefault(h string, defaultValue string) {
@@ -96,7 +102,7 @@ func (tb *Table) addValue(newValue map[string]string) error {
 		}
 	}
 
-	tb.Value = append(tb.Value, ToRow(newValue))
+	tb.Value = append(tb.Value, toRow(newValue))
 	return nil
 }
 

@@ -125,7 +125,7 @@ func isEvenNumber(number int) bool {
 	return false
 }
 
-func ToRow(value map[string]string) map[string]cell.Cell {
+func toRow(value map[string]string) map[string]cell.Cell {
 	row := make(map[string]cell.Cell)
 	for k, v := range value {
 		row[k] = cell.CreateData(v)

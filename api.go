@@ -1,9 +1,9 @@
 package gotable
 
 import (
-	"fmt"
 	"github.com/liushuochen/gotable/constant"
 	"github.com/liushuochen/gotable/table"
+	"github.com/liushuochen/gotable/util"
 )
 
 const (
@@ -15,9 +15,7 @@ const (
 
 // Deprecated
 func CreateTable(header []string) (*table.Table, error) {
-	fmt.Println("Function `CreateTable` will no longer supported." +
-		" You can use the `Create` function instead of `CreateTable` function." +
-		" This function will be removed in version 3.0.")
+	util.DeprecatedTips("CreateTable", "Create", "3.0", "function")
 	return Create(header...)
 }
 
