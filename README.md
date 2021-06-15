@@ -28,9 +28,9 @@ gotable.Default
 ```
 
 ### *table.Table
-- Add value
+- Add row
 ```go
-func (tb *Table) AddValue(newValue map[string]string) error
+func (tb *Table) AddRow(row map[string]string) error
 ```
 
 - Add a list of values
@@ -41,9 +41,9 @@ consists of adding failed values.
 func (tb *Table) AddValues(values []map[string]string) []map[string]string
 ```
 
-- Add head
+- Add column
 ```go
-func (tb *Table) AddHead(newHead string) error
+func (tb *Table) AddColumn(column string) error
 ```
 
 - Print table
@@ -133,6 +133,13 @@ Use table method ```CloseBorder``` to close table border.
 func (tb *Table) CloseBorder()
 ```
 
+- Open border
+Use table method ```OpenBorder``` to open table border. By default, the border property is turned on.
+
+```go
+func (tb *Table) OpenBorder()
+```
+
 
 ## Demo
 ### Create a table
@@ -175,11 +182,11 @@ func main() {
 		return
 	}
 
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "DC"
-	value["UK"] = "London"
-	err = tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "DC"
+	row["UK"] = "London"
+	err = tb.AddRow(row)
 	if err != nil {
 		fmt.Println("Add value to table failed: ", err.Error())
 		return
@@ -252,11 +259,11 @@ func main() {
 		return
 	}
 
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "Washington, D.C."
-	value["UK"] = "London"
-	tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington, D.C."
+	row["UK"] = "London"
+	tb.AddRow(row)
 
 	tb.PrintTable()
 }
@@ -291,23 +298,23 @@ func main() {
 	tb.SetDefault("China", "Xi'AN")
 	tb.SetDefault("US", "Los Angeles")
 
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "Washington D.C."
-	value["UK"] = "London"
-	tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington D.C."
+	row["UK"] = "London"
+	tb.AddRow(row)
 
-	value2 := make(map[string]string)
-	value2["US"] = "NewYork"
-	value2["UK"] = "Manchester"
-	tb.AddValue(value2)
+	row2 := make(map[string]string)
+	row2["US"] = "NewYork"
+	row2["UK"] = "Manchester"
+	tb.AddRow(row2)
 
-	value3 := make(map[string]string)
-	value3["China"] = "Hangzhou"
+	row3 := make(map[string]string)
+	row3["China"] = "Hangzhou"
 	// use gotable.Default
-	value3["US"] = gotable.Default
-	value3["UK"] = "Manchester"
-	tb.AddValue(value3)
+	row3["US"] = gotable.Default
+	row3["UK"] = "Manchester"
+	tb.AddRow(row3)
 
 	tb.PrintTable()
 }
@@ -457,17 +464,17 @@ func main() {
 		return
 	}
 
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "Washington D.C."
-	value["UK"] = "London"
-	tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington D.C."
+	row["UK"] = "London"
+	tb.AddRow(row)
 	tb.Align("UK", gotable.Left)
 
-	value2 := make(map[string]string)
-	value2["US"] = "NewYork"
-	value2["UK"] = "Manchester"
-	tb.AddValue(value2)
+	row2 := make(map[string]string)
+	row2["US"] = "NewYork"
+	row2["UK"] = "Manchester"
+	tb.AddRow(row2)
 
 	tb.PrintTable()
 }
@@ -545,16 +552,16 @@ func main() {
 	}
 
 	tb.SetDefault("UK", "---")
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "Washington, D.C."
-	value["UK"] = "London"
-	_ = tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington, D.C."
+	row["UK"] = "London"
+	_ = tb.AddRow(row)
 
-	value2 := make(map[string]string)
-	value2["China"] = "Hangzhou"
-	value2["US"] = "NewYork"
-	_ = tb.AddValue(value2)
+	row2 := make(map[string]string)
+	row2["China"] = "Hangzhou"
+	row2["US"] = "NewYork"
+	_ = tb.AddRow(row2)
 	fmt.Println(tb.GetValues())
 	// [map[China:Beijing UK:London US:Washington, D.C.] map[China:Hangzhou UK:--- US:NewYork]]
 }
@@ -579,11 +586,11 @@ func main() {
 
 	values := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
-		value := make(map[string]string)
-		value["Name"] = fmt.Sprintf("employee-%d", i)
-		value["ID"] = fmt.Sprintf("00%d", i)
-		value["salary"] = "60000"
-		values = append(values, value)
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		values = append(values, row)
 	}
 
 	tb.AddValues(values)
@@ -628,11 +635,11 @@ func main() {
 
 	values := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
-		value := make(map[string]string)
-		value["Name"] = fmt.Sprintf("employee-%d", i)
-		value["ID"] = fmt.Sprintf("00%d", i)
-		value["salary"] = "60000"
-		values = append(values, value)
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		values = append(values, row)
 	}
 
 	tb.AddValues(values)
@@ -662,11 +669,11 @@ func main() {
 
 	values := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
-		value := make(map[string]string)
-		value["Name"] = fmt.Sprintf("employee-%d", i)
-		value["ID"] = fmt.Sprintf("00%d", i)
-		value["salary"] = "60000"
-		values = append(values, value)
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		values = append(values, row)
 	}
 
 	jsonString, err := tb.Json()
@@ -710,23 +717,23 @@ func main() {
 
 	tb.SetDefault("US", "Los Angeles")
 
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "Washington D.C."
-	value["UK"] = "London"
-	tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington D.C."
+	row["UK"] = "London"
+	tb.AddRow(row)
 
-	value2 := make(map[string]string)
-	value2["China"] = "Xi'AN"
-	value2["US"] = "NewYork"
-	value2["UK"] = "Manchester"
-	tb.AddValue(value2)
+	row2 := make(map[string]string)
+	row2["China"] = "Xi'AN"
+	row2["US"] = "NewYork"
+	row2["UK"] = "Manchester"
+	tb.AddRow(row2)
 
-	value3 := make(map[string]string)
-	value3["China"] = "Hangzhou"
-	value3["US"] = gotable.Default
-	value3["UK"] = "Manchester"
-	tb.AddValue(value3)
+	row3 := make(map[string]string)
+	row3["China"] = "Hangzhou"
+	row3["US"] = gotable.Default
+	row3["UK"] = "Manchester"
+	tb.AddRow(row3)
 
 	// close border
 	tb.CloseBorder()
@@ -744,5 +751,63 @@ China     US               UK
 Beijing   Washington D.C.  London      
 Xi'AN     NewYork          Manchester  
 Hangzhou  Los Angeles      Manchester
+
+```
+
+### Open border
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.Create("China", "US", "UK")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	tb.SetDefault("US", "Los Angeles")
+
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington D.C."
+	row["UK"] = "London"
+	tb.AddRow(row)
+
+	row2 := make(map[string]string)
+	row2["China"] = "Xi'AN"
+	row2["US"] = "NewYork"
+	row2["UK"] = "Manchester"
+	tb.AddRow(row2)
+
+	row3 := make(map[string]string)
+	row3["China"] = "Hangzhou"
+	row3["US"] = gotable.Default
+	row3["UK"] = "Manchester"
+	tb.AddRow(row3)
+
+	// close border
+	tb.CloseBorder()
+
+	// open border again
+	tb.OpenBorder()
+
+	tb.PrintTable()
+}
+```
+
+execute result:
+```text
++----------+-----------------+------------+
+|  China   |       US        |     UK     |
++----------+-----------------+------------+
+| Beijing  | Washington D.C. |   London   |
+|  Xi'AN   |     NewYork     | Manchester |
+| Hangzhou |   Los Angeles   | Manchester |
++----------+-----------------+------------+
 
 ```

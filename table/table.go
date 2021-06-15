@@ -17,14 +17,14 @@ const (
 
 type Table struct {
 	Columns *Set
-	Value  	[]map[string]cell.Cell
+	Row  	[]map[string]cell.Cell
 	border	bool
 }
 
 func CreateTable(set *Set) *Table {
 	return &Table{
 		Columns: set,
-		Value: make([]map[string]cell.Cell, 0),
+		Row: make([]map[string]cell.Cell, 0),
 		border: true,
 	}
 }
@@ -36,7 +36,7 @@ func (tb *Table) AddColumn(column string) error {
 	}
 
 	// modify exist value, add new column.
-	for _, row := range tb.Value {
+	for _, row := range tb.Row {
 		row[column] = cell.CreateEmptyData()
 	}
 	return nil
@@ -78,7 +78,9 @@ func (tb *Table) GetDefaults() map[string]string {
 	return defaults
 }
 
+// Deprecated
 func (tb *Table) AddValue(newValue map[string]string) error {
+	util.DeprecatedTips("AddValue", "AddRow", "3.0", "method")
 	return tb.addValue(newValue)
 }
 
@@ -102,7 +104,30 @@ func (tb *Table) addValue(newValue map[string]string) error {
 		}
 	}
 
-	tb.Value = append(tb.Value, toRow(newValue))
+	tb.Row = append(tb.Row, toRow(newValue))
+	return nil
+}
+
+func (tb *Table) AddRow(row map[string]string) error {
+	for key := range row {
+		if !tb.Columns.Exist(key) {
+			return fmt.Errorf("invalid value %s", key)
+		}
+
+		// add row by const `DEFAULT`
+		if row[key] == Default {
+			row[key] = tb.Columns.Get(key).Default()
+		}
+	}
+
+	for _, column := range tb.Columns.base {
+		_, ok := row[column.String()]
+		if !ok {
+			row[column.String()] = column.Default()
+		}
+	}
+
+	tb.Row = append(tb.Row, toRow(row))
 	return nil
 }
 
@@ -131,7 +156,7 @@ func (tb *Table) PrintTable() {
 		tag[h.String()] = cell.CreateData("-")
 	}
 
-	for _, data := range tb.Value {
+	for _, data := range tb.Row {
 		for _, h := range tb.Columns.base {
 			maxLength := max(h.Length(), data[h.String()].Length())
 			maxLength = max(maxLength, columnMaxLength[h.String()])
@@ -174,7 +199,7 @@ func (tb *Table) PrintTable() {
 
 	// print value
 	tableValue := taga
-	tableValue = append(tableValue, tb.Value...)
+	tableValue = append(tableValue, tb.Row...)
 	tableValue = append(tableValue, tag)
 	printGroup(tableValue, tb.Columns.base, columnMaxLength, tb.border)
 }
@@ -184,7 +209,7 @@ func (tb *Table) Empty() bool {
 }
 
 func (tb *Table) Length() int {
-	return len(tb.Value)
+	return len(tb.Row)
 }
 
 func (tb *Table) GetHeaders() []string {
@@ -197,7 +222,7 @@ func (tb *Table) GetHeaders() []string {
 
 func (tb *Table) GetValues() []map[string]string {
 	values := make([]map[string]string, 0)
-	for _, value := range tb.Value {
+	for _, value := range tb.Row {
 		ms := make(map[string]string)
 		for k, v := range value {
 			ms[k] = v.String()
@@ -208,7 +233,7 @@ func (tb *Table) GetValues() []map[string]string {
 }
 
 func (tb *Table) Exist(value map[string]string) bool {
-	for _, row := range tb.Value {
+	for _, row := range tb.Row {
 		exist := true
 		for key := range value {
 			v, ok := row[key]
@@ -224,7 +249,7 @@ func (tb *Table) Exist(value map[string]string) bool {
 
 func (tb *Table) Json() (string, error) {
 	data := make([]map[string]interface{}, 0)
-	for _, v := range tb.Value {
+	for _, v := range tb.Row {
 		element := make(map[string]interface{})
 		for head, value := range v {
 			element[head] = value
