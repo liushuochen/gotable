@@ -3,8 +3,12 @@
 ## Introduction
 Print table in console
 
-## reference
+## Reference
 Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
+
+## Supported character set
+* ASCII
+* Chinese characters
 
 ## API
 ### github.com/liushuochen/gotable
@@ -33,12 +37,12 @@ gotable.Default
 func (tb *Table) AddRow(row map[string]string) error
 ```
 
-- Add a list of values
-Method ```AddValues``` add a list of values. It returns a slice that 
-consists of adding failed values.
+- Add a list of rows
+Method ```AddRows``` add a list of rows. It returns a slice that 
+consists of adding failed rows.
 
 ```go
-func (tb *Table) AddValues(values []map[string]string) []map[string]string
+func (tb *Table) AddRows(rows []map[string]string) []map[string]string
 ```
 
 - Add column
@@ -164,8 +168,8 @@ func main() {
 
 ```
 
-### Add value
-Use table method ```AddValue``` to add a new value in the table.
+### Add row
+Use table method ```AddRow``` to add a new value in the table.
 
 ```go
 package main
@@ -195,9 +199,9 @@ func main() {
 
 ```
 
-### Add values
-Method ```AddValues``` add a list of values. It returns a slice that 
-consists of adding failed values.
+### Add rows
+Method ```AddRows``` add a list of rows. It returns a slice that 
+consists of adding failed rows.
 
 ```go
 package main
@@ -214,16 +218,16 @@ func main() {
 		return
 	}
 
-	values := make([]map[string]string, 0)
+	rows := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
-		value := make(map[string]string)
-		value["Name"] = fmt.Sprintf("employee-%d", i)
-		value["ID"] = fmt.Sprintf("00%d", i)
-		value["salary"] = "60000"
-		values = append(values, value)
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		rows = append(rows, row)
 	}
 
-	tb.AddValues(values)
+	tb.AddRows(rows)
 	tb.PrintTable()
 }
 
@@ -406,7 +410,7 @@ func main() {
 
 ```
 
-### Add a new head to a table
+### Add a new column to a table
 ```go
 package main
 
@@ -422,11 +426,11 @@ func main() {
 		return
 	}
 
-	value := make(map[string]string)
-	value["China"] = "Beijing"
-	value["US"] = "Washington D.C."
-	value["UK"] = "London"
-	tb.AddValue(value)
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington D.C."
+	row["UK"] = "London"
+	tb.AddRow(row)
 	tb.AddColumn("Japan")
 
 	tb.PrintTable()
@@ -584,16 +588,16 @@ func main() {
 		return
 	}
 
-	values := make([]map[string]string, 0)
+	rows := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
 		row := make(map[string]string)
 		row["Name"] = fmt.Sprintf("employee-%d", i)
 		row["ID"] = fmt.Sprintf("00%d", i)
 		row["salary"] = "60000"
-		values = append(values, row)
+		rows = append(rows, row)
 	}
 
-	tb.AddValues(values)
+	tb.AddRows(rows)
 
 	row := make(map[string]string)
 	row["salary"] = "60000"
@@ -633,16 +637,16 @@ func main() {
 	fmt.Printf("Before insert values, the value of length is: %d\n", length)
 	// Before insert values, the value of length is: 0
 
-	values := make([]map[string]string, 0)
+	rows := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
 		row := make(map[string]string)
 		row["Name"] = fmt.Sprintf("employee-%d", i)
 		row["ID"] = fmt.Sprintf("00%d", i)
 		row["salary"] = "60000"
-		values = append(values, row)
+		rows = append(rows, row)
 	}
 
-	tb.AddValues(values)
+	tb.AddRows(rows)
 
 	length = tb.Length()
 	fmt.Printf("After insert values, the value of length is: %d\n", length)
@@ -651,7 +655,7 @@ func main() {
 
 ```
 
-### To json string
+ ### To JSON string
 ```go
 package main
 
@@ -667,13 +671,13 @@ func main() {
 		return
 	}
 
-	values := make([]map[string]string, 0)
+	rows := make([]map[string]string, 0)
 	for i := 0; i < 3; i++ {
 		row := make(map[string]string)
 		row["Name"] = fmt.Sprintf("employee-%d", i)
 		row["ID"] = fmt.Sprintf("00%d", i)
 		row["salary"] = "60000"
-		values = append(values, row)
+		rows = append(rows, row)
 	}
 
 	jsonString, err := tb.Json()
@@ -684,7 +688,7 @@ func main() {
 	fmt.Println(jsonString)
 	// output: []
 
-	tb.AddValues(values)
+	tb.AddRows(rows)
 
 	jsonString, err = tb.Json()
 	if err != nil {
@@ -798,6 +802,7 @@ func main() {
 
 	tb.PrintTable()
 }
+
 ```
 
 execute result:

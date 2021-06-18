@@ -43,6 +43,7 @@ func (tb *Table) AddColumn(column string) error {
 }
 
 // Deprecated
+// TODO: removed in 3.0
 func (tb *Table) AddHead(newHead string) error {
 	util.DeprecatedTips("AddHead", "AddColumn", "3.0", "method")
 	return tb.AddColumn(newHead)
@@ -79,33 +80,16 @@ func (tb *Table) GetDefaults() map[string]string {
 }
 
 // Deprecated
+// TODO: removed in 3.0
 func (tb *Table) AddValue(newValue map[string]string) error {
 	util.DeprecatedTips("AddValue", "AddRow", "3.0", "method")
 	return tb.addValue(newValue)
 }
 
+// Deprecated
+// TODO: removed in 3.0
 func (tb *Table) addValue(newValue map[string]string) error {
-	for key := range newValue {
-		if !tb.Columns.Exist(key) {
-			err := fmt.Errorf("invalid value %s", key)
-			return err
-		}
-
-		// add value by const `DEFAULT`
-		if newValue[key] == Default {
-			newValue[key] = tb.Columns.Get(key).Default()
-		}
-	}
-
-	for _, head := range tb.Columns.base {
-		_, ok := newValue[head.String()]
-		if !ok {
-			newValue[head.String()] = head.Default()
-		}
-	}
-
-	tb.Row = append(tb.Row, toRow(newValue))
-	return nil
+	return tb.AddRow(newValue)
 }
 
 func (tb *Table) AddRow(row map[string]string) error {
@@ -131,15 +115,22 @@ func (tb *Table) AddRow(row map[string]string) error {
 	return nil
 }
 
-func (tb *Table) AddValues(values []map[string]string) []map[string]string {
+func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	failure := make([]map[string]string, 0)
-	for _, value := range values {
-		err := tb.AddValue(value)
+	for _, row := range rows {
+		err := tb.AddRow(row)
 		if err != nil {
-			failure = append(failure, value)
+			failure = append(failure, row)
 		}
 	}
 	return failure
+}
+
+// Deprecated
+// TODO: removed in 3.0
+func (tb *Table) AddValues(values []map[string]string) []map[string]string {
+	util.DeprecatedTips("AddValues", "AddRows", "3.0", "method")
+	return tb.AddRows(values)
 }
 
 func (tb *Table) PrintTable() {
