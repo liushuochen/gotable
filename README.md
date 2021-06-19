@@ -99,11 +99,11 @@ Use table method ```Empty``` to check if the table is empty.
 func (tb *Table) Empty() bool
 ```
 
-- Get list of heads
-Use table method ```GetHeaders``` to get a list of heads.
+- Get list of columns
+Use table method ```GetColumns``` to get a list of columns.
 
 ```go
-func (tb *Table) GetHeaders() []string
+func (tb *Table) GetColumns() []string
 ```
 
 - Get values map
@@ -125,9 +125,11 @@ func (tb *Table) Length() int
 
 - To json string
 Use table method ```Json``` to convert the table to JSON format.
+The argument ```indent``` indicates the number of indents.
+If the argument ```indent``` is less than or equal to 0, then the ```Json``` method unindents.
 
 ```go
-func (tb *Table) Json() (string, error)
+func (tb *Table) Json(indent int) (string, error)
 ```
 
 - Close border
@@ -518,7 +520,7 @@ func main() {
 }
 ```
 
-### Get list of heads
+### Get list of columns
 ```go
 package main
 
@@ -534,7 +536,7 @@ func main() {
 		return
 	}
 
-	fmt.Println(tb.GetHeaders())
+	fmt.Println(tb.GetColumns())
 	// [China US UK]
 }
 ```
@@ -680,7 +682,7 @@ func main() {
 		rows = append(rows, row)
 	}
 
-	jsonString, err := tb.Json()
+	jsonString, err := tb.Json(4)
 	if err != nil {
 		fmt.Println("ERROR: ", err.Error())
 		return
@@ -690,16 +692,30 @@ func main() {
 
 	tb.AddRows(rows)
 
-	jsonString, err = tb.Json()
+	jsonString, err = tb.Json(4)
 	if err != nil {
 		fmt.Println("ERROR: ", err.Error())
 		return
 	}
 	fmt.Println(jsonString)
 	// output:
-	// [{"ID":"000","Name":"employee-0","salary":"60000"},
-	// {"ID":"001","Name":"employee-1","salary":"60000"},
-	// {"ID":"002","Name":"employee-2","salary":"60000"}]
+	// [
+	//       {
+	//              "ID": "000",
+	//              "Name": "employee-0",
+	//              "salary": "60000"
+	//       },
+	//       {
+	//              "ID": "001",
+	//              "Name": "employee-1",
+	//              "salary": "60000"
+	//
+	//
+	//              "ID": "002",
+	//              "Name": "employee-2",
+	//              "salary": "60000"
+	//       }
+	//]
 }
 ```
 

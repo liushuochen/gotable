@@ -15,3 +15,18 @@ func Capitalize(s string) string {
 	}
 	return strings.ToUpper(string(s[0])) + s[1:]
 }
+
+func CSVCellString(s string) string {
+	hasComma := false
+	for _, c := range s {
+		if c == ',' {
+			hasComma = true
+			break
+		}
+	}
+
+	if hasComma {
+		return "\"" + s + "\""
+	}
+	return s
+}

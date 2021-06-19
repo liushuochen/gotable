@@ -6,6 +6,7 @@ import (
 	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/header"
 	"github.com/liushuochen/gotable/util"
+	"strings"
 )
 
 const (
@@ -203,12 +204,19 @@ func (tb *Table) Length() int {
 	return len(tb.Row)
 }
 
-func (tb *Table) GetHeaders() []string {
-	result := make([]string, 0)
-	for _, head := range tb.Columns.base {
-		result = append(result, head.String())
+func (tb *Table) GetColumns() []string {
+	columns := make([]string, 0)
+	for _, column := range tb.Columns.base {
+		columns = append(columns, column.String())
 	}
-	return result
+	return columns
+}
+
+// Deprecated
+// TODO: removed in 3.0
+func (tb *Table) GetHeaders() []string {
+	util.DeprecatedTips("GetHeaders", "GetColumns", "3.0", "method")
+	return tb.GetColumns()
 }
 
 func (tb *Table) GetValues() []map[string]string {
@@ -238,17 +246,29 @@ func (tb *Table) Exist(value map[string]string) bool {
 	return false
 }
 
-func (tb *Table) Json() (string, error) {
-	data := make([]map[string]interface{}, 0)
-	for _, v := range tb.Row {
-		element := make(map[string]interface{})
-		for head, value := range v {
-			element[head] = value
+func (tb *Table) json(indent int) ([]byte, error) {
+	data := make([]map[string]string, 0)
+	for _, row := range tb.Row {
+		element := make(map[string]string)
+		for column, value := range row {
+			element[column] = value.String()
 		}
 		data = append(data, element)
 	}
 
-	bytes, err := json.Marshal(data)
+	if indent < 0 {
+		indent = 0
+	}
+	elems := make([]string, 0)
+	for i := 0; i < indent; i++ {
+		elems = append(elems, " ")
+	}
+
+	return json.MarshalIndent(data, "", strings.Join(elems, " "))
+}
+
+func (tb *Table) Json(indent int) (string, error) {
+	bytes, err := tb.json(indent)
 	if err != nil {
 		return "", err
 	}
