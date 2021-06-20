@@ -89,7 +89,7 @@ aligned or right aligned. See the next section for more details on how
 to use it.</p>
 
 ```go
-func (tb *Table) Align(head string, mode int)
+func (tb *Table) Align(column string, mode int)
 ```
 
 - Check empty

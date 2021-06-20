@@ -283,9 +283,9 @@ func (tb *Table) OpenBorder() {
 	tb.border = true
 }
 
-func (tb *Table) Align(head string, mode int) {
+func (tb *Table) Align(column string, mode int) {
 	for _, h := range tb.Columns.base {
-		if h.String() == head {
+		if h.String() == column {
 			h.SetAlign(mode)
 			return
 		}
