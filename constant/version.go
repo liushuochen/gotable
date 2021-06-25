@@ -1,7 +1,7 @@
 package constant
 
 const (
-	version = "go-table 2.13.1"
+	version = "go-table 3.0ref"
 )
 
 func GetVersion() string {
