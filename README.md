@@ -17,9 +17,19 @@ Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/de
 func Create(columns ...string) (*table.Table, error)
 ```
 
+- Create a table from struct
+```go
+func CreateByStruct(v interface{}) (*table.Table, error)
+```
+
 - Get version
 ```go
 func Version() string
+```
+
+- Get version list
+```go
+func Versions() []string
 ```
 
 - Specify default value
@@ -132,6 +142,13 @@ If the argument ```indent``` is less than or equal to 0, then the ```Json``` met
 func (tb *Table) Json(indent int) (string, error)
 ```
 
+- Save the table data to a JSON file
+Use table method ```ToJsonFile``` to save the table data to a JSON file.
+
+```go
+func (tb *Table) ToJsonFile(path string, indent int) error
+```
+
 - Close border
 Use table method ```CloseBorder``` to close table border.
 
@@ -167,6 +184,42 @@ func main() {
 		return
 	}
 }
+
+```
+
+### Create a table from struct
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+type Student struct {
+	Id		string	`gotable:"id"`    // Specify the column name of the table through the struct tag `gotable`
+	Name	string
+}
+
+func main() {
+	tb, err := gotable.CreateByStruct(&Student{})
+	if err != nil {
+		fmt.Println("Create table failed.")
+		return
+	}
+	tb.AddRow(map[string]string{"id": "001", "Name": "bob"})
+	tb.PrintTable()
+}
+
+```
+
+execute result:
+```text
++-----+------+
+| id  | Name |
++-----+------+
+| 001 | bob  |
++-----+------+
 
 ```
 
@@ -657,7 +710,7 @@ func main() {
 
 ```
 
- ### To JSON string
+### To JSON string
 ```go
 package main
 
@@ -718,6 +771,61 @@ func main() {
 	//]
 }
 ```
+
+### Save the table data to a JSON file
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.Create("Name", "ID", "salary")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	rows := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		rows = append(rows, row)
+	}
+	tb.AddRows(rows)
+	err = tb.ToJsonFile("cmd/demo.json", 4)
+	if err != nil {
+		fmt.Println("write json file error: ", err.Error())
+		return
+	}
+}
+```
+
+cmd/demo.json:
+```json
+[
+       {
+              "ID": "000",
+              "Name": "employee-0",
+              "salary": "60000"
+       },
+       {
+              "ID": "001",
+              "Name": "employee-1",
+              "salary": "60000"
+       },
+       {
+              "ID": "002",
+              "Name": "employee-2",
+              "salary": "60000"
+       }
+]
+```
+
 
 ### Close border
 ```go

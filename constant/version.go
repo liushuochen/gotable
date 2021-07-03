@@ -1,9 +1,6 @@
 package constant
 
-const (
-	version = "go-table 3.0ref"
-)
-
-func GetVersion() string {
-	return version
+// 3.0
+func GetVersions() []string {
+	return []string{"3", "0"}
 }

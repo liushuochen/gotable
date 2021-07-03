@@ -4,6 +4,8 @@ import (
 	"github.com/liushuochen/gotable/constant"
 	"github.com/liushuochen/gotable/table"
 	"github.com/liushuochen/gotable/util"
+	"reflect"
+	"strings"
 )
 
 const (
@@ -31,4 +33,27 @@ func Create(columns ...string) (*table.Table, error) {
 	return tb, nil
 }
 
-func Version() string { return constant.GetVersion() }
+func CreateByStruct(v interface{}) (*table.Table, error) {
+	set := &table.Set{}
+	s := reflect.TypeOf(v).Elem()
+	for i := 0; i < s.NumField(); i++ {
+		field := s.Field(i)
+		name := field.Tag.Get("gotable")
+		if name == "" {
+			name = field.Name
+		}
+
+		err := set.Add(name)
+		if err != nil {
+			return nil, err
+		}
+	}
+	tb := table.CreateTable(set)
+	return tb, nil
+}
+
+func Version() string {
+	return "gotable " + strings.Join(constant.GetVersions(), ".")
+}
+
+func Versions() []string { return constant.GetVersions() }

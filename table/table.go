@@ -6,6 +6,7 @@ import (
 	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/header"
 	"github.com/liushuochen/gotable/util"
+	"os"
 	"strings"
 )
 
@@ -43,13 +44,6 @@ func (tb *Table) AddColumn(column string) error {
 	return nil
 }
 
-// Deprecated
-// TODO: removed in 3.0
-func (tb *Table) AddHead(newHead string) error {
-	util.DeprecatedTips("AddHead", "AddColumn", "3.0", "method")
-	return tb.AddColumn(newHead)
-}
-
 func (tb *Table) SetDefault(h string, defaultValue string) {
 	for _, head := range tb.Columns.base {
 		if head.String() == h {
@@ -78,19 +72,6 @@ func (tb *Table) GetDefaults() map[string]string {
 		defaults[h.String()] = h.Default()
 	}
 	return defaults
-}
-
-// Deprecated
-// TODO: removed in 3.0
-func (tb *Table) AddValue(newValue map[string]string) error {
-	util.DeprecatedTips("AddValue", "AddRow", "3.0", "method")
-	return tb.addValue(newValue)
-}
-
-// Deprecated
-// TODO: removed in 3.0
-func (tb *Table) addValue(newValue map[string]string) error {
-	return tb.AddRow(newValue)
 }
 
 func (tb *Table) AddRow(row map[string]string) error {
@@ -125,13 +106,6 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 		}
 	}
 	return failure
-}
-
-// Deprecated
-// TODO: removed in 3.0
-func (tb *Table) AddValues(values []map[string]string) []map[string]string {
-	util.DeprecatedTips("AddValues", "AddRows", "3.0", "method")
-	return tb.AddRows(values)
 }
 
 func (tb *Table) PrintTable() {
@@ -212,13 +186,6 @@ func (tb *Table) GetColumns() []string {
 	return columns
 }
 
-// Deprecated
-// TODO: removed in 3.0
-func (tb *Table) GetHeaders() []string {
-	util.DeprecatedTips("GetHeaders", "GetColumns", "3.0", "method")
-	return tb.GetColumns()
-}
-
 func (tb *Table) GetValues() []map[string]string {
 	values := make([]map[string]string, 0)
 	for _, value := range tb.Row {
@@ -290,4 +257,27 @@ func (tb *Table) Align(column string, mode int) {
 			return
 		}
 	}
+}
+
+func (tb *Table) ToJsonFile(path string, indent int) error {
+	if !util.IsJsonFile(path) {
+		return fmt.Errorf("%s: not a regular json file", path)
+	}
+
+	bytes, err := tb.json(indent)
+	if err != nil {
+		return err
+	}
+
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(bytes)
+	if err != nil {
+		return err
+	}
+	return nil
 }
