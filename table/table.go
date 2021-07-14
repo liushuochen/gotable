@@ -281,3 +281,31 @@ func (tb *Table) ToJsonFile(path string, indent int) error {
 	}
 	return nil
 }
+
+func (tb *Table) ToCSVFile(path string) error {
+	if !util.IsCSVFile(path) {
+		return fmt.Errorf("%s: not a regular csv file", path)
+	}
+
+	contents := []string{strings.Join(tb.GetColumns(), ",")}
+	columns := tb.GetColumns()
+	for _, value := range tb.GetValues() {
+		content := make([]string, 0)
+		for _, column := range columns {
+			content = append(content, util.CSVCellString(value[column]))
+		}
+		contents = append(contents, strings.Join(content, ","))
+	}
+
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(strings.Join(contents, "\n"))
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -1,6 +1,6 @@
 package constant
 
-// 3.0
+// 3.1
 func GetVersions() []string {
-	return []string{"3", "0"}
+	return []string{"3", "1"}
 }

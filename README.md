@@ -149,6 +149,13 @@ Use table method ```ToJsonFile``` to save the table data to a JSON file.
 func (tb *Table) ToJsonFile(path string, indent int) error
 ```
 
+- Save the table data to a CSV file
+Use table method ```ToCSVFile``` to save the table data to a CSV file.
+
+```go
+func (tb *Table) ToCSVFile(path string) error
+```
+
 - Close border
 Use table method ```CloseBorder``` to close table border.
 
@@ -826,6 +833,39 @@ cmd/demo.json:
 ]
 ```
 
+### Save the table data to a CSV file
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.Create("Name", "ID", "salary")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	rows := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		rows = append(rows, row)
+	}
+	tb.AddRows(rows)
+	err = tb.ToCSVFile("cmd/demo.csv")
+	if err != nil {
+		fmt.Println("write csv file error: ", err.Error())
+		return
+	}
+}
+
+```
 
 ### Close border
 ```go
