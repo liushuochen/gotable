@@ -1,9 +1,11 @@
 package gotable
 
 import (
+	"fmt"
 	"github.com/liushuochen/gotable/constant"
 	"github.com/liushuochen/gotable/table"
 	"github.com/liushuochen/gotable/util"
+	"io/ioutil"
 	"reflect"
 	"strings"
 )
@@ -14,12 +16,6 @@ const (
 	Right = table.R
 	Default = table.Default
 )
-
-// Deprecated
-func CreateTable(header []string) (*table.Table, error) {
-	util.DeprecatedTips("CreateTable", "Create", "3.0", "function")
-	return Create(header...)
-}
 
 func Create(columns ...string) (*table.Table, error) {
 	set := &table.Set{}
@@ -57,3 +53,39 @@ func Version() string {
 }
 
 func Versions() []string { return constant.GetVersions() }
+
+func ReadFromCSVFile(path string) (*table.Table, error) {
+	if !util.IsFile(path) {
+		return nil, fmt.Errorf("csv file `%s` do not exist", path)
+	}
+	if !util.IsCSVFile(path) {
+		return nil, fmt.Errorf("not a regular csv file: %s", path)
+	}
+
+	content, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	lines := strings.Split(string(content), "\n")
+	if len(lines) < 1 {
+		return nil, fmt.Errorf("csv file %s is empty", path)
+	}
+
+	columns := strings.Split(lines[0], ",")
+	tb, err := Create(columns...)
+	if err != nil {
+		return nil, err
+	}
+
+	rows := make([]map[string]string, 0)
+	for _, line := range lines[1:] {
+		values := strings.Split(line, ",")
+		row := make(map[string]string)
+		for i := range values {
+			row[columns[i]] = values[i]
+		}
+		rows = append(rows, row)
+	}
+	tb.AddRows(rows)
+	return tb, nil
+}

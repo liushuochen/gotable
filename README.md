@@ -41,6 +41,11 @@ information.
 gotable.Default
 ```
 
+- Load data from CSV file
+```go
+func ReadFromCSVFile(path string) (*table.Table, error)
+```
+
 ### *table.Table
 - Add row
 ```go
@@ -227,6 +232,27 @@ execute result:
 +-----+------+
 | 001 | bob  |
 +-----+------+
+
+```
+
+### Load data from CSV file
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.ReadFromCSVFile("cmd/demo.csv")
+	if err != nil {
+		fmt.Println("read failed: ", err.Error())
+		return
+	}
+
+	table.PrintTable()
+}
 
 ```
 
