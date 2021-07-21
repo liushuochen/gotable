@@ -1,14 +1,19 @@
 # gotable
 
+
 ## Introduction
 Print table in console
 
+
 ## Reference
-Please refer to guide: [gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
+Please refer to guide: 
+[gotable guide](https://blog.csdn.net/TCatTime/article/details/103068260#%E8%8E%B7%E5%8F%96gotable)
+
 
 ## Supported character set
 * ASCII
 * Chinese characters
+
 
 ## API
 ### github.com/liushuochen/gotable
@@ -174,6 +179,15 @@ Use table method ```OpenBorder``` to open table border. By default, the border p
 ```go
 func (tb *Table) OpenBorder()
 ```
+
+
+## Error type
+In this section, we introduce the error types defined in gotable. By default, we will still return the original 
+```Error``` interface.
+
+### NotARegularCSVFileError
+This error type indicates that the given filename is not a valid csv. It has a public method 
+```*NotARegularCSVFileError.Filename() string``` that returns the wrong CSV filename.
 
 
 ## Demo
@@ -1006,3 +1020,4 @@ execute result:
 +----------+-----------------+------------+
 
 ```
+

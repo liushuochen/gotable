@@ -1,11 +1,12 @@
 package gotable
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/liushuochen/gotable/constant"
 	"github.com/liushuochen/gotable/table"
 	"github.com/liushuochen/gotable/util"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -62,27 +63,29 @@ func ReadFromCSVFile(path string) (*table.Table, error) {
 		return nil, fmt.Errorf("not a regular csv file: %s", path)
 	}
 
-	content, err := ioutil.ReadFile(path)
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-	lines := strings.Split(string(content), "\n")
+	reader := csv.NewReader(file)
+	lines, err := reader.ReadAll()
+	if err != nil{
+		return nil, err
+	}
 	if len(lines) < 1 {
 		return nil, fmt.Errorf("csv file %s is empty", path)
 	}
 
-	columns := strings.Split(lines[0], ",")
-	tb, err := Create(columns...)
+	tb, err := Create(lines[0]...)
 	if err != nil {
 		return nil, err
 	}
 
 	rows := make([]map[string]string, 0)
 	for _, line := range lines[1:] {
-		values := strings.Split(line, ",")
 		row := make(map[string]string)
-		for i := range values {
-			row[columns[i]] = values[i]
+		for i := range line {
+			row[lines[0][i]] = line[i]
 		}
 		rows = append(rows, row)
 	}

@@ -1,9 +1,11 @@
 package table
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
+	"github.com/liushuochen/gotable/exception"
 	"github.com/liushuochen/gotable/header"
 	"github.com/liushuochen/gotable/util"
 	"os"
@@ -284,26 +286,32 @@ func (tb *Table) ToJsonFile(path string, indent int) error {
 
 func (tb *Table) ToCSVFile(path string) error {
 	if !util.IsCSVFile(path) {
-		return fmt.Errorf("%s: not a regular csv file", path)
+		return exception.NotARegularCSVFile(path)
 	}
-
-	contents := []string{strings.Join(tb.GetColumns(), ",")}
-	columns := tb.GetColumns()
-	for _, value := range tb.GetValues() {
-		content := make([]string, 0)
-		for _, column := range columns {
-			content = append(content, util.CSVCellString(value[column]))
-		}
-		contents = append(contents, strings.Join(content, ","))
-	}
-
-	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
+	writer := csv.NewWriter(file)
 
-	_, err = file.WriteString(strings.Join(contents, "\n"))
+	contents := make([][]string, 0)
+	columns := tb.GetColumns()
+	contents = append(contents, columns)
+	for _, value := range tb.GetValues() {
+		content := make([]string, 0)
+		for _, column := range columns {
+			content = append(content, value[column])
+		}
+		contents = append(contents, content)
+	}
+
+	err = writer.WriteAll(contents)
+	if err != nil {
+		return err
+	}
+	writer.Flush()
+	err = writer.Error()
 	if err != nil {
 		return err
 	}
