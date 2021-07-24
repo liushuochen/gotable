@@ -1,8 +1,5 @@
 # gotable
-
-
-## Introduction
-Print table in console
+Print table in console.
 
 
 ## Reference
@@ -17,27 +14,27 @@ Please refer to guide:
 
 ## API
 ### github.com/liushuochen/gotable
-- Create table
+#### Create table
 ```go
 func Create(columns ...string) (*table.Table, error)
 ```
 
-- Create a table from struct
+#### Create a table from struct
 ```go
 func CreateByStruct(v interface{}) (*table.Table, error)
 ```
 
-- Get version
+#### Get version
 ```go
 func Version() string
 ```
 
-- Get version list
+#### Get version list
 ```go
 func Versions() []string
 ```
 
-- Specify default value
+#### Specify default value
 The ```gotable.Default``` constant replaces the default value stored 
 in head. Refer to Set Default Values in the Demo section for more 
 information.
@@ -46,18 +43,23 @@ information.
 gotable.Default
 ```
 
-- Load data from CSV file
+#### Load data from CSV file
 ```go
 func ReadFromCSVFile(path string) (*table.Table, error)
 ```
 
+#### Load data from JSON file
+```go
+func ReadFromJSONFile(path string) (*table.Table, error)
+```
+
 ### *table.Table
-- Add row
+#### Add row
 ```go
 func (tb *Table) AddRow(row map[string]string) error
 ```
 
-- Add a list of rows
+#### Add a list of rows
 Method ```AddRows``` add a list of rows. It returns a slice that 
 consists of adding failed rows.
 
@@ -65,29 +67,29 @@ consists of adding failed rows.
 func (tb *Table) AddRows(rows []map[string]string) []map[string]string
 ```
 
-- Add column
+#### Add column
 ```go
 func (tb *Table) AddColumn(column string) error
 ```
 
-- Print table
+#### Print table
 ```go
 func (tb *Table) PrintTable()
 ```
 
-- Set default value
+#### Set default value
 By default, the default value for all heads is an empty string.
 
 ```go
 func (tb *Table) SetDefault(h string, defaultValue string)
 ```
 
-- Drop default value
+#### Drop default value
 ```go
 func (tb *Table) DropDefault(h string)
 ```
 
-- Get default value
+#### Get default value
 Use table method ```GetDefault``` to get default value of head. 
 If h does not exist in the table.Header, the method returns an empty 
 string.
@@ -96,14 +98,14 @@ string.
 func (tb *Table) GetDefault(h string) string
 ```
 
-- Get default map
+#### Get default map
 Use table method ```GetDefaults``` to get default map of head. 
 
 ```go
 func (tb *Table) GetDefaults() map[string]string
 ```
 
-- Arrange: center, align left or align right
+#### Arrange: center, align left or align right
 <p> By default, the table is centered. You can set a header to be left 
 aligned or right aligned. See the next section for more details on how 
 to use it.</p>
@@ -112,70 +114,64 @@ to use it.</p>
 func (tb *Table) Align(column string, mode int)
 ```
 
-- Check empty
+#### Check empty
 Use table method ```Empty``` to check if the table is empty.
 
 ```go
 func (tb *Table) Empty() bool
 ```
 
-- Get list of columns
+#### Get list of columns
 Use table method ```GetColumns``` to get a list of columns.
 
 ```go
 func (tb *Table) GetColumns() []string
 ```
 
-- Get values map
+#### Get values map
 Use table method ```GetValues``` to get the map that save values.
-
 ```go
 func (tb *Table) GetValues() []map[string]string
 ```
 
-- Check value exists
+#### Check value exists
 ```go
 func (tb *Table) Exist(value map[string]string) bool
 ```
 
-- Get table length
+#### Get table length
 ```go
 func (tb *Table) Length() int
 ```
 
-- To json string
+#### To json string
 Use table method ```Json``` to convert the table to JSON format.
 The argument ```indent``` indicates the number of indents.
 If the argument ```indent``` is less than or equal to 0, then the ```Json``` method unindents.
-
 ```go
 func (tb *Table) Json(indent int) (string, error)
 ```
 
-- Save the table data to a JSON file
+#### Save the table data to a JSON file
 Use table method ```ToJsonFile``` to save the table data to a JSON file.
-
 ```go
 func (tb *Table) ToJsonFile(path string, indent int) error
 ```
 
-- Save the table data to a CSV file
+#### Save the table data to a CSV file
 Use table method ```ToCSVFile``` to save the table data to a CSV file.
-
 ```go
 func (tb *Table) ToCSVFile(path string) error
 ```
 
-- Close border
+#### Close border
 Use table method ```CloseBorder``` to close table border.
-
 ```go
 func (tb *Table) CloseBorder()
 ```
 
-- Open border
+#### Open border
 Use table method ```OpenBorder``` to open table border. By default, the border property is turned on.
-
 ```go
 func (tb *Table) OpenBorder()
 ```
@@ -184,6 +180,10 @@ func (tb *Table) OpenBorder()
 ## Error type
 In this section, we introduce the error types defined in gotable. By default, we will still return the original 
 ```Error``` interface.
+
+### FileDoNotExistError
+This error type indicates that the filename was not found in the server. It has a public method 
+```*FileDoNotExistError.Filename() string``` that returns the wrong filename.
 
 ### NotARegularCSVFileError
 This error type indicates that the given filename is not a valid csv. It has a public method 
@@ -266,6 +266,27 @@ func main() {
 	}
 
 	table.PrintTable()
+}
+
+```
+
+### Load data from JSON file
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.ReadFromJSONFile("cmd/demo.json")
+	if err != nil {
+		fmt.Println("[ERROR] ", err.Error())
+		return
+	}
+
+	tb.PrintTable()
 }
 
 ```
@@ -1020,4 +1041,5 @@ execute result:
 +----------+-----------------+------------+
 
 ```
+
 
