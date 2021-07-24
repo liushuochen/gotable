@@ -176,10 +176,42 @@ Use table method ```OpenBorder``` to open table border. By default, the border p
 func (tb *Table) OpenBorder()
 ```
 
+#### Has column
+Table method `HasColumn` determine whether the column is included.
+```go
+func (tb *Table) HasColumn(column string) bool
+```
+
 
 ## Error type
 In this section, we introduce the error types defined in gotable. By default, we will still return the original 
-```Error``` interface.
+```Error``` interface. The following code demonstrates how to properly handle errors returned by ```gotable```.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+	"github.com/liushuochen/gotable/exception"
+)
+
+func main() {
+	tb, err := gotable.ReadFromJSONFile("cmd/fun.csv")
+	if err != nil {
+		switch err.(type) {
+		case *exception.FileDoNotExistError:
+			exp, _ := err.(*exception.FileDoNotExistError)
+			fmt.Printf("file %s dot exit: %s", exp.Filename(), err.Error())
+		default:
+			fmt.Println(err.Error())
+		}
+		return
+	}
+	tb.PrintTable()
+}
+
+```
 
 ### FileDoNotExistError
 This error type indicates that the filename was not found in the server. It has a public method 
@@ -1042,4 +1074,32 @@ execute result:
 
 ```
 
+### Has column
+```go
+package main
 
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+type Stu struct {
+	Name	string	`gotable:"name"`
+	Sex		string	`gotable:"sex"`
+	Age		int		`gotable:"age"`
+}
+
+func main() {
+	tb, err := gotable.CreateByStruct(&Stu{})
+	if err != nil {
+		fmt.Println("[ERROR] ", err.Error())
+		return
+	}
+
+
+	if tb.HasColumn("age") {
+		fmt.Println("table has column age")
+	}
+}
+
+```

@@ -317,3 +317,12 @@ func (tb *Table) ToCSVFile(path string) error {
 	}
 	return nil
 }
+
+func (tb *Table) HasColumn(column string) bool {
+	for index := range tb.Columns.base {
+		if tb.Columns.base[index].String() == column {
+			return true
+		}
+	}
+	return false
+}
