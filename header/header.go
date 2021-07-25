@@ -75,3 +75,35 @@ func (h *Column) SetAlign(mode int) {
 		h.align = AlignCenter
 	}
 }
+
+func (h *Column) Equal(other *Column) bool {
+	functions := []func(o *Column) bool {
+		h.nameEqual,
+		h.lengthEqual,
+		h.defaultEqual,
+		h.alignEqual,
+	}
+
+	for _, function := range functions {
+		if !function(other) {
+			return false
+		}
+	}
+	return true
+}
+
+func (h *Column) nameEqual(other *Column) bool {
+	return h.String() == other.String()
+}
+
+func (h *Column) lengthEqual(other *Column) bool {
+	return h.Length() == other.Length()
+}
+
+func (h *Column) defaultEqual(other *Column) bool {
+	return h.Default() == other.Default()
+}
+
+func (h *Column) alignEqual(other *Column) bool {
+	return h.Align() == other.Align()
+}

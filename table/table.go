@@ -326,3 +326,7 @@ func (tb *Table) HasColumn(column string) bool {
 	}
 	return false
 }
+
+func (tb *Table) EqualColumns(other *Table) bool {
+	return tb.Columns.Equal(other.Columns)
+}

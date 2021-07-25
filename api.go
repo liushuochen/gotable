@@ -21,6 +21,7 @@ const (
 	Default = table.Default
 )
 
+// Create an empty table. When duplicate values in columns, table creation fails.
 func Create(columns ...string) (*table.Table, error) {
 	set := &table.Set{}
 	for _, column := range columns {

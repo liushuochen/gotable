@@ -177,9 +177,16 @@ func (tb *Table) OpenBorder()
 ```
 
 #### Has column
-Table method `HasColumn` determine whether the column is included.
+Table method ```HasColumn``` determine whether the column is included.
 ```go
 func (tb *Table) HasColumn(column string) bool
+```
+
+#### Check whether the columns of the two tables are the same
+Table method ```EqualColumns``` is used to check whether the columns of two tables are the same. This method returns 
+true if the columns of the two tables are identical (length, name, order, alignment, default), and false otherwise.
+```go
+func (tb *Table) EqualColumns(other *Table) bool
 ```
 
 
@@ -220,6 +227,10 @@ This error type indicates that the filename was not found in the server. It has 
 ### NotARegularCSVFileError
 This error type indicates that the given filename is not a valid csv. It has a public method 
 ```*NotARegularCSVFileError.Filename() string``` that returns the wrong CSV filename.
+
+### NotARegularJSONFileError
+This error type indicates that the given filename is not a valid JSON. It has a public method
+```*NotARegularJSONFileError.Filename() string``` that returns the wrong JSON filename.
 
 
 ## Demo
@@ -1100,6 +1111,51 @@ func main() {
 	if tb.HasColumn("age") {
 		fmt.Println("table has column age")
 	}
+}
+
+```
+
+### Check whether the columns of the two tables are the same
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb1, _ := gotable.Create("id", "name")
+	tb2, _ := gotable.Create("name", "id")
+	fmt.Println(tb1.EqualColumns(tb2))
+	// output: false
+	// reason: tb1 and tb2 have different columns order
+
+	tb1, _ = gotable.Create("id", "name")
+	tb2, _ = gotable.Create("id", "name", "sex")
+	fmt.Println(tb1.EqualColumns(tb2))
+	// output: false
+	// reason: tb1 and tb2 have different columns
+
+	tb1, _ = gotable.Create("id", "name")
+	tb2, _ = gotable.Create("id", "name")
+	tb2.SetDefault("id", "001")
+	fmt.Println(tb1.EqualColumns(tb2))
+	// output: false
+	// reason: tb1 and tb2 have different column default. (tb1: "", "";    tb2: "001", "")
+
+	tb1, _ = gotable.Create("id", "name")
+	tb2, _ = gotable.Create("id", "name")
+	tb2.Align("id", gotable.Left)
+	fmt.Println(tb1.EqualColumns(tb2))
+	// output: false
+	// reason: tb1 and tb2 have different column alignment.
+	// (tb1: gotable.Center, gotable.Center;    tb2: gotable.Left, gotable.Center)
+
+	tb1, _ = gotable.Create("id", "name")
+	tb2, _ = gotable.Create("id", "name")
+	fmt.Println(tb1.EqualColumns(tb2))
+	// output: true
 }
 
 ```

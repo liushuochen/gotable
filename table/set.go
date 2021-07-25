@@ -63,3 +63,17 @@ func (set *Set) Get(name string) *header.Column {
 	}
 	return nil
 }
+
+func (set *Set) Equal(other *Set) bool {
+	if set.Len() != other.Len() {
+		return false
+	}
+
+	// TODO (gotable 4) improvement: Use goroutine to speed up validation
+	for index := range set.base {
+		if !set.base[index].Equal(other.base[index]) {
+			return false
+		}
+	}
+	return true
+}
