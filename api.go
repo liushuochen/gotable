@@ -22,7 +22,15 @@ const (
 )
 
 // Create an empty table. When duplicate values in columns, table creation fails.
+// It will return a table pointer and an error.
+// Error:
+// - If the length of columns is not greater than 0, an *exception.ColumnsLengthError error is returned.
+// - If columns contain duplicate values, an error is returned.
 func Create(columns ...string) (*table.Table, error) {
+	if len(columns) <= 0 {
+		return nil, exception.ColumnsLength()
+	}
+
 	set := &table.Set{}
 	for _, column := range columns {
 		err := set.Add(column)
@@ -34,10 +42,17 @@ func Create(columns ...string) (*table.Table, error) {
 	return tb, nil
 }
 
+
+// CreateByStruct creates an empty table from struct. You can rename a field using struct tag: gotable
 func CreateByStruct(v interface{}) (*table.Table, error) {
 	set := &table.Set{}
 	s := reflect.TypeOf(v).Elem()
-	for i := 0; i < s.NumField(); i++ {
+	numField := s.NumField()
+	if numField <= 0 {
+		return nil, exception.ColumnsLength()
+	}
+
+	for i := 0; i < numField; i++ {
 		field := s.Field(i)
 		name := field.Tag.Get("gotable")
 		if name == "" {
