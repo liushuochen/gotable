@@ -33,6 +33,12 @@ func CreateTable(set *Set) *Table {
 	}
 }
 
+// Clear the table. The table is cleared of all data.
+func (tb *Table) Clear() {
+	tb.Columns.Clear()
+	tb.Row = make([]map[string]cell.Cell, 0)
+}
+
 func (tb *Table) AddColumn(column string) error {
 	err := tb.Columns.Add(column)
 	if err != nil {

@@ -54,6 +54,12 @@ func ReadFromJSONFile(path string) (*table.Table, error)
 ```
 
 ### *table.Table
+#### Clear data
+The clear method is used to clear all data in the table, include columns and rows.
+```go
+func (tb *Table) Clear()
+```
+
 #### Add row
 ```go
 func (tb *Table) AddRow(row map[string]string) error
@@ -404,6 +410,59 @@ execute result:
 +---------+-----------------+--------+
 | Beijing | Washington D.C. | London |
 +---------+-----------------+--------+
+```
+
+### Clear data
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.Create("Name", "ID", "salary")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	length := tb.Length()
+	fmt.Printf("Before insert values, the value of length is: %d\n", length)
+	// Before insert values, the value of length is: 0
+
+	rows := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		rows = append(rows, row)
+	}
+
+	tb.AddRows(rows)
+	tb.PrintTable()
+
+	tb.Clear()
+	fmt.Println("After the table data is cleared...")
+	tb.PrintTable()
+}
+
+```
+
+execute result:
+```text
++------------+-----+--------+
+|    Name    | ID  | salary |
++------------+-----+--------+
+| employee-0 | 000 | 60000  |
+| employee-1 | 001 | 60000  |
+| employee-2 | 002 | 60000  |
++------------+-----+--------+
+After the table data is cleared...
+table is empty.
+
 ```
 
 ### Set default value
@@ -1119,47 +1178,4 @@ func main() {
 
 
 ## Error type
-In this section, we introduce the error types defined in gotable. By default, we will still return the original
-```Error``` interface. The following code demonstrates how to properly handle errors returned by ```gotable```.
-
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/liushuochen/gotable"
-	"github.com/liushuochen/gotable/exception"
-)
-
-func main() {
-	tb, err := gotable.ReadFromJSONFile("cmd/fun.csv")
-	if err != nil {
-		switch err.(type) {
-		case *exception.FileDoNotExistError:
-			exp, _ := err.(*exception.FileDoNotExistError)
-			fmt.Printf("file %s dot exit: %s", exp.Filename(), err.Error())
-		default:
-			fmt.Println(err.Error())
-		}
-		return
-	}
-	tb.PrintTable()
-}
-
-```
-
-### FileDoNotExistError
-This error type indicates that the filename was not found in the server. It has a public method
-```*FileDoNotExistError.Filename() string``` that returns the wrong filename.
-
-### NotARegularCSVFileError
-This error type indicates that the given filename is not a valid csv. It has a public method
-```*NotARegularCSVFileError.Filename() string``` that returns the wrong CSV filename.
-
-### NotARegularJSONFileError
-This error type indicates that the given filename is not a valid JSON. It has a public method
-```*NotARegularJSONFileError.Filename() string``` that returns the wrong JSON filename.
-
-### NotGotableJSONFormatError
-This error type indicates that the data format stored in the JSON file can not be parsed as a table.
-It has a public method ```*NotGotableJSONFormatError.Filename() string``` than returns the wrong JSON filename.
+Please refer to this guide '[error type](doc/errors.md)' for more gotable error information.

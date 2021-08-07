@@ -26,6 +26,7 @@ const (
 // Error:
 // - If the length of columns is not greater than 0, an *exception.ColumnsLengthError error is returned.
 // - If columns contain duplicate values, an error is returned.
+// - Otherwise, the value of error is nil.
 func Create(columns ...string) (*table.Table, error) {
 	if len(columns) <= 0 {
 		return nil, exception.ColumnsLength()
