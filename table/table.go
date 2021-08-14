@@ -116,12 +116,8 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	return failure
 }
 
+// PrintTable method used to print table data in STDOUT
 func (tb *Table) PrintTable() {
-	if tb.Empty() {
-		fmt.Println("table is empty.")
-		return
-	}
-
 	columnMaxLength := make(map[string]int)
 	tag := make(map[string]cell.Cell)
 	taga := make([]map[string]cell.Cell, 0)
@@ -173,8 +169,10 @@ func (tb *Table) PrintTable() {
 
 	// print value
 	tableValue := taga
-	tableValue = append(tableValue, tb.Row...)
-	tableValue = append(tableValue, tag)
+	if !tb.Empty() {
+		tableValue = append(tableValue, tb.Row...)
+		tableValue = append(tableValue, tag)
+	}
 	printGroup(tableValue, tb.Columns.base, columnMaxLength, tb.border)
 }
 

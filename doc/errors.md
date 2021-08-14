@@ -29,6 +29,8 @@ func main() {
 
 ```
 
+[Return to the home page](../README.md)
+
 ## FileDoNotExistError
 This error type indicates that the filename was not found in the server. It has a public method
 ```*FileDoNotExistError.Filename() string``` that returns the wrong filename.

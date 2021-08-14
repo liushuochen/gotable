@@ -1,5 +1,5 @@
 # gotable
-Print table in console.
+Generate beautiful ASCII tables.
 
 
 ## Reference
@@ -270,8 +270,6 @@ func main() {
 		fmt.Println("read failed: ", err.Error())
 		return
 	}
-
-	table.PrintTable()
 }
 
 ```
@@ -286,13 +284,11 @@ import (
 )
 
 func main() {
-	tb, err := gotable.ReadFromJSONFile("cmd/demo.json")
+	table, err := gotable.ReadFromJSONFile("cmd/demo.json")
 	if err != nil {
 		fmt.Println("[ERROR] ", err.Error())
 		return
 	}
-
-	tb.PrintTable()
 }
 
 ```
@@ -461,7 +457,6 @@ execute result:
 | employee-2 | 002 | 60000  |
 +------------+-----+--------+
 After the table data is cleared...
-table is empty.
 
 ```
 
