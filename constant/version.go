@@ -1,6 +1,6 @@
 package constant
 
-// GetVersions 3.9.0
+// GetVersions 4.0.ref
 func GetVersions() []string {
-	return []string{"3", "9", "0"}
+	return []string{"4", "0", "ref"}
 }
