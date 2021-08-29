@@ -1,4 +1,9 @@
-package header
+package column
+
+import (
+	"github.com/liushuochen/gotable/color"
+	"github.com/liushuochen/gotable/util"
+)
 
 const (
 	AlignCenter = iota
@@ -8,6 +13,7 @@ const (
 
 type Column struct {
 	name			string
+	coloredName		string
 	defaultValue	string
 	align			int
 	length			int
@@ -16,23 +22,19 @@ type Column struct {
 func CreateColumn(name string) *Column {
 	h := &Column{
 		name: name,
+		coloredName: name,
 		defaultValue: "",
 		align: AlignCenter,
-		length: 0,
-	}
-
-	// TODO: tmp code, will remove in gotable 3.0
-	for _, c := range name {
-		if isChinese(c) {
-			h.length += 2
-		} else {
-			h.length += 1
-		}
+		length: util.Length(name),
 	}
 	return h
 }
 
 func (h *Column) String() string {
+	return h.coloredName
+}
+
+func (h *Column) Original() string {
 	return h.name
 }
 
@@ -92,8 +94,21 @@ func (h *Column) Equal(other *Column) bool {
 	return true
 }
 
+func (h *Column) SetColor(displayType, font, background int) {
+	c := new(color.Color)
+	c.Display = displayType
+	c.Font = font
+	c.Background = background
+	h.coloredName = c.Combine(h.Original())
+	return
+}
+
+func (h *Column) Colorful() bool {
+	return h.String() != h.Original()
+}
+
 func (h *Column) nameEqual(other *Column) bool {
-	return h.String() == other.String()
+	return h.Original() == other.Original()
 }
 
 func (h *Column) lengthEqual(other *Column) bool {

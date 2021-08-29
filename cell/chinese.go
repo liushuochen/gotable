@@ -1,5 +1,0 @@
-package cell
-
-const (
-	chineseSymbol = "！……（），。？、"
-)

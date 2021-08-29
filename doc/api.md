@@ -43,6 +43,42 @@ func ReadFromCSVFile(path string) (*table.Table, error)
 func ReadFromJSONFile(path string) (*table.Table, error)
 ```
 
+### Color control
+The following constants are used in conjunction with the ```*table.SetColumnColor``` method to change the column color.
+#### display type
+Default display
+```go
+gotable.TerminalDefault
+```
+Fonts are highlighted
+```go
+gotable.Highlight
+```
+Underline
+```go
+gotable.Underline
+```
+Font flash
+```go
+gotable.Flash
+```
+#### color
+```go
+gotable.Black
+gotable.Red
+gotable.Green
+gotable.Yellow
+gotable.Blue
+gotable.Purple
+gotable.Cyan
+gotable.Write
+```
+
+Do not set the background color
+```go
+gotable.NoneBackground
+```
+
 ## *table.Table
 ### Clear data
 The clear method is used to clear all data in the table, include columns and rows.
@@ -183,4 +219,12 @@ Table method ```EqualColumns``` is used to check whether the columns of two tabl
 true if the columns of the two tables are identical (length, name, order, alignment, default), and false otherwise.
 ```go
 func (tb *Table) EqualColumns(other *Table) bool
+```
+
+### Set column color
+Table method ```SetColumnColor``` is used to set the color of a specific column. The first parameter specifies the name 
+of the column to be modified. The second parameter indicates the type of font to display. Refer to the Color control 
+section in this document for more information. The third and fourth parameters specify the font and background color.
+```go
+func (tb *Table) SetColumnColor(columnName string, display, fount, background int)
 ```

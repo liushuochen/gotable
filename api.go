@@ -21,6 +21,28 @@ const (
 	Default = table.Default
 )
 
+// Colored display control
+const (
+	TerminalDefault = 0
+	Highlight       = 1
+	Underline       = 4
+	Flash           = 5
+)
+
+// Colored control
+const (
+	Black   		= 30
+	Red     		= 31
+	Green   		= 32
+	Yellow  		= 33
+	Blue    		= 34
+	Purple  		= 35
+	Cyan    		= 36
+	Write   		= 37
+	NoneBackground = 0
+)
+
+
 // Create an empty table. When duplicate values in columns, table creation fails.
 // It will return a table pointer and an error.
 // Error:

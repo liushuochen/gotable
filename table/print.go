@@ -3,18 +3,19 @@ package table
 import (
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
-	"github.com/liushuochen/gotable/header"
+	"github.com/liushuochen/gotable/column"
 )
 
 func printGroup(
 	group []map[string]cell.Cell,
-	header []*header.Column,
+	header []*column.Column,
 	columnMaxLen map[string]int,
 	setBorder bool,
 ) {
 	for _, item := range group {
 		for index, head := range header {
-			itemLen := columnMaxLen[head.String()] + 2
+			itemLen := columnMaxLen[head.Original()] + 2
+			//fmt.Println(head, itemLen)
 			s := ""
 			if item[head.String()].String() == "-" {
 				if setBorder {

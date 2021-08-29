@@ -1,6 +1,8 @@
 package cell
 
-import "unicode"
+import (
+	"github.com/liushuochen/gotable/util"
+)
 
 type Data struct {
 	value	string
@@ -10,32 +12,12 @@ type Data struct {
 func CreateData(value string) *Data {
 	d := new(Data)
 	d.value = value
-	d.length = 0
-	for _, c := range value {
-		if isChinese(c) {
-			d.length += 2
-		} else {
-			d.length += 1
-		}
-	}
+	d.length = util.Length(value)
 	return d
 }
 
 func CreateEmptyData() *Data {
 	return CreateData("")
-}
-
-func isChinese(c int32) bool {
-	if unicode.Is(unicode.Han, c) {
-		return true
-	}
-
-	for _, s := range chineseSymbol {
-		if c == s {
-			return true
-		}
-	}
-	return false
 }
 
 func (d *Data) String() string {
@@ -44,4 +26,8 @@ func (d *Data) String() string {
 
 func (d *Data) Length() int {
 	return d.length
+}
+
+func (d *Data) Original() string {
+	return d.String()
 }

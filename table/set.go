@@ -2,11 +2,11 @@ package table
 
 import (
 	"fmt"
-	"github.com/liushuochen/gotable/header"
+	"github.com/liushuochen/gotable/column"
 )
 
 type Set struct {
-	base []*header.Column
+	base []*column.Column
 }
 
 func (set *Set) Len() int {
@@ -23,7 +23,7 @@ func (set *Set) Exist(element string) bool {
 
 func (set *Set) exist(element string) int {
 	for index, data := range set.base {
-		if data.String() == element {
+		if data.Original() == element {
 			return index
 		}
 	}
@@ -32,7 +32,7 @@ func (set *Set) exist(element string) int {
 }
 
 func (set *Set) Clear() {
-	set.base = make([]*header.Column, 0)
+	set.base = make([]*column.Column, 0)
 }
 
 func (set *Set) Add(element string) error {
@@ -40,7 +40,7 @@ func (set *Set) Add(element string) error {
 		return fmt.Errorf("value %s has exit", element)
 	}
 
-	newHeader := header.CreateColumn(element)
+	newHeader := column.CreateColumn(element)
 	set.base = append(set.base, newHeader)
 	return nil
 }
@@ -55,9 +55,9 @@ func (set *Set) Remove(element string) error {
 	return nil
 }
 
-func (set *Set) Get(name string) *header.Column {
+func (set *Set) Get(name string) *column.Column {
 	for _, h := range set.base {
-		if h.String() == name {
+		if h.Original() == name {
 			return h
 		}
 	}

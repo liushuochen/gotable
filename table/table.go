@@ -5,17 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
+	"github.com/liushuochen/gotable/column"
 	"github.com/liushuochen/gotable/exception"
-	"github.com/liushuochen/gotable/header"
 	"github.com/liushuochen/gotable/util"
 	"os"
 	"strings"
 )
 
 const (
-	C = header.AlignCenter
-	L = header.AlignLeft
-	R = header.AlignRight
+	C = column.AlignCenter
+	L = column.AlignLeft
+	R = column.AlignRight
 	Default = "__DEFAULT__"
 )
 
@@ -54,7 +54,7 @@ func (tb *Table) AddColumn(column string) error {
 
 func (tb *Table) SetDefault(h string, defaultValue string) {
 	for _, head := range tb.Columns.base {
-		if head.String() == h {
+		if head.Original() == h {
 			head.SetDefault(defaultValue)
 			break
 		}
@@ -67,7 +67,7 @@ func (tb *Table) DropDefault(h string) {
 
 func (tb *Table) GetDefault(h string) string {
 	for _, head := range tb.Columns.base {
-		if head.String() == h {
+		if head.Original() == h {
 			return head.Default()
 		}
 	}
@@ -77,15 +77,15 @@ func (tb *Table) GetDefault(h string) string {
 func (tb *Table) GetDefaults() map[string]string {
 	defaults := make(map[string]string)
 	for _, h := range tb.Columns.base {
-		defaults[h.String()] = h.Default()
+		defaults[h.Original()] = h.Default()
 	}
 	return defaults
 }
 
-func (tb *Table) AddRow(row map[string]string) error {
+func (tb *Table)  AddRow(row map[string]string) error {
 	for key := range row {
 		if !tb.Columns.Exist(key) {
-			return fmt.Errorf("invalid value %s", key)
+			return exception.ColumnDoNotExist(key)
 		}
 
 		// add row by const `DEFAULT`
@@ -94,10 +94,11 @@ func (tb *Table) AddRow(row map[string]string) error {
 		}
 	}
 
-	for _, column := range tb.Columns.base {
-		_, ok := row[column.String()]
+	// Add default value
+	for _, col := range tb.Columns.base {
+		_, ok := row[col.Original()]
 		if !ok {
-			row[column.String()] = column.Default()
+			row[col.Original()] = col.Default()
 		}
 	}
 
@@ -122,15 +123,15 @@ func (tb *Table) PrintTable() {
 	tag := make(map[string]cell.Cell)
 	taga := make([]map[string]cell.Cell, 0)
 	for _, h := range tb.Columns.base {
-		columnMaxLength[h.String()] = h.Length()
+		columnMaxLength[h.Original()] = h.Length()
 		tag[h.String()] = cell.CreateData("-")
 	}
 
 	for _, data := range tb.Row {
 		for _, h := range tb.Columns.base {
-			maxLength := max(h.Length(), data[h.String()].Length())
-			maxLength = max(maxLength, columnMaxLength[h.String()])
-			columnMaxLength[h.String()] = maxLength
+			maxLength := max(h.Length(), data[h.Original()].Length())
+			maxLength = max(maxLength, columnMaxLength[h.Original()])
+			columnMaxLength[h.Original()] = maxLength
 		}
 	}
 
@@ -144,7 +145,7 @@ func (tb *Table) PrintTable() {
 	icon := "|"
 	if !tb.border { icon = "" }
 	for index, head := range tb.Columns.base {
-		itemLen := columnMaxLength[head.String()] + 2
+		itemLen := columnMaxLength[head.Original()] + 2
 		s := ""
 		switch head.Align() {
 		case R:
@@ -170,7 +171,14 @@ func (tb *Table) PrintTable() {
 	// print value
 	tableValue := taga
 	if !tb.Empty() {
-		tableValue = append(tableValue, tb.Row...)
+		for _, row := range tb.Row {
+			value := make(map[string]cell.Cell)
+			for key := range row {
+				col := tb.Columns.Get(key)
+				value[col.String()] = row[key]
+			}
+			tableValue = append(tableValue, value)
+		}
 		tableValue = append(tableValue, tag)
 	}
 	printGroup(tableValue, tb.Columns.base, columnMaxLength, tb.border)
@@ -186,8 +194,8 @@ func (tb *Table) Length() int {
 
 func (tb *Table) GetColumns() []string {
 	columns := make([]string, 0)
-	for _, column := range tb.Columns.base {
-		columns = append(columns, column.String())
+	for _, col := range tb.Columns.base {
+		columns = append(columns, col.Original())
 	}
 	return columns
 }
@@ -223,8 +231,8 @@ func (tb *Table) json(indent int) ([]byte, error) {
 	data := make([]map[string]string, 0)
 	for _, row := range tb.Row {
 		element := make(map[string]string)
-		for column, value := range row {
-			element[column] = value.String()
+		for col, value := range row {
+			element[col] = value.String()
 		}
 		data = append(data, element)
 	}
@@ -258,7 +266,7 @@ func (tb *Table) OpenBorder() {
 
 func (tb *Table) Align(column string, mode int) {
 	for _, h := range tb.Columns.base {
-		if h.String() == column {
+		if h.Original() == column {
 			h.SetAlign(mode)
 			return
 		}
@@ -304,8 +312,8 @@ func (tb *Table) ToCSVFile(path string) error {
 	contents = append(contents, columns)
 	for _, value := range tb.GetValues() {
 		content := make([]string, 0)
-		for _, column := range columns {
-			content = append(content, value[column])
+		for _, col := range columns {
+			content = append(content, value[col])
 		}
 		contents = append(contents, content)
 	}
@@ -324,7 +332,7 @@ func (tb *Table) ToCSVFile(path string) error {
 
 func (tb *Table) HasColumn(column string) bool {
 	for index := range tb.Columns.base {
-		if tb.Columns.base[index].String() == column {
+		if tb.Columns.base[index].Original() == column {
 			return true
 		}
 	}
@@ -333,4 +341,14 @@ func (tb *Table) HasColumn(column string) bool {
 
 func (tb *Table) EqualColumns(other *Table) bool {
 	return tb.Columns.Equal(other.Columns)
+}
+
+func (tb *Table) SetColumnColor(columnName string, display, fount, background int) {
+	background += 10
+	for _, col := range tb.Columns.base {
+		if col.Original() == columnName {
+			col.SetColor(display, fount, background)
+			break
+		}
+	}
 }
