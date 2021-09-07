@@ -1,4 +1,4 @@
-package column
+package cell
 
 import (
 	"github.com/liushuochen/gotable/color"
@@ -21,11 +21,11 @@ type Column struct {
 
 func CreateColumn(name string) *Column {
 	h := &Column{
-		name: name,
-		coloredName: name,
+		name:         name,
+		coloredName:  name,
 		defaultValue: "",
-		align: AlignCenter,
-		length: util.Length(name),
+		align:        AlignCenter,
+		length:       util.Length(name),
 	}
 	return h
 }

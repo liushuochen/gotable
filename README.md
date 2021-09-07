@@ -1,5 +1,5 @@
 # gotable 4.0: Colored
-Generate beautiful ASCII tables. In this version, gotable will re-implement color table printing.
+Generate beautiful ASCII tables.
 
 
 ## Reference

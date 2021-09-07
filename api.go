@@ -67,6 +67,11 @@ func Create(columns ...string) (*table.Table, error) {
 
 
 // CreateByStruct creates an empty table from struct. You can rename a field using struct tag: gotable
+// It will return a table pointer and an error.
+// Error:
+// - If the length of columns is not greater than 0, an *exception.ColumnsLengthError error is returned.
+// - If columns contain duplicate values, an error is returned.
+// - Otherwise, the value of error is nil.
 func CreateByStruct(v interface{}) (*table.Table, error) {
 	set := &table.Set{}
 	s := reflect.TypeOf(v).Elem()
@@ -91,6 +96,10 @@ func CreateByStruct(v interface{}) (*table.Table, error) {
 	return tb, nil
 }
 
+// Version
+// The version function returns a string representing the version information of the gotable.
+// e.g.
+// 	   gotable 3.3.0
 func Version() string {
 	return "gotable " + strings.Join(constant.GetVersions(), ".")
 }

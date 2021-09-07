@@ -46,3 +46,6 @@ This error type indicates that the given filename is not a valid JSON. It has a 
 ## NotGotableJSONFormatError
 This error type indicates that the data format stored in the JSON file can not be parsed as a table.
 It has a public method ```*NotGotableJSONFormatError.Filename() string``` that returns the wrong JSON filename.
+
+## ColumnLengthError
+This error type indicates that column's length not greater than 0.

@@ -3,12 +3,11 @@ package table
 import (
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
-	"github.com/liushuochen/gotable/column"
 )
 
 func printGroup(
 	group []map[string]cell.Cell,
-	header []*column.Column,
+	header []*cell.Column,
 	columnMaxLen map[string]int,
 	setBorder bool,
 ) {

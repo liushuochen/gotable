@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
-	"github.com/liushuochen/gotable/column"
 	"github.com/liushuochen/gotable/exception"
 	"github.com/liushuochen/gotable/util"
 	"os"
@@ -13,9 +12,9 @@ import (
 )
 
 const (
-	C = column.AlignCenter
-	L = column.AlignLeft
-	R = column.AlignRight
+	C = cell.AlignCenter
+	L = cell.AlignLeft
+	R = cell.AlignRight
 	Default = "__DEFAULT__"
 )
 
