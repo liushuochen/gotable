@@ -13,7 +13,10 @@ func printGroup(
 ) {
 	for _, item := range group {
 		for index, head := range header {
-			itemLen := columnMaxLen[head.Original()] + 2
+                itemLen := columnMaxLen[head.Original()]
+                if setBorder {
+                    itemLen = itemLen + 2
+                }
 			//fmt.Println(head, itemLen)
 			s := ""
 			if item[head.String()].String() == "-" {
@@ -36,7 +39,7 @@ func printGroup(
 				icon = "+"
 			}
 			if !setBorder {
-				icon = ""
+				icon = " "
 			}
 
 			if index == 0 {
