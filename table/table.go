@@ -81,7 +81,49 @@ func (tb *Table) GetDefaults() map[string]string {
 	return defaults
 }
 
-func (tb *Table)  AddRow(row map[string]string) error {
+// AddRow method support Map and Slice argument.
+// For Map argument, you must put the data from each row into a Map and use column-data as key-value pairs. If the Map
+//   does not contain a column, the table sets it to the default value. If the Map contains a column that does not
+//   exist, the AddRow method returns an error.
+// For Slice argument, you must ensure that the slice length is equal to the column length. Method will automatically
+//   mapping values in Slice and columns. The default value cannot be omitted and must use gotable.Default constant.
+// Return error types:
+//   - *exception.UnsupportedRowTypeError: It returned when the type of the argument is not supported.
+//   - *exception.RowLengthNotEqualColumnsError: It returned if the argument is type of the Slice but the length is
+//       different from the length of column.
+//   - *exception.ColumnDoNotExistError: It returned if the argument is type of the Map but contains a nonexistent
+//       column as a key.
+func (tb *Table) AddRow(row interface{}) error {
+	switch v := row.(type) {
+	case []string:
+		return tb.addRowFromSlice(v)
+	case map[string]string:
+		return tb.addRowFromMap(v)
+	default:
+		return exception.UnsupportedRowType(v)
+	}
+}
+
+func (tb *Table) addRowFromSlice(row []string) error {
+	rowLength := len(row)
+	if rowLength != tb.Columns.Len() {
+		return exception.RowLengthNotEqualColumns(rowLength, tb.Columns.Len())
+	}
+
+	rowMap := make(map[string]string, 0)
+	for i := 0; i < rowLength; i++ {
+		if row[i] == Default {
+			rowMap[tb.Columns.base[i].Original()] = tb.Columns.base[i].Default()
+		} else {
+			rowMap[tb.Columns.base[i].Original()] = row[i]
+		}
+	}
+
+	tb.Row = append(tb.Row, toRow(rowMap))
+	return nil
+}
+
+func (tb *Table) addRowFromMap(row map[string]string) error {
 	for key := range row {
 		if !tb.Columns.Exist(key) {
 			return exception.ColumnDoNotExist(key)

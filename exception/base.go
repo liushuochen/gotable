@@ -13,3 +13,7 @@ func createBaseError(message string) *baseError {
 func (e *baseError) Error() string {
 	return e.message
 }
+
+func (e *baseError) String() string {
+	return e.Error()
+}

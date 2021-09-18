@@ -49,3 +49,7 @@ It has a public method ```*NotGotableJSONFormatError.Filename() string``` that r
 
 ## ColumnLengthError
 This error type indicates that column's length not greater than 0.
+
+## ColumnDoNotExistError
+A nonexistent column was found while adding a row. It has a public method ```*ColumnDoNotExistError.Name() string``` 
+that returns the nonexistent column name.

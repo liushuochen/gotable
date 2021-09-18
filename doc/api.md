@@ -25,9 +25,8 @@ func Versions() []string
 ```
 
 ### Specify default value
-The ```gotable.Default``` constant replaces the default value stored
-in head. Refer to Set Default Values in the Demo section for more
-information.
+The ```gotable.Default``` constant replaces the default value stored in column. Refer to Set Default Values in the Demo 
+section for more information.
 
 ```go
 gotable.Default
@@ -87,8 +86,9 @@ func (tb *Table) Clear()
 ```
 
 ### Add row
+Add a row to the table. Support Map and Slice. See the Demo section for more information.
 ```go
-func (tb *Table) AddRow(row map[string]string) error
+func (tb *Table) AddRow(row interface{}) error
 ```
 
 ### Add a list of rows
