@@ -184,9 +184,12 @@ func (tb *Table) PrintTable() {
 
 	// print table head
 	icon := "|"
-	if !tb.border { icon = "" }
+	if !tb.border { icon = " " }
 	for index, head := range tb.Columns.base {
-		itemLen := columnMaxLength[head.Original()] + 2
+		itemLen := columnMaxLength[head.Original()]
+                if tb.border {
+                    itemLen = itemLen + 2
+                }
 		s := ""
 		switch head.Align() {
 		case R:
