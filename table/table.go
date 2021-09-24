@@ -179,7 +179,7 @@ func (tb *Table) PrintTable() {
 	// print first line
 	taga = append(taga, tag)
 	if tb.border {
-		printGroup(taga, tb.Columns.base, columnMaxLength, tb.border)
+		tb.printGroup(taga, columnMaxLength)
 	}
 
 	// print table head
@@ -187,9 +187,7 @@ func (tb *Table) PrintTable() {
 	if !tb.border { icon = " " }
 	for index, head := range tb.Columns.base {
 		itemLen := columnMaxLength[head.Original()]
-                if tb.border {
-                    itemLen = itemLen + 2
-                }
+        if tb.border { itemLen += 2 }
 		s := ""
 		switch head.Align() {
 		case R:
@@ -225,7 +223,7 @@ func (tb *Table) PrintTable() {
 		}
 		tableValue = append(tableValue, tag)
 	}
-	printGroup(tableValue, tb.Columns.base, columnMaxLength, tb.border)
+	tb.printGroup(tableValue, columnMaxLength)
 }
 
 func (tb *Table) Empty() bool {

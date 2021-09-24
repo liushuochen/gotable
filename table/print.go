@@ -5,22 +5,20 @@ import (
 	"github.com/liushuochen/gotable/cell"
 )
 
-func printGroup(
-	group []map[string]cell.Cell,
-	header []*cell.Column,
-	columnMaxLen map[string]int,
-	setBorder bool,
-) {
+
+// This method print part of table data in STDOUT. It will be called twice in *table.PrintTable method.
+// Arguments:
+//   group: 		A map that storage column as key, data as value. Data is either "-" or row, if the value of data is
+//                  "-", the printGroup method will print the border of the table.
+//   columnMaxLen:  A map that storage column as key, max length of cell of column as value.
+func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[string]int) {
 	for _, item := range group {
-		for index, head := range header {
-                itemLen := columnMaxLen[head.Original()]
-                if setBorder {
-                    itemLen = itemLen + 2
-                }
-			//fmt.Println(head, itemLen)
+		for index, head := range tb.Columns.base {
+			itemLen := columnMaxLen[head.Original()]
+			if tb.border { itemLen += 2 }
 			s := ""
 			if item[head.String()].String() == "-" {
-				if setBorder {
+				if tb.border {
 					s, _ = center(item[head.String()], itemLen, "-")
 				}
 			} else {
@@ -38,7 +36,7 @@ func printGroup(
 			if item[head.String()].String() == "-" {
 				icon = "+"
 			}
-			if !setBorder {
+			if !tb.border {
 				icon = " "
 			}
 
