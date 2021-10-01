@@ -51,7 +51,7 @@ It has a public method ```*NotGotableJSONFormatError.Filename() string``` that r
 This error type indicates that the row data structure is not support. It has a public method 
 ```*UnsupportedRowTypeError.Type() string``` that returns the wrong type name.
 
-## ColumnLengthError
+## ColumnsLengthError
 This error type indicates that column's length not greater than 0.
 
 ## ColumnDoNotExistError

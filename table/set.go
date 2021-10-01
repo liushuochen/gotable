@@ -69,11 +69,30 @@ func (set *Set) Equal(other *Set) bool {
 		return false
 	}
 
-	// TODO (gotable 4) improvement: Use goroutine to speed up validation
+	c := make(chan bool)
 	for index := range set.base {
-		if !set.base[index].Equal(other.base[index]) {
-			return false
+		i := index
+		go func(pos int) {
+			if !set.base[pos].Equal(other.base[pos]) {
+				c <- false
+			} else {
+				c <- true
+			}
+		} (i)
+	}
+
+	count := 0
+	for {
+		select {
+		case equal := <- c:
+			count += 1
+			if !equal {
+				return false
+			}
+
+			if count >= set.Len() {
+				return true
+			}
 		}
 	}
-	return true
 }
