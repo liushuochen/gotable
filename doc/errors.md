@@ -57,3 +57,7 @@ This error type indicates that column's length not greater than 0.
 ## ColumnDoNotExistError
 A nonexistent column was found while adding a row. It has a public method ```*ColumnDoNotExistError.Name() string``` 
 that returns the nonexistent column name.
+
+## RowLengthNotEqualColumnsError
+This error is raised when adding a row from a Slice when the length of the Slice is not equal with the length of the 
+table column.

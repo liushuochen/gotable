@@ -48,7 +48,8 @@ func main() {
 
 ```
 
-## Load data from CSV file
+## Load data from file
+Currently, csv and json file are supported.
 ```go
 package main
 
@@ -58,30 +59,12 @@ import (
 )
 
 func main() {
-	table, err := gotable.ReadFromCSVFile("cmd/demo.csv")
+	table, err := gotable.Read("cmd/demo.csv")
 	if err != nil {
-		fmt.Println("read failed: ", err.Error())
+		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
-}
 
-```
-
-## Load data from JSON file
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/liushuochen/gotable"
-)
-
-func main() {
-	table, err := gotable.ReadFromJSONFile("cmd/demo.json")
-	if err != nil {
-		fmt.Println("[ERROR] ", err.Error())
-		return
-	}
 }
 
 ```

@@ -32,14 +32,10 @@ section for more information.
 gotable.Default
 ```
 
-### Load data from CSV file
+### Load data from file
+Currently，csv and json file are supported.
 ```go
-func ReadFromCSVFile(path string) (*table.Table, error)
-```
-
-### Load data from JSON file
-```go
-func ReadFromJSONFile(path string) (*table.Table, error)
+func Read(path string) (*table.Table, error)
 ```
 
 ### Color control

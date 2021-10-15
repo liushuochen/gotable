@@ -8,7 +8,7 @@ type fileError struct {
 }
 
 func createFileError(filename, message string) *fileError {
-	err := &fileError{createBaseError(message), filename}
+	err := &fileError{baseError: createBaseError(message), filename: filename}
 	return err
 }
 
@@ -23,7 +23,7 @@ type FileDoNotExistError struct {
 
 func FileDoNotExist(path string) *FileDoNotExistError {
 	message := fmt.Sprintf("file %s do not exist", path)
-	err := &FileDoNotExistError{createFileError(path, message)}
+	err := &FileDoNotExistError{fileError: createFileError(path, message)}
 	return err
 }
 
@@ -34,7 +34,7 @@ type NotARegularCSVFileError struct {
 
 func NotARegularCSVFile(path string) *NotARegularCSVFileError {
 	message := fmt.Sprintf("not a regular csv file: %s", path)
-	err := &NotARegularCSVFileError{createFileError(path, message)}
+	err := &NotARegularCSVFileError{fileError: createFileError(path, message)}
 	return err
 }
 
@@ -45,7 +45,20 @@ type NotARegularJSONFileError struct {
 
 func NotARegularJSONFile(path string) *NotARegularJSONFileError {
 	message := fmt.Sprintf("not a regular json file: %s", path)
-	err := &NotARegularJSONFileError{createFileError(path, message)}
+	err := &NotARegularJSONFileError{fileError: createFileError(path, message)}
+	return err
+}
+
+
+type UnSupportedFileTypeError struct {
+	*fileError
+}
+
+func UnSupportedFileType(path string) *UnSupportedFileTypeError {
+	message := fmt.Sprintf("Unsupported file type %s", path)
+	err := &UnSupportedFileTypeError{
+		fileError: createFileError(path, message),
+	}
 	return err
 }
 
@@ -56,6 +69,6 @@ type NotGotableJSONFormatError struct {
 
 func NotGotableJSONFormat(path string) *NotGotableJSONFormatError {
 	message := fmt.Sprintf("json file %s is not a valid gotable json format", path)
-	err := &NotGotableJSONFormatError{createFileError(path, message)}
+	err := &NotGotableJSONFormatError{fileError: createFileError(path, message)}
 	return err
 }
