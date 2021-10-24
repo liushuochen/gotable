@@ -61,3 +61,7 @@ that returns the nonexistent column name.
 ## RowLengthNotEqualColumnsError
 This error is raised when adding a row from a Slice when the length of the Slice is not equal with the length of the 
 table column.
+
+## UnSupportedFileTypeError
+When the file type read is not supported. It has a public mnethod ```*UnSupportedFileTypeError.Filename() string``` 
+that returns the wrong filename.

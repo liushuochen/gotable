@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"github.com/liushuochen/gotable/constant"
 	"github.com/liushuochen/gotable/exception"
 	"github.com/liushuochen/gotable/table"
 	"github.com/liushuochen/gotable/util"
@@ -101,10 +100,15 @@ func CreateByStruct(v interface{}) (*table.Table, error) {
 // e.g.
 // 	   gotable 3.3.0
 func Version() string {
-	return "gotable " + strings.Join(constant.GetVersions(), ".")
+	return "gotable " + strings.Join(getVersions(), ".")
 }
 
-func Versions() []string { return constant.GetVersions() }
+func Versions() []string { return getVersions() }
+
+// getVersions 4.6.0
+func getVersions() []string {
+	return []string{"4", "6", "0"}
+}
 
 // TODO: Removed in gotable 5.0
 func ReadFromCSVFile(path string) (*table.Table, error) {
