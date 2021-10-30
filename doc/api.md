@@ -172,12 +172,12 @@ func (tb *Table) Exist(value map[string]string) bool
 func (tb *Table) Length() int
 ```
 
-### To json string
-Use table method ```Json``` to convert the table to JSON format.
+### To JSON string
+Use table method ```JSON``` to convert the table to JSON format.
 The argument ```indent``` indicates the number of indents.
 If the argument ```indent``` is less than or equal to 0, then the ```Json``` method unindents.
 ```go
-func (tb *Table) Json(indent int) (string, error)
+func (tb *Table) JSON(indent int) (string, error)
 ```
 
 ### Save the table data to a JSON file

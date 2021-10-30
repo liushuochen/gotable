@@ -4,6 +4,12 @@ import (
 	"fmt"
 )
 
+// DeprecatedTips
+// Arguments:
+// - deleteFunction: delete function name
+// - newFunction:    new function name
+// - version:        support version
+// - functionType:   method or function
 func DeprecatedTips(
 	deleteFunction,
 	newFunction,

@@ -668,7 +668,7 @@ func main() {
 		rows = append(rows, row)
 	}
 
-	jsonString, err := tb.Json(4)
+	jsonString, err := tb.JSON(4)
 	if err != nil {
 		fmt.Println("ERROR: ", err.Error())
 		return
@@ -678,7 +678,7 @@ func main() {
 
 	tb.AddRows(rows)
 
-	jsonString, err = tb.Json(4)
+	jsonString, err = tb.JSON(4)
 	if err != nil {
 		fmt.Println("ERROR: ", err.Error())
 		return

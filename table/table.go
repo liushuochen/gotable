@@ -290,7 +290,19 @@ func (tb *Table) json(indent int) ([]byte, error) {
 	return json.MarshalIndent(data, "", strings.Join(elems, " "))
 }
 
+// TODO: moved in gotable 5.0
 func (tb *Table) Json(indent int) (string, error) {
+	util.DeprecatedTips("Json", "JSON", "gotable 5.0", "method")
+	bytes, err := tb.json(indent)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+// The JSON method returns the JSON string corresponding to the gotable. The indent argument represents the indent
+// value. If index is less than zero, the JSON method treats it as zero.
+func (tb *Table) JSON(indent int) (string, error) {
 	bytes, err := tb.json(indent)
 	if err != nil {
 		return "", err

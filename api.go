@@ -105,9 +105,9 @@ func Version() string {
 
 func Versions() []string { return getVersions() }
 
-// getVersions 4.6.0
+// getVersions 4.7.0
 func getVersions() []string {
-	return []string{"4", "6", "0"}
+	return []string{"4", "7", "0"}
 }
 
 // TODO: Removed in gotable 5.0
@@ -152,7 +152,7 @@ func ReadFromCSVFile(path string) (*table.Table, error) {
 
 // TODO: Removed in gotable 5.0
 func ReadFromJSONFile(path string) (*table.Table, error) {
-	util.DeprecatedTips("ReadFromJSONFile", "Read", "gotable 5.0", "gotable")
+	util.DeprecatedTips("ReadFromJSONFile", "Read", "gotable 5.0", "function")
 	if !util.IsFile(path) {
 		return nil, exception.FileDoNotExist(path)
 	}
