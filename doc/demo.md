@@ -39,7 +39,7 @@ type Student struct {
 }
 
 func main() {
-	tb, err := gotable.CreateByStruct(&Student{})
+	table, err := gotable.CreateByStruct(&Student{})
 	if err != nil {
 		fmt.Println("Create table failed.")
 		return
@@ -114,7 +114,7 @@ func main() {
 		return
 	}
 
-	table.PrintTable()
+	fmt.Println(table)
 }
 
 ```
@@ -132,7 +132,7 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("Name", "ID", "salary")
+	table, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -147,26 +147,22 @@ func main() {
 		rows = append(rows, row)
 	}
 
-	tb.AddRows(rows)
-	tb.PrintTable()
+	table.AddRows(rows)
+	fmt.Println(table)
+	// outputs:
+	// +------------+-----+--------+
+	// |    Name    | ID  | salary |
+	// +------------+-----+--------+
+	// | employee-0 | 000 | 60000  |
+	// | employee-1 | 001 | 60000  |
+	// | employee-2 | 002 | 60000  |
+	// +------------+-----+--------+
 }
-
-```
-
-execute result:
-```text
-+------------+-----+--------+
-|    Name    | ID  | salary |
-+------------+-----+--------+
-| employee-0 | 000 | 60000  |
-| employee-1 | 001 | 60000  |
-| employee-2 | 002 | 60000  |
-+------------+-----+--------+
-
 ```
 
 ## Print table
-Table method ```PrintTable``` will print content of this table in STDOUT.
+You can print the contents of the table instance to STDOUT using the print function in the ```fmt``` standard library.
+For example ```fmt.Println```, ```fmt.Print``` and so on.
 
 ```go
 package main
@@ -177,7 +173,7 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -187,20 +183,33 @@ func main() {
 	row["China"] = "Beijing"
 	row["US"] = "Washington, D.C."
 	row["UK"] = "London"
-	tb.AddRow(row)
+	table.AddRow(row)
 
-	tb.PrintTable()
+	fmt.Println(table)
+	// outputs:
+	// +---------+------------------+--------+
+	// |  China  |        US        |   UK   |
+	// +---------+------------------+--------+
+	// | Beijing | Washington, D.C. | London |
+	// +---------+------------------+--------+
+
+	fmt.Printf("%s", table)
+	// outputs:
+	// +---------+------------------+--------+
+	// |  China  |        US        |   UK   |
+	// +---------+------------------+--------+
+	// | Beijing | Washington, D.C. | London |
+	// +---------+------------------+--------+
+
+	fmt.Print(table)
+	// outputs:
+	// +---------+------------------+--------+
+	// |  China  |        US        |   UK   |
+	// +---------+------------------+--------+
+	// | Beijing | Washington, D.C. | London |
+	// +---------+------------------+--------+
 }
 
-```
-
-execute result:
-```text
-+---------+-----------------+--------+
-|  China  |       US        |   UK   |
-+---------+-----------------+--------+
-| Beijing | Washington D.C. | London |
-+---------+-----------------+--------+
 ```
 
 ## Clear data
@@ -213,13 +222,13 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("Name", "ID", "salary")
+	table, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	length := tb.Length()
+	length := table.Length()
 	fmt.Printf("Before insert values, the value of length is: %d\n", length)
 	// Before insert values, the value of length is: 0
 
@@ -232,26 +241,22 @@ func main() {
 		rows = append(rows, row)
 	}
 
-	tb.AddRows(rows)
-	tb.PrintTable()
+	table.AddRows(rows)
+	fmt.Println(table)
+	// outputs:
+	// +------------+-----+--------+
+	// |    Name    | ID  | salary |
+	// +------------+-----+--------+
+	// | employee-0 | 000 | 60000  |
+	// | employee-1 | 001 | 60000  |
+	// | employee-2 | 002 | 60000  |
+	// +------------+-----+--------+
 
-	tb.Clear()
+	table.Clear()
 	fmt.Println("After the table data is cleared...")
-	tb.PrintTable()
+	fmt.Println(table)
+	// output: After the table data is cleared...
 }
-
-```
-
-execute result:
-```text
-+------------+-----+--------+
-|    Name    | ID  | salary |
-+------------+-----+--------+
-| employee-0 | 000 | 60000  |
-| employee-1 | 001 | 60000  |
-| employee-2 | 002 | 60000  |
-+------------+-----+--------+
-After the table data is cleared...
 
 ```
 
@@ -272,54 +277,50 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	tb.SetDefault("China", "Xi'AN")
-	tb.SetDefault("US", "Los Angeles")
+	table.SetDefault("China", "Xi'AN")
+	table.SetDefault("US", "Los Angeles")
 
 	row := make(map[string]string)
 	row["China"] = "Beijing"
 	row["US"] = "Washington D.C."
 	row["UK"] = "London"
-	tb.AddRow(row)
+	table.AddRow(row)
 
 	// China is omitted in Map, the value of China column in the row is changed to the default value(Xi'AN).
 	row2 := make(map[string]string)
 	row2["US"] = "NewYork"
 	row2["UK"] = "Manchester"
-	tb.AddRow(row2)
+	table.AddRow(row2)
 
 	// Use the gotable.Default constant to indicate that the value of US is the default(Los Angeles)
 	row3 := make(map[string]string)
 	row3["China"] = "Hangzhou"
 	row3["US"] = gotable.Default
 	row3["UK"] = "Manchester"
-	tb.AddRow(row3)
+	table.AddRow(row3)
 
 	// Use gotable.Default in Slice.
 	// Because the value of row4[1] is gotable.Default constant, the value for column[1](US) is the default value(Los Angeles)
 	row4 := []string{"Qingdao", gotable.Default, "Oxford"}
-	tb.AddRow(row4)
+	table.AddRow(row4)
 
-	tb.PrintTable()
+	fmt.Println(table)
+	// outputs:
+	// +----------+-----------------+------------+
+	// |  China   |       US        |     UK     |
+	// +----------+-----------------+------------+
+	// | Beijing  | Washington D.C. |   London   |
+	// |  Xi'AN   |     NewYork     | Manchester |
+	// | Hangzhou |   Los Angeles   | Manchester |
+	// | Qingdao  |   Los Angeles   |   Oxford   |
+	// +----------+-----------------+------------+
 }
-
-```
-
-execute result:
-```text
-+----------+-----------------+------------+
-|  China   |       US        |     UK     |
-+----------+-----------------+------------+
-| Beijing  | Washington D.C. |   London   |
-|  Xi'AN   |     NewYork     | Manchester |
-| Hangzhou |   Los Angeles   | Manchester |
-| Qingdao  |   Los Angeles   |   Oxford   |
-+----------+-----------------+------------+
 
 ```
 
@@ -407,7 +408,7 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -417,21 +418,17 @@ func main() {
 	row["China"] = "Beijing"
 	row["US"] = "Washington D.C."
 	row["UK"] = "London"
-	tb.AddRow(row)
-	tb.AddColumn("Japan")
+	table.AddRow(row)
+	table.AddColumn("Japan")
 
-	tb.PrintTable()
+	fmt.Println(table)
+	// outputs:
+	// +---------+-----------------+--------+-------+
+	// |  China  |       US        |   UK   | Japan |
+	// +---------+-----------------+--------+-------+
+	// | Beijing | Washington D.C. | London |       |
+	// +---------+-----------------+--------+-------+
 }
-
-```
-
-execute result:
-```text
-+---------+-----------------+--------+-------+
-|  China  |       US        |   UK   | Japan |
-+---------+-----------------+--------+-------+
-| Beijing | Washington D.C. | London |       |
-+---------+-----------------+--------+-------+
 
 ```
 
@@ -449,7 +446,7 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -459,27 +456,23 @@ func main() {
 	row["China"] = "Beijing"
 	row["US"] = "Washington D.C."
 	row["UK"] = "London"
-	tb.AddRow(row)
-	tb.Align("UK", gotable.Left)
+	table.AddRow(row)
+	table.Align("UK", gotable.Left)
 
 	row2 := make(map[string]string)
 	row2["US"] = "NewYork"
 	row2["UK"] = "Manchester"
-	tb.AddRow(row2)
+	table.AddRow(row2)
 
-	tb.PrintTable()
+	fmt.Println(table)
+	// outputs:
+	// +---------+-----------------+------------+
+	// |  China  |       US        |UK          |
+	// +---------+-----------------+------------+
+	// | Beijing | Washington D.C. |London      |
+	// |         |     NewYork     |Manchester  |
+	// +---------+-----------------+------------+
 }
-
-```
-
-execute result:
-```text
-+---------+-----------------+------------+
-|  China  |       US        |UK          |
-+---------+-----------------+------------+
-| Beijing | Washington D.C. |London      |
-|         |     NewYork     |Manchester  |
-+---------+-----------------+------------+
 
 ```
 
@@ -803,48 +796,45 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	tb.SetDefault("US", "Los Angeles")
+	table.SetDefault("US", "Los Angeles")
 
 	row := make(map[string]string)
 	row["China"] = "Beijing"
 	row["US"] = "Washington D.C."
 	row["UK"] = "London"
-	tb.AddRow(row)
+	table.AddRow(row)
 
 	row2 := make(map[string]string)
 	row2["China"] = "Xi'AN"
 	row2["US"] = "NewYork"
 	row2["UK"] = "Manchester"
-	tb.AddRow(row2)
+	table.AddRow(row2)
 
 	row3 := make(map[string]string)
 	row3["China"] = "Hangzhou"
 	row3["US"] = gotable.Default
 	row3["UK"] = "Manchester"
-	tb.AddRow(row3)
+	table.AddRow(row3)
 
 	// close border
-	tb.CloseBorder()
-	tb.Align("China", gotable.Left)
-	tb.Align("US", gotable.Left)
-	tb.Align("UK", gotable.Left)
+	table.CloseBorder()
+	table.Align("China", gotable.Left)
+	table.Align("US", gotable.Left)
+	table.Align("UK", gotable.Left)
 
-	tb.PrintTable()
+	fmt.Println(table)
+	// outputs:
+	//  China    US              UK             
+	//  Beijing  Washington D.C. London     
+	//  Xi'AN    NewYork         Manchester 
+	//  Hangzhou Los Angeles     Manchester 
 }
-```
-
-execute result:
-```text
-China     US               UK          
-Beijing   Washington D.C.  London      
-Xi'AN     NewYork          Manchester  
-Hangzhou  Los Angeles      Manchester
 
 ```
 
@@ -858,52 +848,48 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	tb.SetDefault("US", "Los Angeles")
+	table.SetDefault("US", "Los Angeles")
 
 	row := make(map[string]string)
 	row["China"] = "Beijing"
 	row["US"] = "Washington D.C."
 	row["UK"] = "London"
-	tb.AddRow(row)
+	table.AddRow(row)
 
 	row2 := make(map[string]string)
 	row2["China"] = "Xi'AN"
 	row2["US"] = "NewYork"
 	row2["UK"] = "Manchester"
-	tb.AddRow(row2)
+	table.AddRow(row2)
 
 	row3 := make(map[string]string)
 	row3["China"] = "Hangzhou"
 	row3["US"] = gotable.Default
 	row3["UK"] = "Manchester"
-	tb.AddRow(row3)
+	table.AddRow(row3)
 
 	// close border
-	tb.CloseBorder()
+	table.CloseBorder()
 
 	// open border again
-	tb.OpenBorder()
+	table.OpenBorder()
 
-	tb.PrintTable()
+	fmt.Println(table)
+	// outputs:
+	// +----------+-----------------+------------+
+	// |  China   |       US        |     UK     |
+	// +----------+-----------------+------------+
+	// | Beijing  | Washington D.C. |   London   |
+	// |  Xi'AN   |     NewYork     | Manchester |
+	// | Hangzhou |   Los Angeles   | Manchester |
+	// +----------+-----------------+------------+
 }
-
-```
-
-execute result:
-```text
-+----------+-----------------+------------+
-|  China   |       US        |     UK     |
-+----------+-----------------+------------+
-| Beijing  | Washington D.C. |   London   |
-|  Xi'AN   |     NewYork     | Manchester |
-| Hangzhou |   Los Angeles   | Manchester |
-+----------+-----------------+------------+
 
 ```
 
@@ -992,7 +978,7 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("Name", "ID", "salary")
+	table, err := gotable.Create("Name", "ID", "salary")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
@@ -1007,12 +993,11 @@ func main() {
 		rows = append(rows, row)
 	}
 
-	tb.AddRows(rows)
-	
+	table.AddRows(rows)
+
 	// Underline the `salary` column with a white font and no background color
-	tb.SetColumnColor("salary", gotable.Underline, gotable.Write, gotable.NoneBackground)
-	tb.PrintTable()
+	table.SetColumnColor("salary", gotable.Underline, gotable.Write, gotable.NoneBackground)
+	fmt.Println(table)
 }
 
 ```
-

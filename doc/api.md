@@ -101,8 +101,10 @@ func (tb *Table) AddColumn(column string) error
 ```
 
 ### Print table
+```*table``` implements ```fmt.Stringer``` interface, so you can use the ```fmt.Print```, ```fmt.Printf``` functions 
+and so on to print the contents of the table instance.
 ```go
-func (tb *Table) PrintTable()
+func (tb *Table) String() string
 ```
 
 ### Set default value

@@ -158,8 +158,7 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	return failure
 }
 
-// PrintTable method used to print table data in STDOUT
-func (tb *Table) PrintTable() {
+func (tb *Table) String() string {
 	columnMaxLength := make(map[string]int)
 	tag := make(map[string]cell.Cell)
 	taga := make([]map[string]cell.Cell, 0)
@@ -176,10 +175,12 @@ func (tb *Table) PrintTable() {
 		}
 	}
 
+	content := ""
 	// print first line
 	taga = append(taga, tag)
 	if tb.border {
-		tb.printGroup(taga, columnMaxLength)
+		// tb.printGroup(taga, columnMaxLength)
+		content += tb.printGroup(taga, columnMaxLength)
 	}
 
 	// print table head
@@ -187,7 +188,7 @@ func (tb *Table) PrintTable() {
 	if !tb.border { icon = " " }
 	for index, head := range tb.Columns.base {
 		itemLen := columnMaxLength[head.Original()]
-        if tb.border { itemLen += 2 }
+		if tb.border { itemLen += 2 }
 		s := ""
 		switch head.Align() {
 		case R:
@@ -203,14 +204,13 @@ func (tb *Table) PrintTable() {
 			s = "" + s + icon
 		}
 
-		fmt.Print(s)
+		content += s
 	}
 
 	if tb.border {
-		fmt.Println()
+		content += "\n"
 	}
 
-	// print value
 	tableValue := taga
 	if !tb.Empty() {
 		for _, row := range tb.Row {
@@ -223,7 +223,15 @@ func (tb *Table) PrintTable() {
 		}
 		tableValue = append(tableValue, tag)
 	}
-	tb.printGroup(tableValue, columnMaxLength)
+
+	content += tb.printGroup(tableValue, columnMaxLength)
+	return content
+}
+
+// PrintTable method used to print table data in STDOUT
+func (tb *Table) PrintTable() {
+	util.DeprecatedTips("PrintTable", "fmt.Println", "5.0", "method")
+	fmt.Println(tb)
 }
 
 func (tb *Table) Empty() bool {

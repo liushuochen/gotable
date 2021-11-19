@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	tb, err := gotable.ReadFromJSONFile("cmd/fun.csv")
+	table, err := gotable.ReadFromJSONFile("cmd/fun.csv")
 	if err != nil {
 		switch err.(type) {
 		case *exception.FileDoNotExistError:
@@ -24,7 +24,7 @@ func main() {
 		}
 		return
 	}
-	tb.PrintTable()
+	fmt.Println(table)
 }
 
 ```
