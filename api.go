@@ -105,9 +105,9 @@ func Version() string {
 
 func Versions() []string { return getVersions() }
 
-// getVersions 4.8.0
+// getVersions 4.9.0
 func getVersions() []string {
-	return []string{"4", "8", "0"}
+	return []string{"4", "9", "0"}
 }
 
 // TODO: Removed in gotable 5.0
@@ -272,7 +272,9 @@ func Read(path string) (*table.Table, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	} (file)
 
 	if util.IsJsonFile(file.Name()) {
 		return readFromJSONFile(file)

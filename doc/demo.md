@@ -698,6 +698,58 @@ func main() {
 }
 ```
 
+## To XML string
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.Create("Name", "ID", "salary")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	rows := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		rows = append(rows, row)
+	}
+
+	table.AddRows(rows)
+
+	content := table.XML(2)
+	fmt.Println(content)
+	// outputs:
+	// <?xml version="1.0" encoding="utf-8" standalone="yes"?>
+	// <table>
+	//   <row>
+	//     <Name>employee-0</Name>
+	//     <ID>000</ID>
+	//     <salary>60000</salary>
+	//   </row>
+	//   <row>
+	//     <Name>employee-1</Name>
+	//     <ID>001</ID>
+	//     <salary>60000</salary>
+	//   </row>
+	//   <row>
+	//     <Name>employee-2</Name>
+	//     <ID>002</ID>
+	//     <salary>60000</salary>
+	//   </row>
+	// </table>
+}
+
+```
+
 ## Save the table data to a JSON file
 ```go
 package main

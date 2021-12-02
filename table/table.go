@@ -318,6 +318,32 @@ func (tb *Table) JSON(indent int) (string, error) {
 	return string(bytes), nil
 }
 
+// The XML method returns the XML format string corresponding to the gotable. The indent argument represents the indent
+// value. If index is less than zero, the XML method treats it as zero.
+func (tb *Table) XML(indent int) string {
+	if indent < 0 {
+		indent = 0
+	}
+	indents := make([]string, indent)
+	for i := 0; i < indent; i++ {
+		indents[i] = " "
+	}
+	indentString := strings.Join(indents, "")
+
+	contents := []string{"<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>", "<table>"}
+	for _, row := range tb.Row {
+		contents = append(contents, indentString + "<row>")
+		for name := range row {
+			line := indentString + indentString + fmt.Sprintf("<%s>%s</%s>", name, row[name], name)
+			contents = append(contents, line)
+		}
+		contents = append(contents, indentString + "</row>")
+	}
+	contents = append(contents, "</table>")
+	content := strings.Join(contents, "\n")
+	return content
+}
+
 func (tb *Table) CloseBorder() {
 	tb.border = false
 }
@@ -349,7 +375,9 @@ func (tb *Table) ToJsonFile(path string, indent int) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	} (file)
 
 	_, err = file.Write(bytes)
 	if err != nil {
@@ -366,7 +394,9 @@ func (tb *Table) ToCSVFile(path string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func(file *os.File) {
+		_ = file.Close()
+	} (file)
 	writer := csv.NewWriter(file)
 
 	contents := make([][]string, 0)

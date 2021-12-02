@@ -177,9 +177,17 @@ func (tb *Table) Length() int
 ### To JSON string
 Use table method ```JSON``` to convert the table to JSON format.
 The argument ```indent``` indicates the number of indents.
-If the argument ```indent``` is less than or equal to 0, then the ```Json``` method unindents.
+If the argument ```indent``` is less than or equal to 0, then the ```JSON``` method unindents.
 ```go
 func (tb *Table) JSON(indent int) (string, error)
+```
+
+### To XML string
+Use table method ```XML``` to convert the table to XML format.
+The argument ```indent``` indicates the number of indents.
+If the argument ```indent``` is less than or equal to 0, then the ```XML``` method unindents.
+```go
+func (tb *Table) XML(indent int) string
 ```
 
 ### Save the table data to a JSON file
