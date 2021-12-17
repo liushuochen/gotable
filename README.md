@@ -1,5 +1,44 @@
-# gotable 4.0: Colored
+# gotable 5: Safe
 Generate beautiful ASCII tables.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.Create("version", "description")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	table.AddRow([]string{"gotable 5", "Safe: New table type to enhance concurrency security"})
+	table.AddRow([]string{"gotable 4", "Colored: Print colored column"})
+	table.AddRow([]string{"gotable 3", "Storage: Store the table data as a file"})
+	table.AddRow([]string{"gotable 2", "Simple: Use simpler APIs to control table"})
+	table.AddRow([]string{"gotable 1", "Gotable: Print a beautiful ASCII table"})
+
+	fmt.Println(table)
+}
+
+```
+
+```text
++-----------+------------------------------------------------------+
+|  version  |                     description                      |
++-----------+------------------------------------------------------+
+| gotable 5 | Safe: New table type to enhance concurrency security |
+| gotable 4 |            Colored: Print colored column             |
+| gotable 3 |       Storage: Store the table data as a file        |
+| gotable 2 |      Simple: Use simpler APIs to control table       |
+| gotable 1 |        Gotable: Print a beautiful ASCII table        |
++-----------+------------------------------------------------------+
+
+```
 
 
 ## Reference

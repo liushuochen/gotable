@@ -105,9 +105,9 @@ func Version() string {
 
 func Versions() []string { return getVersions() }
 
-// getVersions 4.9.0
+// getVersions 5.0.ref
 func getVersions() []string {
-	return []string{"4", "9", "0"}
+	return []string{"5", "0", "ref"}
 }
 
 // TODO: Removed in gotable 5.0
