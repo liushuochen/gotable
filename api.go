@@ -3,7 +3,6 @@ package gotable
 import (
 	"encoding/csv"
 	"encoding/json"
-	"fmt"
 	"github.com/liushuochen/gotable/exception"
 	"github.com/liushuochen/gotable/table"
 	"github.com/liushuochen/gotable/util"
@@ -107,87 +106,7 @@ func Versions() []string { return getVersions() }
 
 // getVersions 5.0.ref
 func getVersions() []string {
-	return []string{"5", "0", "ref"}
-}
-
-// TODO: Removed in gotable 5.0
-func ReadFromCSVFile(path string) (*table.Table, error) {
-	util.DeprecatedTips("ReadFromJSONFile", "Read", "gotable 5.0", "gotable")
-	if !util.IsFile(path) {
-		return nil, exception.FileDoNotExist(path)
-	}
-	if !util.IsCSVFile(path) {
-		return nil, exception.NotARegularCSVFile(path)
-	}
-
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	reader := csv.NewReader(file)
-	lines, err := reader.ReadAll()
-	if err != nil{
-		return nil, err
-	}
-	if len(lines) < 1 {
-		return nil, fmt.Errorf("csv file %s is empty", path)
-	}
-
-	tb, err := Create(lines[0]...)
-	if err != nil {
-		return nil, err
-	}
-
-	rows := make([]map[string]string, 0)
-	for _, line := range lines[1:] {
-		row := make(map[string]string)
-		for i := range line {
-			row[lines[0][i]] = line[i]
-		}
-		rows = append(rows, row)
-	}
-	tb.AddRows(rows)
-	return tb, nil
-}
-
-// TODO: Removed in gotable 5.0
-func ReadFromJSONFile(path string) (*table.Table, error) {
-	util.DeprecatedTips("ReadFromJSONFile", "Read", "gotable 5.0", "function")
-	if !util.IsFile(path) {
-		return nil, exception.FileDoNotExist(path)
-	}
-	if !util.IsJsonFile(path) {
-		return nil, exception.NotARegularJSONFile(path)
-	}
-
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	byteValue, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-
-	rows := make([]map[string]string, 0)
-	err = json.Unmarshal(byteValue, &rows)
-	if err != nil {
-		return nil, exception.NotGotableJSONFormat(path)
-	}
-
-	if len(rows) == 0 { return Create() }
-	columns := make([]string, 0)
-	for column := range rows[0] {
-		columns = append(columns, column)
-	}
-	tb, err := Create(columns...)
-	if err != nil {
-		return nil, err
-	}
-	tb.AddRows(rows)
-	return tb, nil
+	return []string{"5", "1", "0"}
 }
 
 // Read from a csv file to create a *table instance.

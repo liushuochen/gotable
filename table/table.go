@@ -18,6 +18,11 @@ const (
 	Default = "__DEFAULT__"
 )
 
+// Table struct:
+// - Columns: Save the table columns.
+// - Row: Save the list of column and value mapping.
+// - border: A flag indicates whether to print table border. If the value is `true`, table will show its border.
+//           Default is true(By CreateTable function).
 type Table struct {
 	Columns *Set
 	Row  	[]map[string]cell.Cell
@@ -228,12 +233,6 @@ func (tb *Table) String() string {
 	return content
 }
 
-// PrintTable method used to print table data in STDOUT
-func (tb *Table) PrintTable() {
-	util.DeprecatedTips("PrintTable", "fmt.Println", "5.0", "method")
-	fmt.Println(tb)
-}
-
 func (tb *Table) Empty() bool {
 	return tb.Length() == 0
 }
@@ -296,16 +295,6 @@ func (tb *Table) json(indent int) ([]byte, error) {
 	}
 
 	return json.MarshalIndent(data, "", strings.Join(elems, " "))
-}
-
-// TODO: moved in gotable 5.0
-func (tb *Table) Json(indent int) (string, error) {
-	util.DeprecatedTips("Json", "JSON", "gotable 5.0", "method")
-	bytes, err := tb.json(indent)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
 }
 
 // The JSON method returns the JSON string corresponding to the gotable. The indent argument represents the indent
