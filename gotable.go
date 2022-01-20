@@ -106,7 +106,7 @@ func Versions() []string { return getVersions() }
 
 // getVersions 5.0.ref
 func getVersions() []string {
-	return []string{"5", "0", "0"}
+	return []string{"5", "1", "0"}
 }
 
 // Read from a csv file to create a *table instance.

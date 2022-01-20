@@ -81,6 +81,12 @@ The clear method is used to clear all data in the table, include columns and row
 func (tb *Table) Clear()
 ```
 
+### Get table type
+The type method returns a type of table.
+```go
+func (tb *Table) Type() string
+```
+
 ### Add row
 Add a row to the table. Support Map and Slice. See the Demo section for more information.
 ```go

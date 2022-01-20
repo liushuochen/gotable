@@ -1053,3 +1053,25 @@ func main() {
 }
 
 ```
+
+## Get table type
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.Create("version", "description")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	fmt.Println(table.Type())
+	// output: simple
+}
+
+```

@@ -23,10 +23,12 @@ const (
 // - Row: Save the list of column and value mapping.
 // - border: A flag indicates whether to print table border. If the value is `true`, table will show its border.
 //           Default is true(By CreateTable function).
+// - tableType: Type of table.
 type Table struct {
-	Columns *Set
-	Row  	[]map[string]cell.Cell
-	border	bool
+	Columns      *Set
+	Row  	     []map[string]cell.Cell
+	border	     bool
+	tableType    string
 }
 
 func CreateTable(set *Set) *Table {
@@ -34,6 +36,7 @@ func CreateTable(set *Set) *Table {
 		Columns: set,
 		Row: make([]map[string]cell.Cell, 0),
 		border: true,
+		tableType: SimpleTableType,
 	}
 }
 
@@ -41,6 +44,10 @@ func CreateTable(set *Set) *Table {
 func (tb *Table) Clear() {
 	tb.Columns.Clear()
 	tb.Row = make([]map[string]cell.Cell, 0)
+}
+
+func (tb *Table) Type() string {
+	return tb.tableType
 }
 
 func (tb *Table) AddColumn(column string) error {
