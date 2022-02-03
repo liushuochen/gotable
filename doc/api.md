@@ -4,14 +4,19 @@ This section describes the gotable APIs.
 [Return to the home page](../README.md)
 
 ## github.com/liushuochen/gotable
-### Create table
+### Create a simple table
 ```go
 func Create(columns ...string) (*table.Table, error)
 ```
 
-### Create a table from struct
+### Create a simple table from struct
 ```go
 func CreateByStruct(v interface{}) (*table.Table, error)
+```
+
+### Create a safe table
+```go
+func CreateSafeTable(columns ...string) (*table.SafeTable, error)
 ```
 
 ### Get version
@@ -74,7 +79,7 @@ Do not set the background color
 gotable.NoneBackground
 ```
 
-## *table.Table
+## APIs for simple table type(*table.Table)
 ### Clear data
 The clear method is used to clear all data in the table, include columns and rows.
 ```go
@@ -239,4 +244,11 @@ of the column to be modified. The second parameter indicates the type of font to
 section in this document for more information. The third and fourth parameters specify the font and background color.
 ```go
 func (tb *Table) SetColumnColor(columnName string, display, fount, background int)
+```
+
+## APIs for safe table type(*table.SafeTable)
+### Get table type
+The type method returns a type of table.
+```go
+func (tb *Table) Type() string
 ```

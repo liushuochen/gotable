@@ -3,10 +3,27 @@ package table
 import (
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
+	"github.com/liushuochen/gotable/exception"
 )
 
 type Set struct {
 	base []*cell.Column
+}
+
+func CreateSetFromString(columns ...string) (*Set, error) {
+	if len(columns) <= 0 {
+		return nil, exception.ColumnsLength()
+	}
+
+	set := &Set{base: make([]*cell.Column, 0)}
+	for _, column := range columns {
+		err := set.Add(column)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return set, nil
 }
 
 func (set *Set) Len() int {
@@ -78,13 +95,13 @@ func (set *Set) Equal(other *Set) bool {
 			} else {
 				c <- true
 			}
-		} (i)
+		}(i)
 	}
 
 	count := 0
 	for {
 		select {
-		case equal := <- c:
+		case equal := <-c:
 			count += 1
 			if !equal {
 				return false

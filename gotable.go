@@ -13,9 +13,9 @@ import (
 )
 
 const (
-	Center = table.C
-	Left = table.L
-	Right = table.R
+	Center  = table.C
+	Left    = table.L
+	Right   = table.R
 	Default = table.Default
 )
 
@@ -29,40 +29,46 @@ const (
 
 // Colored control
 const (
-	Black   		= 30
-	Red     		= 31
-	Green   		= 32
-	Yellow  		= 33
-	Blue    		= 34
-	Purple  		= 35
-	Cyan    		= 36
-	Write   		= 37
-	NoneBackground  = 0
+	Black          = 30
+	Red            = 31
+	Green          = 32
+	Yellow         = 33
+	Blue           = 34
+	Purple         = 35
+	Cyan           = 36
+	Write          = 37
+	NoneBackground = 0
 )
 
-
-// Create an empty table. When duplicate values in columns, table creation fails.
+// Create an empty simple table. When duplicate values in columns, table creation fails.
 // It will return a table pointer and an error.
 // Error:
 // - If the length of columns is not greater than 0, an *exception.ColumnsLengthError error is returned.
 // - If columns contain duplicate values, an error is returned.
 // - Otherwise, the value of error is nil.
 func Create(columns ...string) (*table.Table, error) {
-	if len(columns) <= 0 {
-		return nil, exception.ColumnsLength()
-	}
-
-	set := &table.Set{}
-	for _, column := range columns {
-		err := set.Add(column)
-		if err != nil {
-			return nil, err
-		}
+	set, err := table.CreateSetFromString(columns...)
+	if err != nil {
+		return nil, err
 	}
 	tb := table.CreateTable(set)
 	return tb, nil
 }
 
+// CreateSafeTable function used to create an empty safe table. When duplicate values in columns, table creation fails.
+// It will return a table pointer and an error.
+// Error:
+// - If the length of columns is not greater than 0, an *exception.ColumnsLengthError error is returned.
+// - If columns contain duplicate values, an error is returned.
+// - Otherwise, the value of error is nil.
+func CreateSafeTable(columns ...string) (*table.SafeTable, error) {
+	set, err := table.CreateSetFromString(columns...)
+	if err != nil {
+		return nil, err
+	}
+	tb := table.CreateSafeTable(set)
+	return tb, nil
+}
 
 // CreateByStruct creates an empty table from struct. You can rename a field using struct tag: gotable
 // It will return a table pointer and an error.
@@ -104,9 +110,9 @@ func Version() string {
 
 func Versions() []string { return getVersions() }
 
-// getVersions 5.0.ref
+// getVersions 5.2.0
 func getVersions() []string {
-	return []string{"5", "1", "0"}
+	return []string{"5", "2", "0"}
 }
 
 // Read from a csv file to create a *table instance.
@@ -193,7 +199,7 @@ func Read(path string) (*table.Table, error) {
 	}
 	defer func(file *os.File) {
 		_ = file.Close()
-	} (file)
+	}(file)
 
 	if util.IsJsonFile(file.Name()) {
 		return readFromJSONFile(file)

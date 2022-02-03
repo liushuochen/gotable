@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	C = cell.AlignCenter
-	L = cell.AlignLeft
-	R = cell.AlignRight
+	C       = cell.AlignCenter
+	L       = cell.AlignLeft
+	R       = cell.AlignRight
 	Default = "__DEFAULT__"
 )
 
@@ -25,18 +25,14 @@ const (
 //           Default is true(By CreateTable function).
 // - tableType: Type of table.
 type Table struct {
-	Columns      *Set
-	Row  	     []map[string]cell.Cell
-	border	     bool
-	tableType    string
+	*base
+	Row []map[string]cell.Cell
 }
 
 func CreateTable(set *Set) *Table {
 	return &Table{
-		Columns: set,
-		Row: make([]map[string]cell.Cell, 0),
-		border: true,
-		tableType: SimpleTableType,
+		base: createTableBase(set, SimpleTableType, true),
+		Row:  make([]map[string]cell.Cell, 0),
 	}
 }
 
@@ -44,10 +40,6 @@ func CreateTable(set *Set) *Table {
 func (tb *Table) Clear() {
 	tb.Columns.Clear()
 	tb.Row = make([]map[string]cell.Cell, 0)
-}
-
-func (tb *Table) Type() string {
-	return tb.tableType
 }
 
 func (tb *Table) AddColumn(column string) error {
@@ -197,10 +189,14 @@ func (tb *Table) String() string {
 
 	// print table head
 	icon := "|"
-	if !tb.border { icon = " " }
+	if !tb.border {
+		icon = " "
+	}
 	for index, head := range tb.Columns.base {
 		itemLen := columnMaxLength[head.Original()]
-		if tb.border { itemLen += 2 }
+		if tb.border {
+			itemLen += 2
+		}
 		s := ""
 		switch head.Align() {
 		case R:
@@ -278,7 +274,9 @@ func (tb *Table) Exist(value map[string]string) bool {
 				break
 			}
 		}
-		if exist { return exist }
+		if exist {
+			return exist
+		}
 	}
 	return false
 }
@@ -328,12 +326,12 @@ func (tb *Table) XML(indent int) string {
 
 	contents := []string{"<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>", "<table>"}
 	for _, row := range tb.Row {
-		contents = append(contents, indentString + "<row>")
+		contents = append(contents, indentString+"<row>")
 		for name := range row {
 			line := indentString + indentString + fmt.Sprintf("<%s>%s</%s>", name, row[name], name)
 			contents = append(contents, line)
 		}
-		contents = append(contents, indentString + "</row>")
+		contents = append(contents, indentString+"</row>")
 	}
 	contents = append(contents, "</table>")
 	content := strings.Join(contents, "\n")
@@ -373,7 +371,7 @@ func (tb *Table) ToJsonFile(path string, indent int) error {
 	}
 	defer func(file *os.File) {
 		_ = file.Close()
-	} (file)
+	}(file)
 
 	_, err = file.Write(bytes)
 	if err != nil {
@@ -392,7 +390,7 @@ func (tb *Table) ToCSVFile(path string) error {
 	}
 	defer func(file *os.File) {
 		_ = file.Close()
-	} (file)
+	}(file)
 	writer := csv.NewWriter(file)
 
 	contents := make([][]string, 0)
