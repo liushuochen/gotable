@@ -3,6 +3,7 @@ package table
 import (
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
+	"sync"
 )
 
 
@@ -132,6 +133,14 @@ func toRow(value map[string]string) map[string]cell.Cell {
 	row := make(map[string]cell.Cell)
 	for k, v := range value {
 		row[k] = cell.CreateData(v)
+	}
+	return row
+}
+
+func toSafeRow(value map[string]string) sync.Map {
+	var row sync.Map
+	for k, v := range value {
+		row.Store(k, cell.CreateData(v))
 	}
 	return row
 }

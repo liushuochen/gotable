@@ -252,3 +252,9 @@ The type method returns a type of table.
 ```go
 func (tb *Table) Type() string
 ```
+
+### Add row
+Add a row to the safe table. Only support Map. See the Demo section for more information.
+```go
+func (s *SafeTable) AddRow(row interface{}) error
+```
