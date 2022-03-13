@@ -1076,3 +1076,37 @@ func main() {
 
 ```
 
+## Custom ending string
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.Create("version", "description")
+	if err != nil {
+		fmt.Println("Create safe table failed: ", err.Error())
+		return
+	}
+
+	row := make(map[string]string)
+	row["version"] = "v1.0"
+	row["description"] = "test"
+	table.AddRow(row)
+
+	table.End = ""
+	fmt.Println(table)
+	fmt.Println("I am a new line after printing table.")
+	// outputs:
+	// +---------+-------------+
+    // | version | description |
+    // +---------+-------------+
+    // |  v1.0   |    test     |
+    // +---------+-------------+
+    // I am a new line after printing table.
+}
+
+```

@@ -258,3 +258,7 @@ Add a row to the safe table. Only support Map. See the Demo section for more inf
 ```go
 func (s *SafeTable) AddRow(row interface{}) error
 ```
+
+### Custom ending string
+By default, a new blank line will print after table printing. You can designate your ending string by reset 
+```table.End```.

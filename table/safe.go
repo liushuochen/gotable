@@ -34,7 +34,7 @@ func (s *SafeTable) Clear() {
 func (s *SafeTable) AddRow(row interface{}) error {
 	switch v := row.(type) {
 	//case []string:
-	//	return tb.addRowFromSlice(v)
+	//	return s.addRowFromSlice(v)
 	case map[string]string:
 		return s.addRowFromMap(v)
 	default:
@@ -63,5 +63,24 @@ func (s *SafeTable) addRowFromMap(row map[string]string) error {
 	}
 
 	s.Row = append(s.Row, toSafeRow(row))
+	return nil
+}
+
+func (s *SafeTable) addRowFromSlice(row []string) error {
+	rowLength := len(row)
+	if rowLength != s.Columns.Len() {
+		return exception.RowLengthNotEqualColumns(rowLength, s.Columns.Len())
+	}
+
+	rowMap := make(map[string]string, 0)
+	for i := 0; i < rowLength; i++ {
+		if row[i] == Default {
+			rowMap[s.Columns.base[i].Original()] = s.Columns.base[i].Default()
+		} else {
+			rowMap[s.Columns.base[i].Original()] = row[i]
+		}
+	}
+
+	s.Row = append(s.Row, toSafeRow(rowMap))
 	return nil
 }

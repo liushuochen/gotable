@@ -233,6 +233,12 @@ func (tb *Table) String() string {
 	}
 
 	content += tb.printGroup(tableValue, columnMaxLength)
+	return tb.end(content)
+}
+
+func (tb *Table) end(content string) string {
+	content = content[:len(content)-1]
+	content += tb.End
 	return content
 }
 
