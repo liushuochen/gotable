@@ -23,18 +23,22 @@ func (s *SafeTable) Clear() {
 	s.Row = make([]sync.Map, 0)
 }
 
-// AddRow method only support Map argument.
+// AddRow method support Map and Slice argument.
 // For Map argument, you must put the data from each row into a Map and use column-data as key-value pairs. If the Map
 //   does not contain a column, the table sets it to the default value. If the Map contains a column that does not
 //   exist, the AddRow method returns an error.
+// For Slice argument, you must ensure that the slice length is equal to the column length. Method will automatically
+//   mapping values in Slice and columns. The default value cannot be omitted and must use gotable.Default constant.
 // Return error types:
 //   - *exception.UnsupportedRowTypeError: It returned when the type of the argument is not supported.
+//   - *exception.RowLengthNotEqualColumnsError: It returned if the argument is type of the Slice but the length is
+//       different from the length of column.
 //   - *exception.ColumnDoNotExistError: It returned if the argument is type of the Map but contains a nonexistent
 //       column as a key.
 func (s *SafeTable) AddRow(row interface{}) error {
 	switch v := row.(type) {
-	//case []string:
-	//	return s.addRowFromSlice(v)
+	case []string:
+		return s.addRowFromSlice(v)
 	case map[string]string:
 		return s.addRowFromMap(v)
 	default:

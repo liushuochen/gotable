@@ -1,7 +1,7 @@
 package exception
 
 type baseError struct {
-	message		string
+	message string
 }
 
 func createBaseError(message string) *baseError {

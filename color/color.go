@@ -3,9 +3,9 @@ package color
 import "fmt"
 
 type Color struct {
-	Display		int
-	Font		int
-	Background	int
+	Display    int
+	Font       int
+	Background int
 }
 
 // Combine into a terminal escape sequence

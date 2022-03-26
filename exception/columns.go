@@ -11,10 +11,9 @@ func ColumnsLength() *ColumnsLengthError {
 	return err
 }
 
-
 type ColumnDoNotExistError struct {
 	*baseError
-	name	string
+	name string
 }
 
 func (e *ColumnDoNotExistError) Name() string {

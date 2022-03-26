@@ -12,11 +12,11 @@ const (
 )
 
 type Column struct {
-	name			string
-	coloredName		string
-	defaultValue	string
-	align			int
-	length			int
+	name         string
+	coloredName  string
+	defaultValue string
+	align        int
+	length       int
 }
 
 func CreateColumn(name string) *Column {
@@ -79,7 +79,7 @@ func (h *Column) SetAlign(mode int) {
 }
 
 func (h *Column) Equal(other *Column) bool {
-	functions := []func(o *Column) bool {
+	functions := []func(o *Column) bool{
 		h.nameEqual,
 		h.lengthEqual,
 		h.defaultEqual,

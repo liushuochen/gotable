@@ -4,7 +4,7 @@ import "fmt"
 
 type fileError struct {
 	*baseError
-	filename	string
+	filename string
 }
 
 func createFileError(filename, message string) *fileError {
@@ -16,7 +16,6 @@ func (err *fileError) Filename() string {
 	return err.filename
 }
 
-
 type FileDoNotExistError struct {
 	*fileError
 }
@@ -26,7 +25,6 @@ func FileDoNotExist(path string) *FileDoNotExistError {
 	err := &FileDoNotExistError{fileError: createFileError(path, message)}
 	return err
 }
-
 
 type NotARegularCSVFileError struct {
 	*fileError
@@ -38,7 +36,6 @@ func NotARegularCSVFile(path string) *NotARegularCSVFileError {
 	return err
 }
 
-
 type NotARegularJSONFileError struct {
 	*fileError
 }
@@ -48,7 +45,6 @@ func NotARegularJSONFile(path string) *NotARegularJSONFileError {
 	err := &NotARegularJSONFileError{fileError: createFileError(path, message)}
 	return err
 }
-
 
 type UnSupportedFileTypeError struct {
 	*fileError
@@ -61,7 +57,6 @@ func UnSupportedFileType(path string) *UnSupportedFileTypeError {
 	}
 	return err
 }
-
 
 type NotGotableJSONFormatError struct {
 	*fileError

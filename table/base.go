@@ -1,3 +1,5 @@
+// Package table define all table types methods.
+// base.go contains basic methods of table types.
 package table
 
 // base struct contains common attributes to the table.

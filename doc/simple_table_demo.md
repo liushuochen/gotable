@@ -84,37 +84,44 @@ Use table method ```AddRow``` to add a new row to the table. Method ```AddRow```
 package main
 
 import (
-	"fmt"
-	"github.com/liushuochen/gotable"
+  "fmt"
+  "github.com/liushuochen/gotable"
 )
 
 func main() {
-	table, err := gotable.Create("China", "US", "French")
-	if err != nil {
-		fmt.Println("Create table failed: ", err.Error())
-		return
-	}
+  table, err := gotable.Create("China", "US", "French")
+  if err != nil {
+    fmt.Println("Create table failed: ", err.Error())
+    return
+  }
 
-	// Use map
-	row := make(map[string]string)
-	row["China"] = "Beijing"
-	row["US"] = "Washington, D.C."
-	row["French"] = "Paris"
-	err = table.AddRow(row)
-	if err != nil {
-		fmt.Println("Add value to table failed: ", err.Error())
-		return
-	}
+  // Use map
+  row := make(map[string]string)
+  row["China"] = "Beijing"
+  row["US"] = "Washington, D.C."
+  row["French"] = "Paris"
+  err = table.AddRow(row)
+  if err != nil {
+    fmt.Println("Add value to table failed: ", err.Error())
+    return
+  }
 
-	// Use Slice
-	row2 := []string{"Yinchuan", "Los Angeles", "Orleans"}
-	err = table.AddRow(row2)
-	if err != nil {
-		fmt.Println("Add value to table failed: ", err.Error())
-		return
-	}
+  // Use Slice
+  row2 := []string{"Yinchuan", "Los Angeles", "Orleans"}
+  err = table.AddRow(row2)
+  if err != nil {
+    fmt.Println("Add value to table failed: ", err.Error())
+    return
+  }
 
-	fmt.Println(table)
+  fmt.Println(table)
+  // outputs:
+  // +----------+------------------+---------+
+  // |  China   |        US        | French  |
+  // +----------+------------------+---------+
+  // | Beijing  | Washington, D.C. |  Paris  |
+  // | Yinchuan |   Los Angeles    | Orleans |
+  // +----------+------------------+---------+
 }
 
 ```
@@ -1101,12 +1108,12 @@ func main() {
 	fmt.Println(table)
 	fmt.Println("I am a new line after printing table.")
 	// outputs:
-	// +---------+-------------+
-    // | version | description |
-    // +---------+-------------+
-    // |  v1.0   |    test     |
-    // +---------+-------------+
-    // I am a new line after printing table.
+	// +---------+-------------+ 
+	// | version | description | 
+	// +---------+-------------+ 
+	// |  v1.0   |    test     | 
+	// +---------+-------------+ 
+	// I am a new line after printing table.
 }
 
 ```

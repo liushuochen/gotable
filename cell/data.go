@@ -5,8 +5,8 @@ import (
 )
 
 type Data struct {
-	value	string
-	length	int
+	value  string
+	length int
 }
 
 func CreateData(value string) *Data {

@@ -1,3 +1,5 @@
+// Package table define all table types methods.
+// print.go used to control table printing.
 package table
 
 import (
@@ -5,7 +7,6 @@ import (
 	"github.com/liushuochen/gotable/cell"
 	"sync"
 )
-
 
 // This method print part of table data in STDOUT. It will be called twice in *table.PrintTable method.
 // Arguments:
@@ -17,7 +18,9 @@ func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[strin
 	for _, item := range group {
 		for index, head := range tb.Columns.base {
 			itemLen := columnMaxLen[head.Original()]
-			if tb.border { itemLen += 2 }
+			if tb.border {
+				itemLen += 2
+			}
 			s := ""
 			if item[head.String()].String() == "-" {
 				if tb.border {
@@ -99,7 +102,7 @@ func left(c cell.Cell, length int, fillchar string) (string, error) {
 		return "", err
 	}
 
-	result := c.String() + block(length - c.Length())
+	result := c.String() + block(length-c.Length())
 	return result, nil
 }
 
@@ -110,7 +113,7 @@ func right(c cell.Cell, length int, fillchar string) (string, error) {
 		return "", err
 	}
 
-	result := block(length - c.Length()) + c.String()
+	result := block(length-c.Length()) + c.String()
 	return result, nil
 }
 
@@ -123,7 +126,7 @@ func block(length int) string {
 }
 
 func isEvenNumber(number int) bool {
-	if number % 2 == 0 {
+	if number%2 == 0 {
 		return true
 	}
 	return false

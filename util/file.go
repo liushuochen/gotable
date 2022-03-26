@@ -16,7 +16,7 @@ func IsFile(path string) bool {
 
 func isFormatFile(path, format string) bool {
 	pathSlice := strings.Split(path, ".")
-	return pathSlice[len(pathSlice) - 1] == format
+	return pathSlice[len(pathSlice)-1] == format
 }
 
 func IsJsonFile(path string) bool {
