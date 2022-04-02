@@ -1,6 +1,7 @@
 package table
 
 import (
+	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/exception"
 	"sync"
 )
@@ -10,6 +11,7 @@ type SafeTable struct {
 	Row []sync.Map
 }
 
+// CreateSafeTable returns a pointer of SafeTable.
 func CreateSafeTable(set *Set) *SafeTable {
 	return &SafeTable{
 		base: createTableBase(set, SafeTableType, true),
@@ -21,6 +23,20 @@ func CreateSafeTable(set *Set) *SafeTable {
 func (s *SafeTable) Clear() {
 	s.Columns.Clear()
 	s.Row = make([]sync.Map, 0)
+}
+
+// AddColumn method used to add a new column for table. It returns an error when column has been exist.
+func (s *SafeTable) AddColumn(column string) error {
+	err := s.Columns.Add(column)
+	if err != nil {
+		return err
+	}
+
+	// Modify exist value, add new column.
+	for _, row := range s.Row {
+		row.Store(column, cell.CreateEmptyData())
+	}
+	return nil
 }
 
 // AddRow method support Map and Slice argument.

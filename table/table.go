@@ -48,7 +48,7 @@ func (tb *Table) AddColumn(column string) error {
 		return err
 	}
 
-	// modify exist value, add new column.
+	// Modify exist value, add new column.
 	for _, row := range tb.Row {
 		row[column] = cell.CreateEmptyData()
 	}

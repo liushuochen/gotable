@@ -246,6 +246,10 @@ section in this document for more information. The third and fourth parameters s
 func (tb *Table) SetColumnColor(columnName string, display, fount, background int)
 ```
 
+### Custom ending string
+By default, a new blank line will print after table printing. You can designate your ending string by reset
+```table.End```.
+
 ## APIs for safe table type(*table.SafeTable)
 ### Get table type
 The type method returns a type of table.
@@ -262,3 +266,9 @@ func (s *SafeTable) AddRow(row interface{}) error
 ### Custom ending string
 By default, a new blank line will print after table printing. You can designate your ending string by reset 
 ```table.End```.
+
+### Add column
+
+```go
+func (s *SafeTable) AddColumn(column string) error
+```

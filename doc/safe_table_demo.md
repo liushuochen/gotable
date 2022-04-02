@@ -72,3 +72,36 @@ func main() {
 }
 
 ```
+
+## Add a new column to a table
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.CreateSafeTable("China", "US", "French")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+	
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington, D.C."
+	row["French"] = "Paris"
+	err = table.AddRow(row)
+	if err != nil {
+		fmt.Println("Add value to table failed: ", err.Error())
+		return
+	}
+
+	table.AddColumn("Japan")
+
+	fmt.Println(table)
+}
+
+```
