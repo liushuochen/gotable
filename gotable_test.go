@@ -34,3 +34,42 @@ func TestValueOfColorDisplay(t *testing.T) {
 		t.Errorf("expected gotable.Flash is 5, but %d got", gotable.Flash)
 	}
 }
+
+// Test the value of color control
+func TestValueOfColorControllers(t *testing.T) {
+	if gotable.Black != 30 {
+		t.Errorf("expected gotable.Black is 30, but %d got", gotable.Black)
+	}
+
+	if gotable.Red != 31 {
+		t.Errorf("expected gotable.Red is 31, but %d got", gotable.Red)
+	}
+
+	if gotable.Green != 32 {
+		t.Errorf("expected gotable.Green is 32, but %d got", gotable.Green)
+	}
+
+	if gotable.Yellow != 33 {
+		t.Errorf("expected gotable.Yellow is 33, but %d got", gotable.Yellow)
+	}
+
+	if gotable.Blue != 34 {
+		t.Errorf("expected gotable.Blue is 34, but %d got", gotable.Blue)
+	}
+
+	if gotable.Purple != 35 {
+		t.Errorf("expected gotable.Purple is 35, but %d got", gotable.Purple)
+	}
+
+	if gotable.Cyan != 36 {
+		t.Errorf("expected gotable.Cyan is 36, but %d got", gotable.Cyan)
+	}
+
+	if gotable.Write != 37 {
+		t.Errorf("expected gotable.Write is 37, but %d got", gotable.Write)
+	}
+
+	if gotable.NoneBackground != 0 {
+		t.Errorf("expected gotable.NoneBackground is 0, but %d got", gotable.NoneBackground)
+	}
+}

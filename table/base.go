@@ -27,3 +27,13 @@ func createTableBase(columns *Set, tableType string, border bool) *base {
 func (b *base) Type() string {
 	return b.tableType
 }
+
+// SetDefault method used to set default value for a given column name.
+func (b *base) SetDefault(column string, defaultValue string) {
+	for _, head := range b.Columns.base {
+		if head.Original() == column {
+			head.SetDefault(defaultValue)
+			break
+		}
+	}
+}

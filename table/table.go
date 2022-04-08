@@ -55,15 +55,6 @@ func (tb *Table) AddColumn(column string) error {
 	return nil
 }
 
-func (tb *Table) SetDefault(h string, defaultValue string) {
-	for _, head := range tb.Columns.base {
-		if head.Original() == h {
-			head.SetDefault(defaultValue)
-			break
-		}
-	}
-}
-
 func (tb *Table) DropDefault(h string) {
 	tb.SetDefault(h, "")
 }

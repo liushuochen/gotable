@@ -2,6 +2,8 @@
 In this section, we have written some demos about simple table type for your reference.
 Click [here](demo.md) to return to demo main page.
 
+
+
 ## Create a table
 Use ```gotable.Create``` function with a column(string slice or strings) to create a table.
 It returns a pointer of ```table.Table``` struct and an error.
@@ -24,7 +26,10 @@ func main() {
 
 ```
 
+
+
 ## Create a table from struct
+
 ```go
 package main
 
@@ -48,7 +53,10 @@ func main() {
 
 ```
 
+
+
 ## Load data from file
+
 Currently, csv and json file are supported.
 ```go
 package main
@@ -68,6 +76,8 @@ func main() {
 }
 
 ```
+
+
 
 ## Add row
 
@@ -126,7 +136,10 @@ func main() {
 
 ```
 
+
+
 ## Add rows
+
 Method ```AddRows``` add a list of rows. It returns a slice that
 consists of adding failed rows.
 
@@ -167,7 +180,10 @@ func main() {
 }
 ```
 
+
+
 ## Print table
+
 You can print the contents of the table instance to STDOUT using the print function in the ```fmt``` standard library.
 For example ```fmt.Println```, ```fmt.Print``` and so on.
 
@@ -219,7 +235,10 @@ func main() {
 
 ```
 
+
+
 ## Clear data
+
 ```go
 package main
 
@@ -267,8 +286,11 @@ func main() {
 
 ```
 
+
+
 ## Set default value
-You can use the ```SetDefault``` method to set a default value for column. By default, the default value is an empty
+
+You can use the ```SetDefault``` method to set a default value for a column. By default, the default value is an empty
 string. For Map structure data, when adding a row, omitting a column indicates that the value of column in the row is
 the default value. You can also use the ```gotable.Default``` constant to indicate that a column in the row is the
 default value. For Slice structure data, when adding a row, you must explicitly specify the ```gotable.Default```
@@ -331,7 +353,10 @@ func main() {
 
 ```
 
+
+
 ## Drop default value
+
 ```go
 package main
 
@@ -357,7 +382,10 @@ func main() {
 
 ```
 
+
+
 ## Get default value
+
 ```go
 package main
 
@@ -381,7 +409,10 @@ func main() {
 
 ```
 
+
+
 ## Get default map
+
 ```go
 package main
 
@@ -405,7 +436,10 @@ func main() {
 
 ```
 
+
+
 ## Add a new column to a table
+
 ```go
 package main
 
@@ -439,7 +473,10 @@ func main() {
 
 ```
 
+
+
 ## Arrange: center, align left or align right
+
 To change the arrangement, there are three constants
 (```gotable.Center```, ```gotable.Left```, ```gotable.Right```) to
 choose from. By default, all arrangements is ```gotable.Center```.
@@ -483,7 +520,10 @@ func main() {
 
 ```
 
+
+
 ## Check empty
+
 ```go
 package main
 
@@ -505,7 +545,10 @@ func main() {
 }
 ```
 
+
+
 ## Get list of columns
+
 ```go
 package main
 
@@ -527,7 +570,10 @@ func main() {
 
 ```
 
+
+
 ## Get values map
+
 ```go
 package main
 
@@ -560,7 +606,10 @@ func main() {
 
 ```
 
+
+
 ## Check value exists
+
 ```go
 package main
 
@@ -605,7 +654,10 @@ func main() {
 }
 ```
 
+
+
 ## Get table length
+
 ```go
 package main
 
@@ -643,7 +695,10 @@ func main() {
 
 ```
 
+
+
 ## To JSON string
+
 ```go
 package main
 
@@ -705,7 +760,10 @@ func main() {
 }
 ```
 
+
+
 ## To XML string
+
 ```go
 package main
 
@@ -757,7 +815,10 @@ func main() {
 
 ```
 
+
+
 ## Save the table data to a JSON file
+
 ```go
 package main
 
@@ -811,7 +872,10 @@ cmd/demo.json:
 ]
 ```
 
+
+
 ## Save the table data to a CSV file
+
 ```go
 package main
 
@@ -845,7 +909,10 @@ func main() {
 
 ```
 
+
+
 ## Close border
+
 ```go
 package main
 
@@ -897,7 +964,10 @@ func main() {
 
 ```
 
+
+
 ## Open border
+
 ```go
 package main
 
@@ -952,7 +1022,10 @@ func main() {
 
 ```
 
+
+
 ## Has column
+
 ```go
 package main
 
@@ -982,7 +1055,10 @@ func main() {
 
 ```
 
+
+
 ## Check whether the columns of the two tables are the same
+
 ```go
 package main
 
@@ -1027,7 +1103,10 @@ func main() {
 
 ```
 
+
+
 ## Set columns color
+
 ```go
 package main
 
@@ -1061,7 +1140,10 @@ func main() {
 
 ```
 
+
+
 ## Get table type
+
 ```go
 package main
 
@@ -1083,7 +1165,10 @@ func main() {
 
 ```
 
+
+
 ## Custom ending string
+
 ```go
 package main
 
