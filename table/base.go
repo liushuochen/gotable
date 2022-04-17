@@ -37,3 +37,8 @@ func (b *base) SetDefault(column string, defaultValue string) {
 		}
 	}
 }
+
+// IsSimpleTable method returns a bool value indicate the table type is SimpleTableType.
+func (b *base) IsSimpleTable() bool {
+	return b.tableType == SimpleTableType
+}

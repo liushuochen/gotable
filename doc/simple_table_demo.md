@@ -1202,3 +1202,29 @@ func main() {
 }
 
 ```
+
+
+
+## Check the table type is simple table
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.Create("China", "US", "UK")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	fmt.Println(table.IsSimpleTable())
+	// output: true
+}
+
+```
+

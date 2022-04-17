@@ -73,3 +73,12 @@ func TestValueOfColorControllers(t *testing.T) {
 		t.Errorf("expected gotable.NoneBackground is 0, but %d got", gotable.NoneBackground)
 	}
 }
+
+// Test creating a simple table.
+func TestCreateTable(t *testing.T) {
+	columns := []string{"country", "capital"}
+	_, err := gotable.Create(columns...)
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got", err.Error())
+	}
+}

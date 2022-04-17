@@ -358,6 +358,16 @@ By default, a new blank line will print after table printing. You can designate 
 
 
 
+### Is simple table
+
+Method IsSimpleTable is used to check whether the table type is simple table.
+
+```go
+func (b *base) IsSimpleTable() bool
+```
+
+
+
 
 
 ## APIs for safe table type(*table.SafeTable)
@@ -400,5 +410,15 @@ By default, the default value for all columns is an empty string.
 
 ```go
 func (b *base) SetDefault(column string, defaultValue string)
+```
+
+
+
+### Is simple table
+
+Method IsSimpleTable is used to check whether the table type is simple table.
+
+```go
+func (b *base) IsSimpleTable() bool
 ```
 
