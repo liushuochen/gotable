@@ -368,6 +368,14 @@ func (b *base) IsSimpleTable() bool
 
 
 
+### Is safe table
+
+Method IsSafeTable is used to check whether the table type is safe table.
+
+```go
+func(b *base) IsSafeTable() bool
+```
+
 
 
 ## APIs for safe table type(*table.SafeTable)
@@ -420,5 +428,15 @@ Method IsSimpleTable is used to check whether the table type is simple table.
 
 ```go
 func (b *base) IsSimpleTable() bool
+```
+
+
+
+### Is safe table
+
+Method IsSafeTable is used to check whether the table type is safe table.
+
+```go
+func(b *base) IsSafeTable() bool
 ```
 

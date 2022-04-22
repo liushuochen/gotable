@@ -74,11 +74,20 @@ func TestValueOfColorControllers(t *testing.T) {
 	}
 }
 
-// Test creating a simple table.
-func TestCreateTable(t *testing.T) {
+// TestCreateSimpleTable used to test creating a simple table.
+func TestCreateSimpleTable(t *testing.T) {
 	columns := []string{"country", "capital"}
 	_, err := gotable.Create(columns...)
 	if err != nil {
 		t.Errorf("expected err is nil, but %s got", err.Error())
+	}
+}
+
+// TestCreateSimpleTableWithDuplicateColumn used to test creating a simple table with duplicate columns.
+func TestCreateSimpleTableWithDuplicateColumn(t *testing.T) {
+	columns := []string{"name", "name"}
+	_, err := gotable.Create(columns...)
+	if err == nil {
+		t.Errorf("expected err is not nil, but nil got")
 	}
 }

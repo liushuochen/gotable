@@ -14,7 +14,7 @@ type SafeTable struct {
 // CreateSafeTable returns a pointer of SafeTable.
 func CreateSafeTable(set *Set) *SafeTable {
 	return &SafeTable{
-		base: createTableBase(set, SafeTableType, true),
+		base: createTableBase(set, safeTableType, true),
 		Row:  make([]sync.Map, 0),
 	}
 }

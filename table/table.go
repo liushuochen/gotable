@@ -31,7 +31,7 @@ type Table struct {
 
 func CreateTable(set *Set) *Table {
 	return &Table{
-		base: createTableBase(set, SimpleTableType, true),
+		base: createTableBase(set, simpleTableType, true),
 		Row:  make([]map[string]cell.Cell, 0),
 	}
 }

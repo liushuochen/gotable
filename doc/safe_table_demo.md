@@ -156,7 +156,7 @@ func main() {
 
 
 
-## Check the table type is simple table
+## Check the table type is safe table
 
 ```go
 package main
@@ -173,8 +173,8 @@ func main() {
 		return
 	}
 
-	fmt.Println(table.IsSimpleTable())
-	// output: false
+	fmt.Println(table.IsSafeTable())
+	// output: true
 }
 
 ```

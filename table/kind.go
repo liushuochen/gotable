@@ -3,6 +3,6 @@
 package table
 
 const (
-	SimpleTableType = "simple"
-	SafeTableType   = "safe"
+	simpleTableType = "simple"
+	safeTableType   = "safe"
 )
