@@ -186,12 +186,10 @@ func (tb *Table) DropDefault(h string)
 
 ### Get default value
 
-Use table method ```GetDefault``` to get default value of head.
-If h does not exist in the table.Header, the method returns an empty
-string.
+Use table method ```GetDefault``` to get default value of column. If column does not exist in the table, the method returns an empty string.
 
 ```go
-func (tb *Table) GetDefault(h string) string
+func (b *base) GetDefault(column string) string
 ```
 
 

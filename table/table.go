@@ -59,15 +59,6 @@ func (tb *Table) DropDefault(h string) {
 	tb.SetDefault(h, "")
 }
 
-func (tb *Table) GetDefault(h string) string {
-	for _, head := range tb.Columns.base {
-		if head.Original() == h {
-			return head.Default()
-		}
-	}
-	return ""
-}
-
 func (tb *Table) GetDefaults() map[string]string {
 	defaults := make(map[string]string)
 	for _, h := range tb.Columns.base {

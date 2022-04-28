@@ -179,3 +179,30 @@ func main() {
 
 ```
 
+
+
+## Get default value
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.CreateSafeTable("China", "US", "UK")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	table.SetDefault("China", "Beijing")
+	table.SetDefault("China", "Hangzhou")
+	fmt.Println(table.GetDefault("China"))
+	// Hangzhou
+}
+
+```
+

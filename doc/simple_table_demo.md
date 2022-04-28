@@ -366,17 +366,17 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	tb.SetDefault("UK", "London")
-	fmt.Println(tb.GetDefaults())
+	table.SetDefault("UK", "London")
+	fmt.Println(table.GetDefaults())
 	// map[China: UK:London US:]
-	tb.DropDefault("UK")
-	fmt.Println(tb.GetDefaults())
+	table.DropDefault("UK")
+	fmt.Println(table.GetDefaults())
 	// map[China: UK: US:]
 }
 
@@ -395,15 +395,15 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	tb.SetDefault("China", "Beijing")
-	tb.SetDefault("China", "Hangzhou")
-	fmt.Println(tb.GetDefault("China"))
+	table.SetDefault("China", "Beijing")
+	table.SetDefault("China", "Hangzhou")
+	fmt.Println(table.GetDefault("China"))
 	// Hangzhou
 }
 

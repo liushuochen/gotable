@@ -47,3 +47,13 @@ func (b *base) IsSimpleTable() bool {
 func(b *base) IsSafeTable() bool {
 	return b.tableType == safeTableType
 }
+
+// GetDefault method returns default value with a designated column name.
+func (b *base) GetDefault(column string) string {
+	for _, col := range b.Columns.base {
+		if col.Original() == column {
+			return col.Default()
+		}
+	}
+	return ""
+}
