@@ -29,6 +29,7 @@ type Table struct {
 	Row []map[string]cell.Cell
 }
 
+// CreateTable function returns a pointer of Table.
 func CreateTable(set *Set) *Table {
 	return &Table{
 		base: createTableBase(set, simpleTableType, true),
@@ -53,10 +54,6 @@ func (tb *Table) AddColumn(column string) error {
 		row[column] = cell.CreateEmptyData()
 	}
 	return nil
-}
-
-func (tb *Table) DropDefault(h string) {
-	tb.SetDefault(h, "")
 }
 
 func (tb *Table) GetDefaults() map[string]string {

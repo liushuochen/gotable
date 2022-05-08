@@ -57,3 +57,8 @@ func (b *base) GetDefault(column string) string {
 	}
 	return ""
 }
+
+// DropDefault method used to delete default value for designated column.
+func (b *base) DropDefault(column string) {
+	b.SetDefault(column, "")
+}

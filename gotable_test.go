@@ -2,6 +2,7 @@
 package gotable_test
 
 import (
+	"github.com/liushuochen/gotable/exception"
 	"strings"
 	"testing"
 
@@ -74,7 +75,7 @@ func TestValueOfColorControllers(t *testing.T) {
 	}
 }
 
-// TestCreateSimpleTable used to test creating a simple table.
+// Test creating a simple table.
 func TestCreateSimpleTable(t *testing.T) {
 	columns := []string{"country", "capital"}
 	_, err := gotable.Create(columns...)
@@ -89,5 +90,15 @@ func TestCreateSimpleTableWithDuplicateColumn(t *testing.T) {
 	_, err := gotable.Create(columns...)
 	if err == nil {
 		t.Errorf("expected err is not nil, but nil got")
+	}
+}
+
+// Test creating a simple table without column.
+func TestCreateSimpleTableWithoutColumn(t *testing.T) {
+	_, err := gotable.Create()
+	switch err.(type) {
+	case *exception.ColumnsLengthError:
+	default:
+		t.Errorf("expected err is ColumnsLengthError, but %T got", err)
 	}
 }

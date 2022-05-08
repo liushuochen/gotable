@@ -179,7 +179,7 @@ func (b *base) SetDefault(column string, defaultValue string)
 ### Drop default value
 
 ```go
-func (tb *Table) DropDefault(h string)
+func (b *base) DropDefault(column string)
 ```
 
 
@@ -416,6 +416,14 @@ By default, the default value for all columns is an empty string.
 
 ```go
 func (b *base) SetDefault(column string, defaultValue string)
+```
+
+
+
+### Drop default value
+
+```go
+func (b *base) DropDefault(column string)
 ```
 
 
