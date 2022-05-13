@@ -56,14 +56,6 @@ func (tb *Table) AddColumn(column string) error {
 	return nil
 }
 
-func (tb *Table) GetDefaults() map[string]string {
-	defaults := make(map[string]string)
-	for _, h := range tb.Columns.base {
-		defaults[h.Original()] = h.Default()
-	}
-	return defaults
-}
-
 // AddRow method support Map and Slice argument.
 // For Map argument, you must put the data from each row into a Map and use column-data as key-value pairs. If the Map
 //   does not contain a column, the table sets it to the default value. If the Map contains a column that does not

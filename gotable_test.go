@@ -75,16 +75,17 @@ func TestValueOfColorControllers(t *testing.T) {
 	}
 }
 
-// Test creating a simple table.
+// Create a simple table.
 func TestCreateSimpleTable(t *testing.T) {
 	columns := []string{"country", "capital"}
 	_, err := gotable.Create(columns...)
 	if err != nil {
 		t.Errorf("expected err is nil, but %s got", err.Error())
+		return
 	}
 }
 
-// TestCreateSimpleTableWithDuplicateColumn used to test creating a simple table with duplicate columns.
+// Create a simple table with duplicate columns.
 func TestCreateSimpleTableWithDuplicateColumn(t *testing.T) {
 	columns := []string{"name", "name"}
 	_, err := gotable.Create(columns...)
@@ -93,12 +94,22 @@ func TestCreateSimpleTableWithDuplicateColumn(t *testing.T) {
 	}
 }
 
-// Test creating a simple table without column.
+// Create a simple table without column.
 func TestCreateSimpleTableWithoutColumn(t *testing.T) {
 	_, err := gotable.Create()
 	switch err.(type) {
 	case *exception.ColumnsLengthError:
 	default:
 		t.Errorf("expected err is ColumnsLengthError, but %T got", err)
+	}
+}
+
+// Create a safe table.
+func TestCreateSafeTable(t *testing.T) {
+	columns := []string{"country", "capital"}
+	_, err := gotable.CreateSafeTable(columns...)
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got", err.Error())
+		return
 	}
 }

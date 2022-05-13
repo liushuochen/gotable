@@ -199,7 +199,7 @@ func (b *base) GetDefault(column string) string
 Use table method ```GetDefaults``` to get default map of head.
 
 ```go
-func (tb *Table) GetDefaults() map[string]string
+func (b *base) GetDefaults() map[string]string
 ```
 
 
@@ -386,6 +386,26 @@ func (tb *Table) Type() string
 
 
 
+### Is simple table
+
+Method IsSimpleTable is used to check whether the table type is simple table.
+
+```go
+func (b *base) IsSimpleTable() bool
+```
+
+
+
+### Is safe table
+
+Method IsSafeTable is used to check whether the table type is safe table.
+
+```go
+func(b *base) IsSafeTable() bool
+```
+
+
+
 ### Add row
 
 Add a row to the safe table. Only support Map. See the Demo section for more information.
@@ -428,21 +448,11 @@ func (b *base) DropDefault(column string)
 
 
 
-### Is simple table
+### Get default map
 
-Method IsSimpleTable is used to check whether the table type is simple table.
-
-```go
-func (b *base) IsSimpleTable() bool
-```
-
-
-
-### Is safe table
-
-Method IsSafeTable is used to check whether the table type is safe table.
+Use table method ```GetDefaults``` to get default map of head.
 
 ```go
-func(b *base) IsSafeTable() bool
+func (b *base) GetDefaults() map[string]string
 ```
 
