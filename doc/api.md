@@ -139,8 +139,7 @@ func (tb *Table) AddRow(row interface{}) error
 
 ### Add a list of rows
 
-Method ```AddRows``` add a list of rows. It returns a slice that
-consists of adding failed rows.
+Method ```AddRows``` add a list of rows. It returns a slice that consists of adding failed rows.
 
 ```go
 func (tb *Table) AddRows(rows []map[string]string) []map[string]string
@@ -412,6 +411,18 @@ Add a row to the safe table. Only support Map. See the Demo section for more inf
 ```go
 func (s *SafeTable) AddRow(row interface{}) error
 ```
+
+
+
+### Add a list of rows
+
+Method ```AddRows``` add a list of rows. It returns a slice that consists of adding failed rows.
+
+```go
+func (s *SafeTable) AddRows(rows []map[string]string) []map[string]string
+```
+
+
 
 
 

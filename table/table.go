@@ -43,6 +43,7 @@ func (tb *Table) Clear() {
 	tb.Row = make([]map[string]cell.Cell, 0)
 }
 
+// AddColumn method used to add a new column for table. It returns an error when column has been exist.
 func (tb *Table) AddColumn(column string) error {
 	err := tb.Columns.Add(column)
 	if err != nil {

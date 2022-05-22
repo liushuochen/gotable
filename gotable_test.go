@@ -36,7 +36,7 @@ func TestValueOfColorDisplay(t *testing.T) {
 	}
 }
 
-// Test the value of color control
+// The value of color control
 func TestValueOfColorControllers(t *testing.T) {
 	if gotable.Black != 30 {
 		t.Errorf("expected gotable.Black is 30, but %d got", gotable.Black)
@@ -111,5 +111,14 @@ func TestCreateSafeTable(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected err is nil, but %s got", err.Error())
 		return
+	}
+}
+
+// Create a safe table with duplicate columns.
+func TestCreateSafeTableWithDuplicateColumn(t *testing.T) {
+	columns := []string{"name", "name"}
+	_, err := gotable.CreateSafeTable(columns...)
+	if err == nil {
+		t.Errorf("expected err is not nil, but nil got")
 	}
 }

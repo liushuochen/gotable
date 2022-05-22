@@ -62,6 +62,18 @@ func (s *SafeTable) AddRow(row interface{}) error {
 	}
 }
 
+// AddRows used to add a slice of rows map. It returns a slice of map which add failed.
+func (s *SafeTable) AddRows(rows []map[string]string) []map[string]string {
+	failure := make([]map[string]string, 0)
+	for _, row := range rows {
+		err := s.AddRow(row)
+		if err != nil {
+			failure = append(failure, row)
+		}
+	}
+	return failure
+}
+
 func (s *SafeTable) addRowFromMap(row map[string]string) error {
 	for key := range row {
 		if !s.Columns.Exist(key) {
