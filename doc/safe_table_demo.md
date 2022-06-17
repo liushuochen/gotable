@@ -263,3 +263,44 @@ func main() {
 }
 ```
 
+
+
+## Get table length
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.CreateSafeTable("Name", "ID", "salary")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	length := tb.Length()
+	fmt.Printf("Before insert values, the value of length is: %d\n", length)
+	// Before insert values, the value of length is: 0
+
+	rows := make([]map[string]string, 0)
+	for i := 0; i < 3; i++ {
+		row := make(map[string]string)
+		row["Name"] = fmt.Sprintf("employee-%d", i)
+		row["ID"] = fmt.Sprintf("00%d", i)
+		row["salary"] = "60000"
+		rows = append(rows, row)
+	}
+
+	tb.AddRows(rows)
+
+	length = tb.Length()
+	fmt.Printf("After insert values, the value of length is: %d\n", length)
+	// After insert values, the value of length is: 3
+}
+
+```
+

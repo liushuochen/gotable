@@ -9,7 +9,7 @@ import (
 	"github.com/liushuochen/gotable"
 )
 
-// TestVersionPrefix used to test version whether start with "gotable".
+// Check version string whether start with "gotable".
 func TestVersionPrefix(t *testing.T) {
 	version := gotable.Version()
 	if !strings.HasPrefix(version, "gotable") {
@@ -120,5 +120,15 @@ func TestCreateSafeTableWithDuplicateColumn(t *testing.T) {
 	_, err := gotable.CreateSafeTable(columns...)
 	if err == nil {
 		t.Errorf("expected err is not nil, but nil got")
+	}
+}
+
+// Create a safe table without column.
+func TestCreateSafeTableWithoutColumn(t *testing.T) {
+	_, err := gotable.CreateSafeTable()
+	switch err.(type) {
+	case *exception.ColumnsLengthError:
+	default:
+		t.Errorf("expected err is ColumnsLengthError, but %T got", err)
 	}
 }

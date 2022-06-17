@@ -467,3 +467,11 @@ Use table method ```GetDefaults``` to get default map of head.
 func (b *base) GetDefaults() map[string]string
 ```
 
+
+
+### Get table length
+
+```go
+func (s *SafeTable) Length() int
+```
+

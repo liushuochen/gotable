@@ -123,6 +123,7 @@ func (tb *Table) addRowFromMap(row map[string]string) error {
 	return nil
 }
 
+// AddRows used to add a slice of rows map. It returns a slice of map which add failed.
 func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	failure := make([]map[string]string, 0)
 	for _, row := range rows {
