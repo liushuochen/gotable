@@ -132,3 +132,21 @@ func TestCreateSafeTableWithoutColumn(t *testing.T) {
 		t.Errorf("expected err is ColumnsLengthError, but %T got", err)
 	}
 }
+
+// Create table using struct.
+func TestCreateTableByStruct(t *testing.T) {
+	type Student struct {
+		Name string `gotable:"name"`
+		Age  string `gotable:"age"`
+	}
+
+	stu := &Student{
+		Name: "Bob",
+		Age:  "12",
+	}
+
+	_, err := gotable.CreateByStruct(stu)
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+}

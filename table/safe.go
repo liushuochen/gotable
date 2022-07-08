@@ -121,3 +121,8 @@ func (s *SafeTable) addRowFromSlice(row []string) error {
 func (s *SafeTable) Length() int {
 	return len(s.Row)
 }
+
+// Empty method is used to determine whether the table is empty.
+func (s *SafeTable) Empty() bool {
+	return s.Length() == 0
+}

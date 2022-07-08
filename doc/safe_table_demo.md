@@ -304,3 +304,29 @@ func main() {
 
 ```
 
+
+
+## Check table empty
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, err := gotable.CreateSafeTable("China", "US", "UK")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	if table.Empty() {
+		fmt.Println("table is empty.")
+	}
+}
+
+```
+

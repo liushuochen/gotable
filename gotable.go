@@ -110,9 +110,9 @@ func Version() string {
 
 func Versions() []string { return getVersions() }
 
-// getVersions 5.14.0
+// getVersions 5.15.0
 func getVersions() []string {
-	return []string{"5", "14", "0"}
+	return []string{"5", "15", "0"}
 }
 
 // Read from a csv file to create a *table instance.

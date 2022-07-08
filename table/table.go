@@ -43,7 +43,7 @@ func (tb *Table) Clear() {
 	tb.Row = make([]map[string]cell.Cell, 0)
 }
 
-// AddColumn method used to add a new column for table. It returns an error when column has been exist.
+// AddColumn method used to add a new column for table. It returns an error when column has been existed.
 func (tb *Table) AddColumn(column string) error {
 	err := tb.Columns.Add(column)
 	if err != nil {
@@ -62,7 +62,7 @@ func (tb *Table) AddColumn(column string) error {
 //   does not contain a column, the table sets it to the default value. If the Map contains a column that does not
 //   exist, the AddRow method returns an error.
 // For Slice argument, you must ensure that the slice length is equal to the column length. Method will automatically
-//   mapping values in Slice and columns. The default value cannot be omitted and must use gotable.Default constant.
+//   map values in Slice and columns. The default value cannot be omitted and must use gotable.Default constant.
 // Return error types:
 //   - *exception.UnsupportedRowTypeError: It returned when the type of the argument is not supported.
 //   - *exception.RowLengthNotEqualColumnsError: It returned if the argument is type of the Slice but the length is
@@ -123,7 +123,7 @@ func (tb *Table) addRowFromMap(row map[string]string) error {
 	return nil
 }
 
-// AddRows used to add a slice of rows map. It returns a slice of map which add failed.
+// AddRows used to add a slice of rows maps. It returns a slice of map which add failed.
 func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	failure := make([]map[string]string, 0)
 	for _, row := range rows {
@@ -135,6 +135,7 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	return failure
 }
 
+// String method used to implement fmt.Stringer.
 func (tb *Table) String() string {
 	columnMaxLength := make(map[string]int)
 	tag := make(map[string]cell.Cell)
@@ -215,6 +216,7 @@ func (tb *Table) end(content string) string {
 	return content
 }
 
+// Empty method is used to determine whether the table is empty.
 func (tb *Table) Empty() bool {
 	return tb.Length() == 0
 }

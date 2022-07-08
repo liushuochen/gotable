@@ -533,13 +533,13 @@ import (
 )
 
 func main() {
-	tb, err := gotable.Create("China", "US", "UK")
+	table, err := gotable.Create("China", "US", "UK")
 	if err != nil {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
 
-	if tb.Empty() {
+	if table.Empty() {
 		fmt.Println("table is empty.")
 	}
 }
