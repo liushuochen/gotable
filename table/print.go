@@ -4,8 +4,9 @@ package table
 
 import (
 	"fmt"
-	"github.com/liushuochen/gotable/cell"
 	"sync"
+
+	"github.com/liushuochen/gotable/cell"
 )
 
 // This method print part of table data in STDOUT. It will be called twice in *table.PrintTable method.
@@ -15,17 +16,26 @@ import (
 //   columnMaxLen:  A map that storage column as key, max length of cell of column as value.
 func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[string]int) string {
 	result := ""
+	border := ""
+	switch tb.border {
+	case 1:
+		border = "-"
+	case 2:
+		border = "="
+	case 3:
+		border = "~"
+	case 4:
+		border = "+"
+	}
 	for _, item := range group {
 		for index, head := range tb.Columns.base {
 			itemLen := columnMaxLen[head.Original()]
-			if tb.border {
+			if tb.border > 0 {
 				itemLen += 2
 			}
 			s := ""
-			if item[head.String()].String() == "-" {
-				if tb.border {
-					s, _ = center(item[head.String()], itemLen, "-")
-				}
+			if item[head.String()].String() == border {
+				s, _ = center(item[head.String()], itemLen, border)
 			} else {
 				switch head.Align() {
 				case R:
@@ -41,7 +51,7 @@ func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[strin
 			if item[head.String()].String() == "-" {
 				icon = "+"
 			}
-			if !tb.border {
+			if tb.border == 0 {
 				icon = " "
 			}
 

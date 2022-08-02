@@ -9,12 +9,12 @@ package table
 // End: Used to set the ending. The default is newline "\n".
 type base struct {
 	Columns   *Set
-	border    bool
+	border    int8
 	tableType string
 	End       string
 }
 
-func createTableBase(columns *Set, tableType string, border bool) *base {
+func createTableBase(columns *Set, tableType string, border int8) *base {
 	b := new(base)
 	b.Columns = columns
 	b.tableType = tableType
@@ -44,7 +44,7 @@ func (b *base) IsSimpleTable() bool {
 }
 
 // IsSafeTable method returns a bool value indicate the table type is safeTableType.
-func(b *base) IsSafeTable() bool {
+func (b *base) IsSafeTable() bool {
 	return b.tableType == safeTableType
 }
 

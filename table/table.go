@@ -4,11 +4,12 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/exception"
 	"github.com/liushuochen/gotable/util"
-	"os"
-	"strings"
 )
 
 const (
@@ -32,7 +33,7 @@ type Table struct {
 // CreateTable function returns a pointer of Table.
 func CreateTable(set *Set) *Table {
 	return &Table{
-		base: createTableBase(set, simpleTableType, true),
+		base: createTableBase(set, simpleTableType, 1),
 		Row:  make([]map[string]cell.Cell, 0),
 	}
 }
@@ -140,9 +141,22 @@ func (tb *Table) String() string {
 	columnMaxLength := make(map[string]int)
 	tag := make(map[string]cell.Cell)
 	taga := make([]map[string]cell.Cell, 0)
+	border := ""
+	switch tb.border {
+	case 0:
+	case 1:
+		border = "-"
+	case 2:
+		border = "="
+	case 3:
+		border = "~"
+	case 4:
+		border = "+"
+	}
+
 	for _, h := range tb.Columns.base {
 		columnMaxLength[h.Original()] = h.Length()
-		tag[h.String()] = cell.CreateData("-")
+		tag[h.String()] = cell.CreateData(border)
 	}
 
 	for _, data := range tb.Row {
@@ -156,19 +170,19 @@ func (tb *Table) String() string {
 	content := ""
 	// print first line
 	taga = append(taga, tag)
-	if tb.border {
+	if tb.border > 0 {
 		// tb.printGroup(taga, columnMaxLength)
 		content += tb.printGroup(taga, columnMaxLength)
 	}
 
 	// print table head
 	icon := "|"
-	if !tb.border {
+	if tb.border == 0 {
 		icon = " "
 	}
 	for index, head := range tb.Columns.base {
 		itemLen := columnMaxLength[head.Original()]
-		if tb.border {
+		if tb.border > 0 {
 			itemLen += 2
 		}
 		s := ""
@@ -189,7 +203,7 @@ func (tb *Table) String() string {
 		content += s
 	}
 
-	if tb.border {
+	if tb.border > 0 {
 		content += "\n"
 	}
 
@@ -320,11 +334,15 @@ func (tb *Table) XML(indent int) string {
 }
 
 func (tb *Table) CloseBorder() {
-	tb.border = false
+	tb.border = 0
 }
 
 func (tb *Table) OpenBorder() {
-	tb.border = true
+	tb.border = 1
+}
+
+func (tb *Table) SetBorder(border int8) {
+	tb.border = border
 }
 
 func (tb *Table) Align(column string, mode int) {

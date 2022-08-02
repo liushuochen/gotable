@@ -1,9 +1,10 @@
 package table
 
 import (
+	"sync"
+
 	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/exception"
-	"sync"
 )
 
 type SafeTable struct {
@@ -14,7 +15,7 @@ type SafeTable struct {
 // CreateSafeTable returns a pointer of SafeTable.
 func CreateSafeTable(set *Set) *SafeTable {
 	return &SafeTable{
-		base: createTableBase(set, safeTableType, true),
+		base: createTableBase(set, safeTableType, 1),
 		Row:  make([]sync.Map, 0),
 	}
 }
