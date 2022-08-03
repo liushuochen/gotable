@@ -136,9 +136,14 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	return failure
 }
 
+func (tb *Table) SetColumnMaxLength(column string, maxlength int) error {
+	tb.ColumnMaxLengths[column] = maxlength
+	//fmt.Println(column, tb.ColumnMaxLengths[column])
+	return nil
+}
+
 // String method used to implement fmt.Stringer.
 func (tb *Table) String() string {
-	columnMaxLength := make(map[string]int)
 	tag := make(map[string]cell.Cell)
 	taga := make([]map[string]cell.Cell, 0)
 	border := ""
@@ -155,15 +160,20 @@ func (tb *Table) String() string {
 	}
 
 	for _, h := range tb.Columns.base {
-		columnMaxLength[h.Original()] = h.Length()
+		if length, exist := tb.ColumnMaxLengths[h.Original()]; !(exist && length > h.Length()) {
+			tb.ColumnMaxLengths[h.Original()] = h.Length()
+		}
+		fmt.Println(h.Original(), tb.ColumnMaxLengths[h.Original()], h.Length())
 		tag[h.String()] = cell.CreateData(border)
 	}
 
+	//confirm the maxLength
 	for _, data := range tb.Row {
 		for _, h := range tb.Columns.base {
 			maxLength := max(h.Length(), data[h.Original()].Length())
-			maxLength = max(maxLength, columnMaxLength[h.Original()])
-			columnMaxLength[h.Original()] = maxLength
+			maxLength = max(maxLength, tb.ColumnMaxLengths[h.Original()])
+			tb.ColumnMaxLengths[h.Original()] = maxLength
+			//fmt.Println(h.Original(), tb.ColumnMaxLengths[h.Original()])
 		}
 	}
 
@@ -172,7 +182,7 @@ func (tb *Table) String() string {
 	taga = append(taga, tag)
 	if tb.border > 0 {
 		// tb.printGroup(taga, columnMaxLength)
-		content += tb.printGroup(taga, columnMaxLength)
+		content += tb.printGroup(taga)
 	}
 
 	// print table head
@@ -181,7 +191,7 @@ func (tb *Table) String() string {
 		icon = " "
 	}
 	for index, head := range tb.Columns.base {
-		itemLen := columnMaxLength[head.Original()]
+		itemLen := tb.ColumnMaxLengths[head.Original()]
 		if tb.border > 0 {
 			itemLen += 2
 		}
@@ -207,6 +217,7 @@ func (tb *Table) String() string {
 		content += "\n"
 	}
 
+	// input tableValue
 	tableValue := taga
 	if !tb.Empty() {
 		for _, row := range tb.Row {
@@ -220,7 +231,7 @@ func (tb *Table) String() string {
 		tableValue = append(tableValue, tag)
 	}
 
-	content += tb.printGroup(tableValue, columnMaxLength)
+	content += tb.printGroup(tableValue)
 	return tb.end(content)
 }
 

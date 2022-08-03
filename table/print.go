@@ -14,7 +14,7 @@ import (
 //   group: 		A map that storage column as key, data as value. Data is either "-" or row, if the value of data is
 //                  "-", the printGroup method will print the border of the table.
 //   columnMaxLen:  A map that storage column as key, max length of cell of column as value.
-func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[string]int) string {
+func (tb *Table) printGroup(group []map[string]cell.Cell) string {
 	result := ""
 	border := ""
 	switch tb.border {
@@ -29,7 +29,7 @@ func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[strin
 	}
 	for _, item := range group {
 		for index, head := range tb.Columns.base {
-			itemLen := columnMaxLen[head.Original()]
+			itemLen := tb.ColumnMaxLengths[head.Original()]
 			if tb.border > 0 {
 				itemLen += 2
 			}

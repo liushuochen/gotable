@@ -8,15 +8,17 @@ package table
 // tableType: Use to record table types
 // End: Used to set the ending. The default is newline "\n".
 type base struct {
-	Columns   *Set
-	border    int8
-	tableType string
-	End       string
+	Columns          *Set
+	ColumnMaxLengths map[string]int
+	border           int8
+	tableType        string
+	End              string
 }
 
 func createTableBase(columns *Set, tableType string, border int8) *base {
 	b := new(base)
 	b.Columns = columns
+	b.ColumnMaxLengths = make(map[string]int)
 	b.tableType = tableType
 	b.border = border
 	b.End = "\n"
