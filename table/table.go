@@ -27,32 +27,50 @@ const (
 // - tableType: Type of table.
 type Table struct {
 	*base
-	Row []map[string]cell.Cell
+	Rows [][]map[string]cell.Cell
 }
 
 // CreateTable function returns a pointer of Table.
 func CreateTable(set *Set) *Table {
 	return &Table{
 		base: createTableBase(set, simpleTableType, 1),
-		Row:  make([]map[string]cell.Cell, 0),
+		Rows: make([][]map[string]cell.Cell, 1),
 	}
 }
 
 // Clear the table. The table is cleared of all data.
 func (tb *Table) Clear() {
-	tb.Columns.Clear()
-	tb.Row = make([]map[string]cell.Cell, 0)
+	if tb.partLen != 1 {
+		tb.Columns = append(tb.Columns[0:1])
+		tb.Rows = append(tb.Rows[0:1])
+		tb.partLen = 1
+	}
+	tb.Columns[0].Clear()
+	tb.Rows[0] = make([]map[string]cell.Cell, 0)
+}
+
+func (tb *Table) AddPart(columns ...string) error {
+	set, err := CreateSetFromString(columns...)
+	if err != nil {
+		return err
+	}
+	tb.Rows = append(tb.Rows, make([]map[string]cell.Cell, 0))
+	return tb.base.addTableBase(set)
 }
 
 // AddColumn method used to add a new column for table. It returns an error when column has been existed.
 func (tb *Table) AddColumn(column string) error {
-	err := tb.Columns.Add(column)
+	return tb.AddPNColumn(tb.partLen-1, column)
+}
+
+func (tb *Table) AddPNColumn(partNumber int, column string) error {
+	err := tb.Columns[partNumber].Add(column)
 	if err != nil {
 		return err
 	}
 
 	// Modify exist value, add new column.
-	for _, row := range tb.Row {
+	for _, row := range tb.Rows[partNumber] {
 		row[column] = cell.CreateEmptyData()
 	}
 	return nil
@@ -81,46 +99,65 @@ func (tb *Table) AddRow(row interface{}) error {
 	}
 }
 
+func (tb *Table) AddPNRow(partNumber int, row interface{}) error {
+	switch v := row.(type) {
+	case []string:
+		return tb.addPNRowFromSlice(partNumber, v)
+	case map[string]string:
+		return tb.addPNRowFromMap(partNumber, v)
+	default:
+		return exception.UnsupportedRowType(v)
+	}
+}
+
 func (tb *Table) addRowFromSlice(row []string) error {
+	return tb.addPNRowFromSlice(tb.partLen-1, row)
+}
+
+func (tb *Table) addPNRowFromSlice(partNumber int, row []string) error {
 	rowLength := len(row)
-	if rowLength != tb.Columns.Len() {
-		return exception.RowLengthNotEqualColumns(rowLength, tb.Columns.Len())
+	if rowLength != tb.Columns[partNumber].Len() {
+		return exception.RowLengthNotEqualColumns(rowLength, tb.Columns[partNumber].Len())
 	}
 
 	rowMap := make(map[string]string, 0)
 	for i := 0; i < rowLength; i++ {
 		if row[i] == Default {
-			rowMap[tb.Columns.base[i].Original()] = tb.Columns.base[i].Default()
+			rowMap[tb.Columns[partNumber].base[i].Original()] = tb.Columns[partNumber].base[i].Default()
 		} else {
-			rowMap[tb.Columns.base[i].Original()] = row[i]
+			rowMap[tb.Columns[partNumber].base[i].Original()] = row[i]
 		}
 	}
 
-	tb.Row = append(tb.Row, toRow(rowMap))
+	tb.Rows[partNumber] = append(tb.Rows[partNumber], toRow(rowMap))
 	return nil
 }
 
 func (tb *Table) addRowFromMap(row map[string]string) error {
+	return tb.addPNRowFromMap(tb.partLen-1, row)
+}
+
+func (tb *Table) addPNRowFromMap(partNumber int, row map[string]string) error {
 	for key := range row {
-		if !tb.Columns.Exist(key) {
+		if !tb.Columns[partNumber].Exist(key) {
 			return exception.ColumnDoNotExist(key)
 		}
 
 		// add row by const `DEFAULT`
 		if row[key] == Default {
-			row[key] = tb.Columns.Get(key).Default()
+			row[key] = tb.Columns[partNumber].Get(key).Default()
 		}
 	}
 
 	// Add default value
-	for _, col := range tb.Columns.base {
+	for _, col := range tb.Columns[partNumber].base {
 		_, ok := row[col.Original()]
 		if !ok {
 			row[col.Original()] = col.Default()
 		}
 	}
 
-	tb.Row = append(tb.Row, toRow(row))
+	tb.Rows[partNumber] = append(tb.Rows[partNumber], toRow(row))
 	return nil
 }
 
@@ -136,8 +173,8 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 	return failure
 }
 
-func (tb *Table) SetColumnMaxLength(column string, maxlength int) error {
-	tb.ColumnMaxLengths[column] = maxlength
+func (tb *Table) SetColumnMaxLength(partNumber int, column string, maxlength int) error {
+	tb.ColumnMaxLengths[partNumber][column] = maxlength
 	//fmt.Println(column, tb.ColumnMaxLengths[column])
 	return nil
 }
@@ -159,79 +196,90 @@ func (tb *Table) String() string {
 		border = "+"
 	}
 
-	for _, h := range tb.Columns.base {
-		if length, exist := tb.ColumnMaxLengths[h.Original()]; !(exist && length > h.Length()) {
-			tb.ColumnMaxLengths[h.Original()] = h.Length()
+	for pn, columns := range tb.Columns {
+		for _, h := range columns.base {
+			if length, exist := tb.ColumnMaxLengths[pn][h.Original()]; !(exist && length > h.Length()) {
+				tb.ColumnMaxLengths[pn][h.Original()] = h.Length()
+			}
+			fmt.Println(h.Original(), tb.ColumnMaxLengths[pn][h.Original()], h.Length())
+			tag[h.String()] = cell.CreateData(border)
 		}
-		fmt.Println(h.Original(), tb.ColumnMaxLengths[h.Original()], h.Length())
-		tag[h.String()] = cell.CreateData(border)
 	}
 
 	//confirm the maxLength
-	for _, data := range tb.Row {
-		for _, h := range tb.Columns.base {
-			maxLength := max(h.Length(), data[h.Original()].Length())
-			maxLength = max(maxLength, tb.ColumnMaxLengths[h.Original()])
-			tb.ColumnMaxLengths[h.Original()] = maxLength
-			//fmt.Println(h.Original(), tb.ColumnMaxLengths[h.Original()])
+	for pn, row := range tb.Rows {
+		for _, data := range row {
+			for _, h := range tb.Columns[pn].base {
+				maxLength := max(h.Length(), data[h.Original()].Length())
+				maxLength = max(maxLength, tb.ColumnMaxLengths[pn][h.Original()])
+				tb.ColumnMaxLengths[pn][h.Original()] = maxLength
+				//fmt.Println(h.Original(), tb.ColumnMaxLengths[h.Original()])
+			}
 		}
 	}
 
 	content := ""
-	// print first line
 	taga = append(taga, tag)
-	if tb.border > 0 {
-		// tb.printGroup(taga, columnMaxLength)
-		content += tb.printGroup(taga)
-	}
 
-	// print table head
-	icon := "|"
-	if tb.border == 0 {
-		icon = " "
-	}
-	for index, head := range tb.Columns.base {
-		itemLen := tb.ColumnMaxLengths[head.Original()]
+	for pn, rows := range tb.Rows {
+		// print first line
+
 		if tb.border > 0 {
-			itemLen += 2
-		}
-		s := ""
-		switch head.Align() {
-		case R:
-			s, _ = right(head, itemLen, " ")
-		case L:
-			s, _ = left(head, itemLen, " ")
-		default:
-			s, _ = center(head, itemLen, " ")
-		}
-		if index == 0 {
-			s = icon + s + icon
-		} else {
-			s = "" + s + icon
+			// tb.printGroup(taga, columnMaxLength)
+			content += tb.printGroup(pn, taga)
 		}
 
-		content += s
-	}
-
-	if tb.border > 0 {
-		content += "\n"
-	}
-
-	// input tableValue
-	tableValue := taga
-	if !tb.Empty() {
-		for _, row := range tb.Row {
-			value := make(map[string]cell.Cell)
-			for key := range row {
-				col := tb.Columns.Get(key)
-				value[col.String()] = row[key]
+		// print table head
+		icon := "|"
+		if tb.border == 0 {
+			icon = " "
+		}
+		for index, head := range tb.Columns[pn].base {
+			itemLen := tb.ColumnMaxLengths[pn][head.Original()]
+			if tb.border > 0 {
+				itemLen += 2
 			}
-			tableValue = append(tableValue, value)
+			s := ""
+			switch head.Align() {
+			case R:
+				s, _ = right(head, itemLen, " ")
+			case L:
+				s, _ = left(head, itemLen, " ")
+			default:
+				s, _ = center(head, itemLen, " ")
+			}
+			if index == 0 {
+				s = icon + s + icon
+			} else {
+				s = "" + s + icon
+			}
+
+			content += s
 		}
-		tableValue = append(tableValue, tag)
+
+		if tb.border > 0 {
+			content += "\n"
+		}
+
+		// input tableValue
+		tableValue := taga
+		if !tb.Empty() {
+			for _, row := range rows {
+				value := make(map[string]cell.Cell)
+				for key := range row {
+					col := tb.Columns[pn].Get(key)
+					value[col.String()] = row[key]
+				}
+				tableValue = append(tableValue, value)
+			}
+
+		}
+
+		content += tb.printGroup(pn, tableValue)
 	}
 
-	content += tb.printGroup(tableValue)
+	content += tb.printGroup(tb.partLen-1, taga)
+
 	return tb.end(content)
 }
 
@@ -247,20 +295,36 @@ func (tb *Table) Empty() bool {
 }
 
 func (tb *Table) Length() int {
-	return len(tb.Row)
+	l := 0
+	for _, rows := range tb.Rows {
+		l += len(rows)
+	}
+	return l
+}
+
+func (tb *Table) PartLength() int {
+	return tb.partLen
 }
 
 func (tb *Table) GetColumns() []string {
+	return tb.GetPNColumns(tb.partLen - 1)
+}
+
+func (tb *Table) GetPNColumns(partNumber int) []string {
 	columns := make([]string, 0)
-	for _, col := range tb.Columns.base {
+	for _, col := range tb.Columns[partNumber].base {
 		columns = append(columns, col.Original())
 	}
 	return columns
 }
 
 func (tb *Table) GetValues() []map[string]string {
+	return tb.GetPNValues(tb.partLen - 1)
+}
+
+func (tb *Table) GetPNValues(partNumber int) []map[string]string {
 	values := make([]map[string]string, 0)
-	for _, value := range tb.Row {
+	for _, value := range tb.Rows[partNumber] {
 		ms := make(map[string]string)
 		for k, v := range value {
 			ms[k] = v.String()
@@ -270,8 +334,8 @@ func (tb *Table) GetValues() []map[string]string {
 	return values
 }
 
-func (tb *Table) Exist(value map[string]string) bool {
-	for _, row := range tb.Row {
+func (tb *Table) PNExist(partNumber int, value map[string]string) bool {
+	for _, row := range tb.Rows[partNumber] {
 		exist := true
 		for key := range value {
 			v, ok := row[key]
@@ -287,16 +351,28 @@ func (tb *Table) Exist(value map[string]string) bool {
 	return false
 }
 
+func (tb *Table) Exist(value map[string]string) bool {
+	exist := false
+	for pn := 0; pn <= tb.partLen; pn++ {
+		exist = tb.PNExist(pn, value)
+		if exist {
+			return exist
+		}
+	}
+	return false
+} ///done
+
 func (tb *Table) json(indent int) ([]byte, error) {
 	data := make([]map[string]string, 0)
-	for _, row := range tb.Row {
-		element := make(map[string]string)
-		for col, value := range row {
-			element[col] = value.String()
+	for _, rows := range tb.Rows {
+		for _, row := range rows {
+			element := make(map[string]string)
+			for col, value := range row {
+				element[col] = value.String()
+			}
+			data = append(data, element)
 		}
-		data = append(data, element)
 	}
-
 	if indent < 0 {
 		indent = 0
 	}
@@ -331,13 +407,15 @@ func (tb *Table) XML(indent int) string {
 	indentString := strings.Join(indents, "")
 
 	contents := []string{"<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>", "<table>"}
-	for _, row := range tb.Row {
-		contents = append(contents, indentString+"<row>")
-		for name := range row {
-			line := indentString + indentString + fmt.Sprintf("<%s>%s</%s>", name, row[name], name)
-			contents = append(contents, line)
+	for _, rows := range tb.Rows {
+		for _, row := range rows {
+			contents = append(contents, indentString+"<row>")
+			for name := range row {
+				line := indentString + indentString + fmt.Sprintf("<%s>%s</%s>", name, row[name], name)
+				contents = append(contents, line)
+			}
+			contents = append(contents, indentString+"</row>")
 		}
-		contents = append(contents, indentString+"</row>")
 	}
 	contents = append(contents, "</table>")
 	content := strings.Join(contents, "\n")
@@ -357,7 +435,11 @@ func (tb *Table) SetBorder(border int8) {
 }
 
 func (tb *Table) Align(column string, mode int) {
-	for _, h := range tb.Columns.base {
+	tb.PNAlign(tb.partLen-1, column, mode)
+}
+
+func (tb *Table) PNAlign(partNumber int, column string, mode int) {
+	for _, h := range tb.Columns[partNumber].base {
 		if h.Original() == column {
 			h.SetAlign(mode)
 			return
@@ -404,14 +486,16 @@ func (tb *Table) ToCSVFile(path string) error {
 	writer := csv.NewWriter(file)
 
 	contents := make([][]string, 0)
-	columns := tb.GetColumns()
-	contents = append(contents, columns)
-	for _, value := range tb.GetValues() {
-		content := make([]string, 0)
-		for _, col := range columns {
-			content = append(content, value[col])
+	for pn := 0; pn < tb.partLen; pn++ {
+		columns := tb.GetPNColumns(pn)
+		contents = append(contents, columns)
+		for _, value := range tb.GetPNValues(pn) {
+			content := make([]string, 0)
+			for _, col := range columns {
+				content = append(content, value[col])
+			}
+			contents = append(contents, content)
 		}
-		contents = append(contents, content)
 	}
 
 	err = writer.WriteAll(contents)
@@ -427,8 +511,12 @@ func (tb *Table) ToCSVFile(path string) error {
 }
 
 func (tb *Table) HasColumn(column string) bool {
-	for index := range tb.Columns.base {
-		if tb.Columns.base[index].Original() == column {
+	return tb.HasPNColumn(tb.partLen-1, column)
+}
+
+func (tb *Table) HasPNColumn(partNumber int, column string) bool {
+	for index := range tb.Columns[partNumber].base {
+		if tb.Columns[partNumber].base[index].Original() == column {
 			return true
 		}
 	}
@@ -436,12 +524,20 @@ func (tb *Table) HasColumn(column string) bool {
 }
 
 func (tb *Table) EqualColumns(other *Table) bool {
-	return tb.Columns.Equal(other.Columns)
+	if tb.partLen == other.partLen {
+		for pn := 0; pn < tb.partLen; pn++ {
+			if !tb.Columns[pn].Equal(other.Columns[pn]) {
+				return false
+			}
+		}
+		return true
+	}
+	return false
 }
 
 func (tb *Table) SetColumnColor(columnName string, display, fount, background int) {
 	background += 10
-	for _, col := range tb.Columns.base {
+	for _, col := range tb.Columns[tb.partLen-1].base {
 		if col.Original() == columnName {
 			col.SetColor(display, fount, background)
 			break
