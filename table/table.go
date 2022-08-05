@@ -64,6 +64,9 @@ func (tb *Table) AddColumn(column string) error {
 }
 
 func (tb *Table) AddPNColumn(partNumber int, column string) error {
+	if partNumber >= tb.partLen {
+		return exception.PartNumber(tb.partLen)
+	}
 	err := tb.Columns[partNumber].Add(column)
 	if err != nil {
 		return err
@@ -100,6 +103,9 @@ func (tb *Table) AddRow(row interface{}) error {
 }
 
 func (tb *Table) AddPNRow(partNumber int, row interface{}) error {
+	if partNumber >= tb.partLen {
+		return exception.PartNumber(tb.partLen)
+	}
 	switch v := row.(type) {
 	case []string:
 		return tb.addPNRowFromSlice(partNumber, v)
@@ -174,6 +180,12 @@ func (tb *Table) AddRows(rows []map[string]string) []map[string]string {
 }
 
 func (tb *Table) SetColumnMaxLength(partNumber int, column string, maxlength int) error {
+	if partNumber >= tb.partLen {
+		return exception.PartNumber(tb.partLen)
+	}
+	if !tb.Columns[partNumber].Exist(column) {
+		return exception.ColumnDoNotExist(column)
+	}
 	tb.ColumnMaxLengths[partNumber][column] = maxlength
 	//fmt.Println(column, tb.ColumnMaxLengths[column])
 	return nil
@@ -311,6 +323,9 @@ func (tb *Table) GetColumns() []string {
 }
 
 func (tb *Table) GetPNColumns(partNumber int) []string {
+	if partNumber >= tb.partLen {
+		return nil
+	}
 	columns := make([]string, 0)
 	for _, col := range tb.Columns[partNumber].base {
 		columns = append(columns, col.Original())
@@ -323,6 +338,9 @@ func (tb *Table) GetValues() []map[string]string {
 }
 
 func (tb *Table) GetPNValues(partNumber int) []map[string]string {
+	if partNumber >= tb.partLen {
+		return nil
+	}
 	values := make([]map[string]string, 0)
 	for _, value := range tb.Rows[partNumber] {
 		ms := make(map[string]string)
@@ -335,6 +353,9 @@ func (tb *Table) GetPNValues(partNumber int) []map[string]string {
 }
 
 func (tb *Table) PNExist(partNumber int, value map[string]string) bool {
+	if partNumber >= tb.partLen {
+		return false
+	}
 	for _, row := range tb.Rows[partNumber] {
 		exist := true
 		for key := range value {
@@ -439,6 +460,9 @@ func (tb *Table) Align(column string, mode int) {
 }
 
 func (tb *Table) PNAlign(partNumber int, column string, mode int) {
+	if partNumber >= tb.partLen {
+		return
+	}
 	for _, h := range tb.Columns[partNumber].base {
 		if h.Original() == column {
 			h.SetAlign(mode)
@@ -515,6 +539,9 @@ func (tb *Table) HasColumn(column string) bool {
 }
 
 func (tb *Table) HasPNColumn(partNumber int, column string) bool {
+	if partNumber >= tb.partLen {
+		return false
+	}
 	for index := range tb.Columns[partNumber].base {
 		if tb.Columns[partNumber].base[index].Original() == column {
 			return true
