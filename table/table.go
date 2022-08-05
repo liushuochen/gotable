@@ -274,7 +274,10 @@ func (tb *Table) String() string {
 		}
 
 		// input tableValue
-		tableValue := taga
+		tableValue := make([]map[string]cell.Cell, 0)
+		if tb.columntag[pn] {
+			tableValue = append(tableValue, tag)
+		}
 		if !tb.Empty() {
 			for _, row := range rows {
 				value := make(map[string]cell.Cell)
@@ -350,6 +353,14 @@ func (tb *Table) GetPNValues(partNumber int) []map[string]string {
 		values = append(values, ms)
 	}
 	return values
+}
+
+func (tb *Table) SetPNColumnsTag(partNumber int, value bool) error {
+	if partNumber >= tb.partLen {
+		return exception.PartNumber(tb.partLen)
+	}
+	tb.columntag[partNumber] = value
+	return nil
 }
 
 func (tb *Table) PNExist(partNumber int, value map[string]string) bool {

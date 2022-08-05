@@ -10,6 +10,7 @@ package table
 type base struct {
 	partLen          int
 	Columns          []*Set
+	columntag        []bool
 	ColumnMaxLengths []map[string]int
 	border           int8
 	tableType        string
@@ -20,6 +21,7 @@ func createTableBase(columns *Set, tableType string, border int8) *base {
 	b := new(base)
 	b.partLen = 1
 	b.Columns = append(b.Columns, columns)
+	b.columntag = []bool{true}
 	b.ColumnMaxLengths = append(b.ColumnMaxLengths, make(map[string]int))
 	b.tableType = tableType
 	b.border = border
@@ -29,6 +31,7 @@ func createTableBase(columns *Set, tableType string, border int8) *base {
 
 func (b *base) addTableBase(columns *Set) error {
 	b.Columns = append(b.Columns, columns)
+	b.columntag = append(b.columntag, true)
 	b.ColumnMaxLengths = append(b.ColumnMaxLengths, make(map[string]int))
 	b.partLen++
 	return nil

@@ -16,17 +16,17 @@ import (
 //   columnMaxLen:  A map that storage column as key, max length of cell of column as value.
 func (tb *Table) printGroup(partNumber int, group []map[string]cell.Cell) string {
 	result := ""
-	border := ""
-	switch tb.border {
-	case 1:
-		border = "-"
-	case 2:
-		border = "="
-	case 3:
-		border = "~"
-	case 4:
-		border = "+"
-	}
+	// border := ""
+	// switch tb.border {
+	// case 1:
+	// 	border = "-"
+	// case 2:
+	// 	border = "="
+	// case 3:
+	// 	border = "~"
+	// case 4:
+	// 	border = "+"
+	// }
 	for _, item := range group {
 		for index, head := range tb.Columns[partNumber].base {
 			itemLen := tb.ColumnMaxLengths[partNumber][head.Original()]
@@ -34,16 +34,25 @@ func (tb *Table) printGroup(partNumber int, group []map[string]cell.Cell) string
 				itemLen += 2
 			}
 			s := ""
-			if item[head.String()].String() == border {
-				s, _ = center(item[head.String()], itemLen, border)
-			} else {
-				switch head.Align() {
-				case R:
-					s, _ = right(item[head.String()], itemLen, " ")
-				case L:
-					s, _ = left(item[head.String()], itemLen, " ")
-				default:
-					s, _ = center(item[head.String()], itemLen, " ")
+			switch item[head.String()].String() {
+			case "-":
+				s, _ = center(item[head.String()], itemLen, "-")
+			case "=":
+				s, _ = center(item[head.String()], itemLen, "=")
+			case "~":
+				s, _ = center(item[head.String()], itemLen, "~")
+			case "+":
+				s, _ = center(item[head.String()], itemLen, "+")
+			default:
+				{
+					switch head.Align() {
+					case R:
+						s, _ = right(item[head.String()], itemLen, " ")
+					case L:
+						s, _ = left(item[head.String()], itemLen, " ")
+					default:
+						s, _ = center(item[head.String()], itemLen, " ")
+					}
 				}
 			}
 
