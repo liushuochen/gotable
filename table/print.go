@@ -4,8 +4,9 @@ package table
 
 import (
 	"fmt"
-	"github.com/liushuochen/gotable/cell"
 	"sync"
+
+	"github.com/liushuochen/gotable/cell"
 )
 
 // This method print part of table data in STDOUT. It will be called twice in *table.PrintTable method.
@@ -13,27 +14,45 @@ import (
 //   group: 		A map that storage column as key, data as value. Data is either "-" or row, if the value of data is
 //                  "-", the printGroup method will print the border of the table.
 //   columnMaxLen:  A map that storage column as key, max length of cell of column as value.
-func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[string]int) string {
+func (tb *Table) printGroup(partNumber int, group []map[string]cell.Cell) string {
 	result := ""
+	// border := ""
+	// switch tb.border {
+	// case 1:
+	// 	border = "-"
+	// case 2:
+	// 	border = "="
+	// case 3:
+	// 	border = "~"
+	// case 4:
+	// 	border = "+"
+	// }
 	for _, item := range group {
-		for index, head := range tb.Columns.base {
-			itemLen := columnMaxLen[head.Original()]
-			if tb.border {
+		for index, head := range tb.Columns[partNumber].base {
+			itemLen := tb.ColumnMaxLengths[partNumber][head.Original()]
+			if tb.border > 0 {
 				itemLen += 2
 			}
 			s := ""
-			if item[head.String()].String() == "-" {
-				if tb.border {
-					s, _ = center(item[head.String()], itemLen, "-")
-				}
-			} else {
-				switch head.Align() {
-				case R:
-					s, _ = right(item[head.String()], itemLen, " ")
-				case L:
-					s, _ = left(item[head.String()], itemLen, " ")
-				default:
-					s, _ = center(item[head.String()], itemLen, " ")
+			switch item[head.String()].String() {
+			case "-":
+				s, _ = center(item[head.String()], itemLen, "-")
+			case "=":
+				s, _ = center(item[head.String()], itemLen, "=")
+			case "~":
+				s, _ = center(item[head.String()], itemLen, "~")
+			case "+":
+				s, _ = center(item[head.String()], itemLen, "+")
+			default:
+				{
+					switch head.Align() {
+					case R:
+						s, _ = right(item[head.String()], itemLen, " ")
+					case L:
+						s, _ = left(item[head.String()], itemLen, " ")
+					default:
+						s, _ = center(item[head.String()], itemLen, " ")
+					}
 				}
 			}
 
@@ -41,7 +60,7 @@ func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[strin
 			if item[head.String()].String() == "-" {
 				icon = "+"
 			}
-			if !tb.border {
+			if tb.border == 0 {
 				icon = " "
 			}
 

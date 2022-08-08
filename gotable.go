@@ -3,13 +3,14 @@ package gotable
 import (
 	"encoding/csv"
 	"encoding/json"
-	"github.com/liushuochen/gotable/exception"
-	"github.com/liushuochen/gotable/table"
-	"github.com/liushuochen/gotable/util"
 	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
+
+	"github.com/liushuochen/gotable/exception"
+	"github.com/liushuochen/gotable/table"
+	"github.com/liushuochen/gotable/util"
 )
 
 const (
