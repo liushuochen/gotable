@@ -210,12 +210,6 @@ func (tb *Table) String() string {
 	return tb.end(content)
 }
 
-func (tb *Table) end(content string) string {
-	content = content[:len(content)-1]
-	content += tb.End
-	return content
-}
-
 // Empty method is used to determine whether the table is empty.
 func (tb *Table) Empty() bool {
 	return tb.Length() == 0

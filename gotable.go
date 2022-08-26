@@ -103,7 +103,7 @@ func CreateByStruct(v interface{}) (*table.Table, error) {
 // Version
 // The version function returns a string representing the version information of the gotable.
 // e.g.
-// 	   gotable 3.3.0
+// 	   gotable 3.4.0
 func Version() string {
 	return "gotable " + strings.Join(getVersions(), ".")
 }

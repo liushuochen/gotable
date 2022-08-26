@@ -150,3 +150,16 @@ func TestCreateTableByStruct(t *testing.T) {
 		t.Errorf("expected err is nil, but %s got.", err.Error())
 	}
 }
+
+// Create table using empty struct.
+func TestCreateTableByEmptyStruct(t *testing.T) {
+	type Student struct{}
+
+	stu := new(Student)
+	_, err := gotable.CreateByStruct(stu)
+	switch err.(type) {
+	case *exception.ColumnsLengthError:
+	default:
+		t.Errorf("expected err is ColumnsLengthError, but %T got", err)
+	}
+}

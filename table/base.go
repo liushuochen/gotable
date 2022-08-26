@@ -44,7 +44,7 @@ func (b *base) IsSimpleTable() bool {
 }
 
 // IsSafeTable method returns a bool value indicate the table type is safeTableType.
-func(b *base) IsSafeTable() bool {
+func (b *base) IsSafeTable() bool {
 	return b.tableType == safeTableType
 }
 
@@ -71,4 +71,10 @@ func (b *base) GetDefaults() map[string]string {
 		defaults[column.Original()] = column.Default()
 	}
 	return defaults
+}
+
+func (b *base) end(content string) string {
+	content = content[:len(content)-1]
+	content += b.End
+	return content
 }

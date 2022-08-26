@@ -20,21 +20,20 @@ func CreateSafeTable(set *Set) *SafeTable {
 }
 
 // Clear the table. The table is cleared of all data.
-func (s *SafeTable) Clear() {
-	s.Columns.Clear()
-	s.Row = make([]sync.Map, 0)
+func (st *SafeTable) Clear() {
+	st.Columns.Clear()
+	st.Row = make([]sync.Map, 0)
 }
 
-// AddColumn method used to add a new column for table. It returns an error when column has been exist.
-func (s *SafeTable) AddColumn(column string) error {
-	err := s.Columns.Add(column)
+// AddColumn method used to add a new column for table. It returns an error when column has been existed.
+func (st *SafeTable) AddColumn(column string) error {
+	err := st.Columns.Add(column)
 	if err != nil {
 		return err
 	}
 
-	// Modify exist value, add new column.
-	for _, row := range s.Row {
-		row.Store(column, cell.CreateEmptyData())
+	for index := range st.Row {
+		st.Row[index].Store(column, cell.CreateEmptyData())
 	}
 	return nil
 }
@@ -51,22 +50,22 @@ func (s *SafeTable) AddColumn(column string) error {
 //       different from the length of column.
 //   - *exception.ColumnDoNotExistError: It returned if the argument is type of the Map but contains a nonexistent
 //       column as a key.
-func (s *SafeTable) AddRow(row interface{}) error {
+func (st *SafeTable) AddRow(row interface{}) error {
 	switch v := row.(type) {
 	case []string:
-		return s.addRowFromSlice(v)
+		return st.addRowFromSlice(v)
 	case map[string]string:
-		return s.addRowFromMap(v)
+		return st.addRowFromMap(v)
 	default:
 		return exception.UnsupportedRowType(v)
 	}
 }
 
 // AddRows used to add a slice of rows map. It returns a slice of map which add failed.
-func (s *SafeTable) AddRows(rows []map[string]string) []map[string]string {
+func (st *SafeTable) AddRows(rows []map[string]string) []map[string]string {
 	failure := make([]map[string]string, 0)
 	for _, row := range rows {
-		err := s.AddRow(row)
+		err := st.AddRow(row)
 		if err != nil {
 			failure = append(failure, row)
 		}
@@ -74,55 +73,55 @@ func (s *SafeTable) AddRows(rows []map[string]string) []map[string]string {
 	return failure
 }
 
-func (s *SafeTable) addRowFromMap(row map[string]string) error {
+func (st *SafeTable) addRowFromMap(row map[string]string) error {
 	for key := range row {
-		if !s.Columns.Exist(key) {
+		if !st.Columns.Exist(key) {
 			return exception.ColumnDoNotExist(key)
 		}
 
 		// add row by const `DEFAULT`
 		if row[key] == Default {
-			row[key] = s.Columns.Get(key).Default()
+			row[key] = st.Columns.Get(key).Default()
 		}
 	}
 
 	// Add default value
-	for _, col := range s.Columns.base {
+	for _, col := range st.Columns.base {
 		_, ok := row[col.Original()]
 		if !ok {
 			row[col.Original()] = col.Default()
 		}
 	}
 
-	s.Row = append(s.Row, toSafeRow(row))
+	st.Row = append(st.Row, toSafeRow(row))
 	return nil
 }
 
-func (s *SafeTable) addRowFromSlice(row []string) error {
+func (st *SafeTable) addRowFromSlice(row []string) error {
 	rowLength := len(row)
-	if rowLength != s.Columns.Len() {
-		return exception.RowLengthNotEqualColumns(rowLength, s.Columns.Len())
+	if rowLength != st.Columns.Len() {
+		return exception.RowLengthNotEqualColumns(rowLength, st.Columns.Len())
 	}
 
 	rowMap := make(map[string]string, 0)
 	for i := 0; i < rowLength; i++ {
 		if row[i] == Default {
-			rowMap[s.Columns.base[i].Original()] = s.Columns.base[i].Default()
+			rowMap[st.Columns.base[i].Original()] = st.Columns.base[i].Default()
 		} else {
-			rowMap[s.Columns.base[i].Original()] = row[i]
+			rowMap[st.Columns.base[i].Original()] = row[i]
 		}
 	}
 
-	s.Row = append(s.Row, toSafeRow(rowMap))
+	st.Row = append(st.Row, toSafeRow(rowMap))
 	return nil
 }
 
 // Length method returns an integer indicates the length of the table row.
-func (s *SafeTable) Length() int {
-	return len(s.Row)
+func (st *SafeTable) Length() int {
+	return len(st.Row)
 }
 
 // Empty method is used to determine whether the table is empty.
-func (s *SafeTable) Empty() bool {
-	return s.Length() == 0
+func (st *SafeTable) Empty() bool {
+	return st.Length() == 0
 }
