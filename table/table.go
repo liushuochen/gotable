@@ -154,31 +154,28 @@ func (tb *Table) String() string {
 	}
 
 	content := ""
-	// print first line
+	icon := " "
+	// Print first line.
 	taga = append(taga, tag)
 	if tb.border {
-		// tb.printGroup(taga, columnMaxLength)
 		content += tb.printGroup(taga, columnMaxLength)
+		icon = "|"
 	}
 
-	// print table head
-	icon := "|"
-	if !tb.border {
-		icon = " "
-	}
-	for index, head := range tb.Columns.base {
-		itemLen := columnMaxLength[head.Original()]
+	// Print table column.
+	for index, column := range tb.Columns.base {
+		itemLen := columnMaxLength[column.Original()]
 		if tb.border {
 			itemLen += 2
 		}
 		s := ""
-		switch head.Align() {
+		switch column.Align() {
 		case R:
-			s, _ = right(head, itemLen, " ")
+			s, _ = right(column, itemLen, " ")
 		case L:
-			s, _ = left(head, itemLen, " ")
+			s, _ = left(column, itemLen, " ")
 		default:
-			s, _ = center(head, itemLen, " ")
+			s, _ = center(column, itemLen, " ")
 		}
 		if index == 0 {
 			s = icon + s + icon

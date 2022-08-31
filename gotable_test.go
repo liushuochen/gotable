@@ -152,7 +152,7 @@ func TestCreateTableByStruct(t *testing.T) {
 }
 
 // Create table using empty struct.
-func TestCreateTableByEmptyStruct(t *testing.T) {
+func TestCreateTableByStruct2(t *testing.T) {
 	type Student struct{}
 
 	stu := new(Student)
@@ -161,5 +161,23 @@ func TestCreateTableByEmptyStruct(t *testing.T) {
 	case *exception.ColumnsLengthError:
 	default:
 		t.Errorf("expected err is ColumnsLengthError, but %T got", err)
+	}
+}
+
+// Create table using struct which contains duplicate tags.
+func TestCreateTableByStruct3(t *testing.T) {
+	type Student struct {
+		Name string `gotable:"name"`
+		Age  string `gotable:"name"`
+	}
+
+	stu := &Student{
+		Name: "Bob",
+		Age:  "12",
+	}
+
+	_, err := gotable.CreateByStruct(stu)
+	if err == nil {
+		t.Errorf("expected got an error, but nil got.")
 	}
 }

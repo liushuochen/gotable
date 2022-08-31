@@ -16,33 +16,71 @@ import (
 func (tb *Table) printGroup(group []map[string]cell.Cell, columnMaxLen map[string]int) string {
 	result := ""
 	for _, item := range group {
-		for index, head := range tb.Columns.base {
-			itemLen := columnMaxLen[head.Original()]
+		for index, column := range tb.Columns.base {
+			itemLen := columnMaxLen[column.Original()]
 			if tb.border {
 				itemLen += 2
 			}
 			s := ""
-			if item[head.String()].String() == "-" {
+			icon := "|"
+			if item[column.String()].String() == "-" {
 				if tb.border {
-					s, _ = center(item[head.String()], itemLen, "-")
+					s, _ = center(item[column.String()], itemLen, "-")
+					icon = "+"
+				} else {
+					icon = " "
 				}
 			} else {
-				switch head.Align() {
+				switch column.Align() {
 				case R:
-					s, _ = right(item[head.String()], itemLen, " ")
+					s, _ = right(item[column.String()], itemLen, " ")
 				case L:
-					s, _ = left(item[head.String()], itemLen, " ")
+					s, _ = left(item[column.String()], itemLen, " ")
 				default:
-					s, _ = center(item[head.String()], itemLen, " ")
+					s, _ = center(item[column.String()], itemLen, " ")
 				}
 			}
 
-			icon := "|"
-			if item[head.String()].String() == "-" {
-				icon = "+"
+			if index == 0 {
+				s = icon + s + icon
+			} else {
+				s = "" + s + icon
 			}
-			if !tb.border {
-				icon = " "
+			result += s
+		}
+		result += "\n"
+	}
+	return result
+}
+
+func (st *SafeTable) printGroup(group []*sync.Map, columnMaxLen *sync.Map) string {
+	result := ""
+	for _, item := range group {
+		for index, column := range st.Columns.base {
+			value, _ := columnMaxLen.Load(column.Original())
+			itemLen := value.(int)
+			if st.border {
+				itemLen += 2
+			}
+			s := ""
+			icon := "|"
+			value, _ = item.Load(column.String())
+			if value.(cell.Cell).String() == "-" {
+				if st.border {
+					s, _ = center(value.(cell.Cell), itemLen, "-")
+					icon = "+"
+				} else {
+					icon = " "
+				}
+			} else {
+				switch column.Align() {
+				case R:
+					s, _ = right(value.(cell.Cell), itemLen, " ")
+				case L:
+					s, _ = left(value.(cell.Cell), itemLen, " ")
+				default:
+					s, _ = center(value.(cell.Cell), itemLen, " ")
+				}
 			}
 
 			if index == 0 {

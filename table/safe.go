@@ -125,3 +125,90 @@ func (st *SafeTable) Length() int {
 func (st *SafeTable) Empty() bool {
 	return st.Length() == 0
 }
+
+// String method used to implement fmt.Stringer.
+func (st *SafeTable) String() string {
+	var (
+		// Variable columnMaxLength original mode is map[string]int
+		columnMaxLength sync.Map
+
+		// Variable tag original mode is map[string]cell.Cell
+		tag sync.Map
+
+		// Variable taga original mode is []map[string]cell.Cell
+		taga = make([]*sync.Map, 0)
+	)
+
+	for _, col := range st.Columns.base {
+		columnMaxLength.Store(col.Original(), col.Length())
+		tag.Store(col.String(), cell.CreateData("-"))
+	}
+
+	for index := range st.Row {
+		for _, col := range st.Columns.base {
+			value, _ := st.Row[index].Load(col.Original())
+			maxLength := max(col.Length(), value.(cell.Cell).Length())
+
+			value, _ = columnMaxLength.Load(col.Original())
+			maxLength = max(maxLength, value.(int))
+			columnMaxLength.Store(col.Original(), maxLength)
+		}
+	}
+
+	content := ""
+	icon := " "
+	// Print first line.
+	taga = append(taga, &tag)
+	if st.border {
+		content += st.printGroup(taga, &columnMaxLength)
+		icon = "|"
+	}
+
+	// Print table column.
+	for index, column := range st.Columns.base {
+		value, _ := columnMaxLength.Load(column.Original())
+		itemLen := value.(int)
+		if st.border {
+			itemLen += 2
+		}
+		s := ""
+		switch column.Align() {
+		case R:
+			s, _ = right(column, itemLen, " ")
+		case L:
+			s, _ = left(column, itemLen, " ")
+		default:
+			s, _ = center(column, itemLen, " ")
+		}
+		if index == 0 {
+			s = icon + s + icon
+		} else {
+			s = "" + s + icon
+		}
+
+		content += s
+	}
+
+	if st.border {
+		content += "\n"
+	}
+
+	tableValue := taga
+	if !st.Empty() {
+		for index := range st.Row {
+			// map[string]cell.Cell
+			var cellMap sync.Map
+			f := func(key, value interface{}) bool {
+				column := st.Columns.Get(key.(string))
+				cellMap.Store(column.String(), value.(cell.Cell))
+				return true
+			}
+			st.Row[index].Range(f)
+			tableValue = append(tableValue, &cellMap)
+		}
+		tableValue = append(tableValue, &tag)
+	}
+
+	content += st.printGroup(tableValue, &columnMaxLength)
+	return st.end(content)
+}

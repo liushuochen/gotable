@@ -29,6 +29,36 @@ func main() {
 
 
 
+## Print table
+
+You can print the contents of the `SafeTable` instance to STDOUT using the print function in the ```fmt``` standard library.
+For example ```fmt.Println```, ```fmt.Print``` and so on.
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	table, _ := gotable.CreateSafeTable("ID", "Name")
+	row := []string{"001", "gotable"}
+	_ = table.AddRow(row)
+	fmt.Println(table)
+	// outputs:
+	// +-----+---------+
+	// | ID  |  Name   |
+	// +-----+---------+
+	// | 001 | gotable |
+	// +-----+---------+
+}
+
+```
+
+
+
 ## Add row
 
 Use safe table method ```AddRow``` to add a new row to the table. Method ```AddRow``` supports Map and Slice.
@@ -43,37 +73,44 @@ argument:
 package main
 
 import (
-  "fmt"
-  "github.com/liushuochen/gotable"
+	"fmt"
+	"github.com/liushuochen/gotable"
 )
 
 func main() {
-  table, err := gotable.CreateSafeTable("China", "US", "French")
-  if err != nil {
-    fmt.Println("Create table failed: ", err.Error())
-    return
-  }
+	table, err := gotable.CreateSafeTable("China", "US", "French")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
 
-  // Use map
-  row := make(map[string]string)
-  row["China"] = "Beijing"
-  row["US"] = "Washington, D.C."
-  row["French"] = "Paris"
-  err = table.AddRow(row)
-  if err != nil {
-    fmt.Println("Add value to table failed: ", err.Error())
-    return
-  }
+	// Use map
+	row := make(map[string]string)
+	row["China"] = "Beijing"
+	row["US"] = "Washington, D.C."
+	row["French"] = "Paris"
+	err = table.AddRow(row)
+	if err != nil {
+		fmt.Println("Add value to table failed: ", err.Error())
+		return
+	}
 
-  // Use Slice
-  row2 := []string{"Yinchuan", "Los Angeles", "Orleans"}
-  err = table.AddRow(row2)
-  if err != nil {
-    fmt.Println("Add value to table failed: ", err.Error())
-    return
-  }
+	// Use Slice
+	row2 := []string{"Yinchuan", "Los Angeles", "Orleans"}
+	err = table.AddRow(row2)
+	if err != nil {
+		fmt.Println("Add value to table failed: ", err.Error())
+		return
+	}
 
-  fmt.Println(table)
+	fmt.Println(table)
+	// outputs:
+	// +----------+------------------+---------+
+	// |  China   |        US        | French  |
+	// +----------+------------------+---------+
+	// | Beijing  | Washington, D.C. |  Paris  |
+	// | Yinchuan |   Los Angeles    | Orleans |
+	// +----------+------------------+---------+
 }
 
 ```
@@ -96,7 +133,7 @@ func main() {
 		fmt.Println("Create table failed: ", err.Error())
 		return
 	}
-	
+
 	row := make(map[string]string)
 	row["China"] = "Beijing"
 	row["US"] = "Washington, D.C."
@@ -107,10 +144,21 @@ func main() {
 		return
 	}
 
-	table.AddColumn("Japan")
+	err = table.AddColumn("Japan")
+	if err != nil {
+		fmt.Println("Add column failed: ", err.Error())
+		return
+	}
 
 	fmt.Println(table)
+	// outputs:
+	// +---------+------------------+--------+-------+
+	// |  China  |        US        | French | Japan |
+	// +---------+------------------+--------+-------+
+	// | Beijing | Washington, D.C. | Paris  |       |
+	// +---------+------------------+--------+-------+
 }
+
 
 ```
 

@@ -110,9 +110,9 @@ func Version() string {
 
 func Versions() []string { return getVersions() }
 
-// getVersions 5.15.0
+// getVersions 5.16.0
 func getVersions() []string {
-	return []string{"5", "15", "0"}
+	return []string{"5", "16", "0"}
 }
 
 // Read from a csv file to create a *table instance.
@@ -180,7 +180,7 @@ func readFromJSONFile(file *os.File) (*table.Table, error) {
 }
 
 // Read from file to create a *table instance.
-// Currently support csv and json file. It will return a table pointer and an error.
+// Currently, support csv and json file. It will return a table pointer and an error.
 // Error:
 // - If path is not a file, or does not exist, an *exception.FileDoNotExistError is returned.
 // - If path is a JSON file, the contents of the file are not eligible table contents, an

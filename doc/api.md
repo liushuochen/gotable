@@ -157,8 +157,9 @@ func (tb *Table) AddColumn(column string) error
 
 ### Print table
 
-```*table``` implements ```fmt.Stringer``` interface, so you can use the ```fmt.Print```, ```fmt.Printf``` functions 
+```*Table``` implements ```fmt.Stringer``` interface, so you can use the ```fmt.Print```, ```fmt.Printf``` functions 
 and so on to print the contents of the table instance.
+
 ```go
 func (tb *Table) String() string
 ```
@@ -473,5 +474,16 @@ func (b *base) GetDefaults() map[string]string
 
 ```go
 func (s *SafeTable) Length() int
+```
+
+
+
+### Print table
+
+```*SafeTable``` implements ```fmt.Stringer``` interface, so you can use the ```fmt.Print```, ```fmt.Printf``` functions 
+and so on to print the contents of the table instance.
+
+```go
+func (st *SafeTable) String() string
 ```
 
