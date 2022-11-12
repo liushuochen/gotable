@@ -181,3 +181,11 @@ func TestCreateTableByStruct3(t *testing.T) {
 		t.Errorf("expected got an error, but nil got.")
 	}
 }
+
+// Check the returned value for Versions function whether empty.
+func TestVersions(t *testing.T) {
+	result := gotable.Versions()
+	if len(result) == 0 {
+		t.Errorf("Versions return an empty slice.")
+	}
+}

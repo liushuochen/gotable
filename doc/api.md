@@ -231,7 +231,7 @@ func (tb *Table) Empty() bool
 Use table method ```GetColumns``` to get a list of columns.
 
 ```go
-func (tb *Table) GetColumns() []string
+func (b *base) GetColumns() []string
 ```
 
 
@@ -485,5 +485,15 @@ and so on to print the contents of the table instance.
 
 ```go
 func (st *SafeTable) String() string
+```
+
+
+
+### Get list of columns
+
+Use table method ```GetColumns``` to get a list of columns.
+
+```go
+func (b *base) GetColumns() []string
 ```
 

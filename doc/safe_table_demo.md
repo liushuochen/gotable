@@ -378,3 +378,28 @@ func main() {
 
 ```
 
+
+
+## Get list of columns
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/liushuochen/gotable"
+)
+
+func main() {
+	tb, err := gotable.CreateSafeTable("China", "US", "UK")
+	if err != nil {
+		fmt.Println("Create table failed: ", err.Error())
+		return
+	}
+
+	fmt.Println(tb.GetColumns())
+	// [China US UK]
+}
+
+```
+

@@ -63,7 +63,7 @@ func (b *base) DropDefault(column string) {
 	b.SetDefault(column, "")
 }
 
-// GetDefaults method return a map that contains all default value of each columns.
+// GetDefaults method return a map that contains all default value of each column.
 // * map[column name] = default value
 func (b *base) GetDefaults() map[string]string {
 	defaults := make(map[string]string)
@@ -77,4 +77,13 @@ func (b *base) end(content string) string {
 	content = content[:len(content)-1]
 	content += b.End
 	return content
+}
+
+// GetColumns method return a list of string that contains all column names.
+func (b *base) GetColumns() []string {
+	columns := make([]string, 0)
+	for _, col := range b.Columns.base {
+		columns = append(columns, col.Original())
+	}
+	return columns
 }

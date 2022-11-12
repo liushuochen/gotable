@@ -216,14 +216,6 @@ func (tb *Table) Length() int {
 	return len(tb.Row)
 }
 
-func (tb *Table) GetColumns() []string {
-	columns := make([]string, 0)
-	for _, col := range tb.Columns.base {
-		columns = append(columns, col.Original())
-	}
-	return columns
-}
-
 func (tb *Table) GetValues() []map[string]string {
 	values := make([]map[string]string, 0)
 	for _, value := range tb.Row {

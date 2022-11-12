@@ -103,16 +103,18 @@ func CreateByStruct(v interface{}) (*table.Table, error) {
 // Version
 // The version function returns a string representing the version information of the gotable.
 // e.g.
-// 	   gotable 3.4.0
+//
+//	gotable 3.4.0
 func Version() string {
 	return "gotable " + strings.Join(getVersions(), ".")
 }
 
+// Versions returns a list of version numbers.
 func Versions() []string { return getVersions() }
 
-// getVersions 5.16.0
+// getVersions 5.17.0
 func getVersions() []string {
-	return []string{"5", "16", "0"}
+	return []string{"5", "17", "0"}
 }
 
 // Read from a csv file to create a *table instance.
@@ -151,10 +153,10 @@ func readFromCSVFile(file *os.File) (*table.Table, error) {
 // Read from a json file to create a *table instance.
 // This function is a private function that only called from Read function. It will return a table pointer and an error.
 // Error:
-// - If the contents of the json file are not eligible table contents, an *exception.NotGotableJSONFormatError is
-//   returned.
-// - If there are duplicate columns in the parse result, an error is returned.
-// - Otherwise the value if error is nil.
+//   - If the contents of the json file are not eligible table contents, an *exception.NotGotableJSONFormatError is
+//     returned.
+//   - If there are duplicate columns in the parse result, an error is returned.
+//   - Otherwise the value if error is nil.
 func readFromJSONFile(file *os.File) (*table.Table, error) {
 	byteValue, err := ioutil.ReadAll(file)
 	if err != nil {
@@ -182,12 +184,12 @@ func readFromJSONFile(file *os.File) (*table.Table, error) {
 // Read from file to create a *table instance.
 // Currently, support csv and json file. It will return a table pointer and an error.
 // Error:
-// - If path is not a file, or does not exist, an *exception.FileDoNotExistError is returned.
-// - If path is a JSON file, the contents of the file are not eligible table contents, an
-//   *exception.NotGotableJSONFormatError is returned.
-// - If path is a CSV file, and the contents of the file are empty, an *exception.ColumnsLengthError is returned.
-// - If there are duplicate columns in the parse result, an error is returned.
-// - Otherwise the value if error is nil.
+//   - If path is not a file, or does not exist, an *exception.FileDoNotExistError is returned.
+//   - If path is a JSON file, the contents of the file are not eligible table contents, an
+//     *exception.NotGotableJSONFormatError is returned.
+//   - If path is a CSV file, and the contents of the file are empty, an *exception.ColumnsLengthError is returned.
+//   - If there are duplicate columns in the parse result, an error is returned.
+//   - Otherwise the value if error is nil.
 func Read(path string) (*table.Table, error) {
 	if !util.IsFile(path) {
 		return nil, exception.FileDoNotExist(path)
