@@ -2,6 +2,11 @@
 // base.go contains basic methods of table types.
 package table
 
+import (
+	"fmt"
+	"strings"
+)
+
 // base struct contains common attributes to the table.
 // Columns: Table columns
 // border: Control the table border display(true: print table border).
@@ -86,4 +91,17 @@ func (b *base) GetColumns() []string {
 		columns = append(columns, col.Original())
 	}
 	return columns
+}
+
+func (b *base) header() []string {
+	resultList := make([]string, 0)
+	resultList = append(resultList, fmt.Sprintf("TableType:%s", b.tableType))
+	resultList = append(resultList, fmt.Sprintf("Border:%v", b.border))
+
+	columns := make([]string, 0)
+	for _, column := range b.Columns.base {
+		columns = append(columns, column.Original())
+	}
+	resultList = append(resultList, fmt.Sprintf("Column:[%s]", strings.Join(columns, ",")))
+	return resultList
 }

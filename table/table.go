@@ -212,6 +212,7 @@ func (tb *Table) Empty() bool {
 	return tb.Length() == 0
 }
 
+// Length method returns an integer indicates the length of the table row.
 func (tb *Table) Length() int {
 	return len(tb.Row)
 }
@@ -401,4 +402,25 @@ func (tb *Table) SetColumnColor(columnName string, display, fount, background in
 			break
 		}
 	}
+}
+
+// GoString method used to implement fmt.GoStringer.
+func (tb *Table) GoString() string {
+	resultList := tb.header()
+	values := make([]string, 0)
+	for _, row := range tb.Row {
+		value := make([]string, 0)
+		for _, column := range tb.Columns.base {
+			v, ok := row[column.Original()]
+			if !ok {
+				value = append(value, column.Default())
+			} else {
+				value = append(value, v.Original())
+			}
+		}
+		values = append(values, strings.Join(value, ","))
+	}
+
+	resultList = append(resultList, fmt.Sprintf("Row:[%v]", strings.Join(values, "; ")))
+	return fmt.Sprintf("{%s}", strings.Join(resultList, "; "))
 }

@@ -178,7 +178,7 @@ func TestCreateTableByStruct3(t *testing.T) {
 
 	_, err := gotable.CreateByStruct(stu)
 	if err == nil {
-		t.Errorf("expected got an error, but nil got.")
+		t.Error("expected got an error, but nil got.")
 	}
 }
 
@@ -186,6 +186,19 @@ func TestCreateTableByStruct3(t *testing.T) {
 func TestVersions(t *testing.T) {
 	result := gotable.Versions()
 	if len(result) == 0 {
-		t.Errorf("Versions return an empty slice.")
+		t.Error("Versions return an empty slice.")
+	}
+}
+
+// Check create table from a CSV file.
+// - Check table length (expected is 3, defined in test_csv.csv).
+func TestReadCSVFile(t *testing.T) {
+	table, err := gotable.Read("test_csv.csv")
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+
+	if table.Length() != 3 {
+		t.Errorf("expected table length is 3, but %d got.", table.Length())
 	}
 }
