@@ -1,12 +1,14 @@
 package table
 
 import (
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/liushuochen/gotable/cell"
 	"github.com/liushuochen/gotable/exception"
 	"github.com/liushuochen/gotable/util"
+	"io"
 	"os"
 	"strings"
 )
@@ -345,19 +347,8 @@ func (tb *Table) ToJsonFile(path string, indent int) error {
 	return nil
 }
 
-func (tb *Table) ToCSVFile(path string) error {
-	if !util.IsCSVFile(path) {
-		return exception.NotARegularCSVFile(path)
-	}
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0666)
-	if err != nil {
-		return err
-	}
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
-	writer := csv.NewWriter(file)
-
+func (tb *Table) csv(buf io.Writer) error {
+	writer := csv.NewWriter(buf)
 	contents := make([][]string, 0)
 	columns := tb.GetColumns()
 	contents = append(contents, columns)
@@ -369,12 +360,39 @@ func (tb *Table) ToCSVFile(path string) error {
 		contents = append(contents, content)
 	}
 
-	err = writer.WriteAll(contents)
+	err := writer.WriteAll(contents)
 	if err != nil {
 		return err
 	}
 	writer.Flush()
 	err = writer.Error()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (tb *Table) CSV() (string, error) {
+	buf := bytes.NewBuffer([]byte{})
+	err := tb.csv(buf)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
+func (tb *Table) ToCSVFile(path string) error {
+	if !util.IsCSVFile(path) {
+		return exception.NotARegularCSVFile(path)
+	}
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
+	err = tb.csv(file)
 	if err != nil {
 		return err
 	}
