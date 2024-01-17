@@ -3,6 +3,7 @@ package gotable_test
 
 import (
 	"github.com/liushuochen/gotable/exception"
+	"os"
 	"strings"
 	"testing"
 
@@ -200,5 +201,48 @@ func TestReadCSVFile(t *testing.T) {
 
 	if table.Length() != 3 {
 		t.Errorf("expected table length is 3, but %d got.", table.Length())
+	}
+}
+
+func TestCSV(t *testing.T) {
+	table, err := gotable.Read("test_csv.csv")
+	res, err := table.CSV()
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+	content, err := os.ReadFile("test_csv.csv")
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+	if strings.TrimSpace(res) != strings.TrimSpace(string(content)) {
+		t.Errorf("expected equal contents")
+	}
+}
+
+func TestToCSVFile(t *testing.T) {
+	table, err := gotable.Read("test_csv.csv")
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+	err = table.ToCSVFile("test_csv_res.csv")
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+	defer func() {
+		err := os.Remove("test_csv_res.csv")
+		if err != nil {
+			t.Errorf("expected err is nil, but %s got.", err.Error())
+		}
+	}()
+	content, err := os.ReadFile("test_csv.csv")
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+	resContent, err := os.ReadFile("test_csv_res.csv")
+	if err != nil {
+		t.Errorf("expected err is nil, but %s got.", err.Error())
+	}
+	if strings.TrimSpace(string(resContent)) != strings.TrimSpace(string(content)) {
+		t.Errorf("expected equal contents")
 	}
 }
